@@ -11,14 +11,14 @@ import org.http4k.routing.routes
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
-val app: HttpHandler = routes(
+fun App() = routes(
     "/ping" bind GET to {
         Response(OK).body("pong")
     }
 )
 
 fun main() {
-    val printingApp: HttpHandler = PrintRequest().then(app)
+    val printingApp: HttpHandler = PrintRequest().then(App())
 
     val server = printingApp.asServer(SunHttp(9000)).start()
 

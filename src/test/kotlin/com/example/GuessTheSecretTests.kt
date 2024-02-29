@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test
 
 class GuessTheSecretTests {
 
+    val app = App()
+
     @Test
     fun `ping test`() {
         assertEquals(Response(OK).body("pong"), app(Request(GET, "/ping")))
