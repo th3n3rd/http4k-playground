@@ -22,19 +22,27 @@ private val gameIdParam = Path.value(GameId).of("id")
 private val gameIdPayload = Body.auto<GameId>().toLens()
 private val gameDetailsPayload = Body.auto<GameDetails>().toLens()
 
-fun App() = routes(
-    "/ping" bind GET to {
-        Response(OK).body("pong")
-    },
-    "/games" bind POST to {
-        Response(CREATED).with(gameIdPayload of GameId())
-    },
-    "/games/{id}" bind GET to {
-        Response(OK).with(gameDetailsPayload of GameDetails(
+private fun GetGameDetailsApi() = "/games/{id}" bind GET to {
+    Response(OK).with(
+        gameDetailsPayload of GameDetails(
             id = gameIdParam(it),
             won = true
-        ))
-    }
+        )
+    )
+}
+
+private fun PingApi() = "/ping" bind GET to {
+    Response(OK).body("pong")
+}
+
+private fun StartNewGameApi() = "/games" bind POST to {
+    Response(CREATED).with(gameIdPayload of GameId())
+}
+
+fun App() = routes(
+    PingApi(),
+    StartNewGameApi(),
+    GetGameDetailsApi()
 )
 
 fun main() {
