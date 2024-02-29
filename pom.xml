@@ -14,7 +14,20 @@
         <junitVersion>5.10.2</junitVersion>
         <http4kVersion>5.13.8.0</http4kVersion>
         <http4kConnectVersion>5.7.0.0</http4kConnectVersion>
+        <forkhandlesBomVersion>2.13.1.0</forkhandlesBomVersion>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>dev.forkhandles</groupId>
+                <artifactId>forkhandles-bom</artifactId>
+                <version>${forkhandlesBomVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -41,6 +54,11 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
                 <version>${kotlinVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.forkhandles</groupId>
+            <artifactId>values4k</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
                 <groupId>org.http4k</groupId>
