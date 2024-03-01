@@ -8,7 +8,6 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
 fun App(games: Games) = routes(
-    PingApi(),
     StartNewGameApi(StartNewGame(games)),
     GetGameDetailsApi()
 )
