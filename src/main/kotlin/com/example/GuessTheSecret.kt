@@ -7,14 +7,14 @@ import org.http4k.routing.routes
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
-fun App() = routes(
+fun App(games: Games) = routes(
     PingApi(),
-    StartNewGameApi(),
+    StartNewGameApi(StartNewGame(games)),
     GetGameDetailsApi()
 )
 
 fun main() {
-    val printingApp: HttpHandler = PrintRequest().then(App())
+    val printingApp: HttpHandler = PrintRequest().then(App(InMemoryGames()))
 
     val server = printingApp.asServer(SunHttp(9000)).start()
 

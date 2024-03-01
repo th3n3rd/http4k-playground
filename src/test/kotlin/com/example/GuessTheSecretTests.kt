@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 class GuessTheSecretTests {
 
-    val app = App()
+    val app = App(InMemoryGames())
     val player = Player(app)
 
     @Test

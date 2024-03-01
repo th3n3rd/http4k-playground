@@ -15,7 +15,7 @@
         <http4kVersion>5.13.8.0</http4kVersion>
         <http4kConnectVersion>5.7.0.0</http4kConnectVersion>
         <forkhandlesBomVersion>2.13.1.0</forkhandlesBomVersion>
-        <kotestRunnerVersion>5.8.0</kotestRunnerVersion>
+        <kotestVersion>5.8.0</kotestVersion>
     </properties>
 
     <dependencyManagement>
@@ -80,6 +80,12 @@
                 <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.http4k</groupId>
+            <artifactId>http4k-testing-kotest</artifactId>
+            <version>${http4kVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>5.10.2</version>
@@ -94,7 +100,13 @@
         <dependency>
             <groupId>io.kotest</groupId>
             <artifactId>kotest-runner-junit5-jvm</artifactId>
-            <version>${kotestRunnerVersion}</version>
+            <version>${kotestVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-json-jvm</artifactId>
+            <version>${kotestVersion}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
