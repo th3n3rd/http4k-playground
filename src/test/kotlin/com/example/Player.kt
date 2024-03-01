@@ -5,10 +5,12 @@ import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
+import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.format.Jackson.auto
+import org.http4k.kotest.shouldHaveStatus
 
 class Player(baseUri: Uri) {
 
@@ -23,5 +25,12 @@ class Player(baseUri: Uri) {
         val response = client(Request(GET, "/games/${game.value}"))
         val details = Body.auto<GameDetails>().toLens()(response)
         return details.won
+    }
+
+    fun guess(game: GameId, secret: String) {
+        val response = client(Request(POST, "/games/${game.value}/guesses")).body("""
+            "secret": "$secret"
+        """.trimIndent())
+        response shouldHaveStatus CREATED
     }
 }

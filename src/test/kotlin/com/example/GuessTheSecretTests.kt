@@ -15,6 +15,8 @@ class GuessTheSecretTests {
     fun `winning gameplay`() {
         val newGame = player.startNewGame()
 
-        assertTrue(player.hasWon(newGame));
+        player.guess(newGame, "secret")
+
+        assertTrue(player.hasWon(newGame))
     }
 }
