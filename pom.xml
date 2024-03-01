@@ -62,6 +62,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>dev.forkhandles</groupId>
+            <artifactId>result4k</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
                 <groupId>org.http4k</groupId>
                 <artifactId>http4k-testing-approval</artifactId>
                 <version>${http4kVersion}</version>
@@ -107,6 +112,11 @@
             <groupId>io.kotest</groupId>
             <artifactId>kotest-assertions-json-jvm</artifactId>
             <version>${kotestVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.forkhandles</groupId>
+            <artifactId>result4k-kotest</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
