@@ -27,7 +27,8 @@ fun GuessApi(guess: Guess) = "/games/{id}/guesses" bind POST to {
         .map { game ->
             Response(CREATED).with(payload of GameDetails(
                 game.id,
-                game.won
+                game.won,
+                game.hint
             ))
         }
         .mapFailure { error ->

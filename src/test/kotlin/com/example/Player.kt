@@ -40,4 +40,10 @@ class Player(baseUri: Uri) {
         )
         response shouldHaveStatus CREATED
     }
+
+    fun receivedHint(game: GameId, hint: String) {
+        val response = client(Request(GET, "/games/${game.value}"))
+        val details = Body.auto<GameDetails>().toLens()(response)
+        details.hint shouldBe hint
+    }
 }

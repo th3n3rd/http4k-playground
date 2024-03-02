@@ -3,6 +3,7 @@ package com.example
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj
 import io.kotest.assertions.json.schema.shouldMatchSchema
+import io.kotest.assertions.json.shouldEqualSpecifiedJson
 import io.kotest.common.ExperimentalKotest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.beUUID
@@ -37,9 +38,16 @@ class GuessApiTests {
                     obj {
                         string("id") { beUUID() }
                     }
+                    string("hint")
                     boolean("won")
                 }
             }
+            bodyString() shouldEqualSpecifiedJson """
+            {
+                "hint": "_______",
+                "won": true
+            }
+            """.trimIndent()
         }
         games.findById(existingGame.id)!!.won shouldBe true
     }

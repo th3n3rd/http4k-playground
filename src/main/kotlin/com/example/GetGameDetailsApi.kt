@@ -13,11 +13,13 @@ import org.http4k.routing.bind
 private val gameId = Path.value(GameId).of("id")
 private val payload = Body.auto<GameDetails>().toLens()
 
-fun GetGameDetailsApi() = "/games/{id}" bind Method.GET to {
+fun GetGameDetailsApi(games: Games = InMemoryGames()) = "/games/{id}" bind Method.GET to {
+    val existingGame = games.findById(gameId(it))!!
     Response(Status.OK).with(
         payload of GameDetails(
-            id = gameId(it),
-            won = true
+            id = existingGame.id,
+            hint = existingGame.hint,
+            won = existingGame.won
         )
     )
 }
