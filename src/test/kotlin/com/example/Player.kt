@@ -8,13 +8,17 @@ import org.http4k.core.Request
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Uri
 import org.http4k.core.then
+import org.http4k.core.with
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
 import org.http4k.kotest.shouldHaveStatus
 
 class Player(baseUri: Uri) {
 
-    private val client = SetBaseUriFrom(baseUri).then(JavaHttpClient())
+    private val client = SetBaseUriFrom(baseUri)
+        .then(JavaHttpClient())
+        .debug()
 
     fun startNewGame(): GameId {
         val response = client(Request(POST, "/games"))
@@ -27,10 +31,14 @@ class Player(baseUri: Uri) {
         return details.won
     }
 
+    data class SubmittedGuess(val secret: String)
+
     fun guess(game: GameId, secret: String) {
-        val response = client(Request(POST, "/games/${game.value}/guesses")).body("""
-            "secret": "$secret"
-        """.trimIndent())
+        val payload = Body.auto<SubmittedGuess>().toLens()
+        val response = client(
+            Request(POST, "/games/${game.value}/guesses")
+                .with(payload of SubmittedGuess(secret))
+        )
         response shouldHaveStatus CREATED
     }
 }
