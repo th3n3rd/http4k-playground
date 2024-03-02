@@ -16,8 +16,9 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalKotest::class)
 class StartNewGameApiTests {
 
+    private val secrets = RotatingSecrets(listOf("secret"))
     private val games = InMemoryGames()
-    private val api = StartNewGameApi(StartNewGame(games))
+    private val api = StartNewGameApi(StartNewGame(games, secrets))
 
     @Test
     fun `starts a new game`() {

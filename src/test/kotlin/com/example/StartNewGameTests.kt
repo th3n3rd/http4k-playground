@@ -7,8 +7,9 @@ import org.junit.jupiter.api.Test
 
 class StartNewGameTests {
 
+    private val secrets = RotatingSecrets(listOf("first", "second"))
     private val games = InMemoryGames()
-    private val startNewGame = StartNewGame(games)
+    private val startNewGame = StartNewGame(games, secrets)
 
     @Test
     fun `starts a different game every time`() {
@@ -16,6 +17,14 @@ class StartNewGameTests {
         val second = startNewGame()
 
         first shouldNotBeEqual second
+    }
+
+    @Test
+    fun `new games get a random secret to guess`() {
+        val first = startNewGame()
+        val second = startNewGame()
+
+        first.secret shouldNotBeEqual second.secret
     }
 
     @Test

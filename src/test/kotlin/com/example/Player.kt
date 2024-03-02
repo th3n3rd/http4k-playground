@@ -32,8 +32,6 @@ class Player(baseUri: Uri) {
         details.won shouldBe true
     }
 
-    data class SubmittedGuess(val secret: String)
-
     fun guess(game: GameId, secret: String) {
         val payload = Body.auto<SubmittedGuess>().toLens()
         val response = client(
