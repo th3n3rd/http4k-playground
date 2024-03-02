@@ -1,5 +1,6 @@
 package com.example
 
+import io.kotest.matchers.shouldBe
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
@@ -25,10 +26,10 @@ class Player(baseUri: Uri) {
         return Body.auto<GameId>().toLens()(response)
     }
 
-    fun hasWon(game: GameId): Boolean {
+    fun hasWon(game: GameId) {
         val response = client(Request(GET, "/games/${game.value}"))
         val details = Body.auto<GameDetails>().toLens()(response)
-        return details.won
+        details.won shouldBe true
     }
 
     data class SubmittedGuess(val secret: String)

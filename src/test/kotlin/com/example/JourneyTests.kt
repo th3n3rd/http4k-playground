@@ -17,6 +17,6 @@ class JourneyTests {
 
         player.guess(newGame, "secret")
 
-        assertTrue(player.hasWon(newGame))
+        player.hasWon(newGame)
     }
 }
