@@ -6,7 +6,7 @@ import org.http4k.server.asServer
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class GuessTheSecretTests {
+class JourneyTests {
 
     private val app = App(InMemoryGames()).asServer(SunHttp(0)).start()
     private val player = Player(Uri.of("http://localhost:${app.port()}"))
