@@ -26,9 +26,9 @@ fun SubmitGuessApi(submitGuess: SubmitGuess) = "/games/{id}/guesses" bind POST t
     submitGuess(gameId(it), submittedGuess(it).secret)
         .map { game ->
             Response(CREATED).with(payload of GameDetails(
-                game.id,
-                game.won,
-                game.hint
+                id = game.id,
+                hint = game.hint,
+                won = game.won
             ))
         }
         .mapFailure { error ->
