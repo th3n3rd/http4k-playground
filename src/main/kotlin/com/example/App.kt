@@ -8,6 +8,7 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
 fun App(games: Games, secrets: Secrets) = routes(
+    RegisterNewPlayerApi(),
     StartNewGameApi(StartNewGame(games, secrets)),
     GetGameDetailsApi(games),
     SubmitGuessApi(SubmitGuess(games))

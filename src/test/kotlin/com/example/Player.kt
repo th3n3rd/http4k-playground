@@ -16,11 +16,15 @@ import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
 import org.http4k.kotest.shouldHaveStatus
 
-class Player(baseUri: Uri) {
+class Player(baseUri: Uri, username: String = "", password: String = "") {
 
     private val client = SetBaseUriFrom(baseUri)
         .then(JavaHttpClient())
         .debug()
+
+    init {
+        register(username, password)
+    }
 
     fun startNewGame(): GameId {
         val response = client(Request(POST, "/games"))
@@ -48,6 +52,16 @@ class Player(baseUri: Uri) {
         details.hint shouldBe hint
     }
 
+    private fun register(username: String, password: String) {
+        val payload = Body.auto<Credentials>().toLens()
+        val response = client(
+            Request(POST, "/players")
+                .with(payload of Credentials(username, password))
+        )
+        response.status shouldBe CREATED
+    }
+
+    data class Credentials(val username: String, val password: String)
     data class Guess(val secret: String)
     data class GameStarted(val id: UUID)
     data class GameDetails(val hint: String, val won: Boolean)
