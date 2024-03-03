@@ -1,0 +1,16 @@
+package com.example
+
+import java.util.concurrent.CopyOnWriteArrayList
+
+class InMemoryPlayers : Players {
+    private val players = CopyOnWriteArrayList<RegisteredPlayer>()
+
+    override fun save(player: RegisteredPlayer) {
+        players.add(player)
+    }
+
+    override fun existsBy(username: String, encodedPassword: String): Boolean {
+        return players.any { it.username == username && it.encodedPassword == encodedPassword}
+    }
+
+}
