@@ -1,6 +1,7 @@
 package com.example
 
 import io.kotest.matchers.shouldBe
+import java.util.*
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
@@ -23,7 +24,7 @@ class Player(baseUri: Uri) {
 
     fun startNewGame(): GameId {
         val response = client(Request(POST, "/games"))
-        return Body.auto<GameId>().toLens()(response)
+        return GameId(Body.auto<GameStarted>().toLens()(response).id)
     }
 
     fun hasWon(game: GameId) {
@@ -33,10 +34,10 @@ class Player(baseUri: Uri) {
     }
 
     fun guess(game: GameId, secret: String) {
-        val payload = Body.auto<SubmittedGuess>().toLens()
+        val payload = Body.auto<Guess>().toLens()
         val response = client(
             Request(POST, "/games/${game.value}/guesses")
-                .with(payload of SubmittedGuess(secret))
+                .with(payload of Guess(secret))
         )
         response shouldHaveStatus CREATED
     }
@@ -46,4 +47,8 @@ class Player(baseUri: Uri) {
         val details = Body.auto<GameDetails>().toLens()(response)
         details.hint shouldBe hint
     }
+
+    data class Guess(val secret: String)
+    data class GameStarted(val id: UUID)
+    data class GameDetails(val hint: String, val won: Boolean)
 }

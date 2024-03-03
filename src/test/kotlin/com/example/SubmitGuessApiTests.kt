@@ -35,11 +35,10 @@ class SubmitGuessApiTests {
             status shouldBe CREATED
             bodyString() shouldMatchSchema jsonSchema {
                 obj {
-                    obj {
-                        string("id") { beUUID() }
-                    }
+                    string("id") { beUUID() }
                     string("hint")
                     boolean("won")
+                    additionalProperties = false
                 }
             }
             bodyString() shouldEqualSpecifiedJson """

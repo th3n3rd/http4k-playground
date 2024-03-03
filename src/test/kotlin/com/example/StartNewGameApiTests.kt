@@ -28,7 +28,8 @@ class StartNewGameApiTests {
             status shouldBe CREATED
             bodyString() shouldMatchSchema jsonSchema {
                 obj {
-                    string("value") { beUUID() }
+                    string("id") { beUUID() }
+                    additionalProperties = false
                 }
             }
         }

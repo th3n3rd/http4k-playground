@@ -29,11 +29,10 @@ class GetGameDetailsApiTests {
             status shouldBe OK
             bodyString() shouldMatchSchema jsonSchema {
                 obj {
-                    obj {
-                        string("value") { beUUID() }
-                    }
+                    string("id") { beUUID() }
                     string("hint")
                     boolean("won")
+                    additionalProperties = false
                 }
             }
             bodyString() shouldEqualSpecifiedJson """
