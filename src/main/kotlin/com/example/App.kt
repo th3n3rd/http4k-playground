@@ -10,7 +10,7 @@ import org.http4k.server.asServer
 fun App(games: Games, secrets: Secrets) = routes(
     StartNewGameApi(StartNewGame(games, secrets)),
     GetGameDetailsApi(games),
-    GuessApi(Guess(games))
+    SubmitGuessApi(SubmitGuess(games))
 )
 
 fun main() {

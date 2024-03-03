@@ -22,8 +22,8 @@ private val gameId = Path.value(GameId).of("id")
 private val submittedGuess = Body.auto<SubmittedGuess>().toLens()
 private val payload = Body.auto<GameDetails>().toLens()
 
-fun GuessApi(guess: Guess) = "/games/{id}/guesses" bind POST to {
-    guess(gameId(it), submittedGuess(it).secret)
+fun SubmitGuessApi(submitGuess: SubmitGuess) = "/games/{id}/guesses" bind POST to {
+    submitGuess(gameId(it), submittedGuess(it).secret)
         .map { game ->
             Response(CREATED).with(payload of GameDetails(
                 game.id,

@@ -15,10 +15,10 @@ import org.http4k.core.Status.Companion.NOT_FOUND
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalKotest::class)
-class GuessApiTests {
+class SubmitGuessApiTests {
 
     private val games = InMemoryGames()
-    private val api = GuessApi(Guess(games))
+    private val api = SubmitGuessApi(SubmitGuess(games))
 
     @Test
     fun `mark the game as won when the guess is right`() {

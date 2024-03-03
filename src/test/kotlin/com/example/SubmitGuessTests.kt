@@ -5,17 +5,17 @@ import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class GuessTests {
+class SubmitGuessTests {
 
     private val games = InMemoryGames()
-    private val guess = Guess(games)
+    private val submitGuess = SubmitGuess(games)
 
     @Test
     fun `marks the game as won then guess is correct`() {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = guess(game.id, "correct")
+        val result = submitGuess(game.id, "correct")
 
         result shouldBeSuccess {
             it.won shouldBe true
@@ -27,7 +27,7 @@ class GuessTests {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = guess(game.id, "incorrect")
+        val result = submitGuess(game.id, "incorrect")
 
         result shouldBeSuccess {
             it.won shouldBe false
@@ -39,7 +39,7 @@ class GuessTests {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = guess(game.id, "correct")
+        val result = submitGuess(game.id, "correct")
 
         result shouldBeSuccess {
             games.findById(it.id) shouldBe it
@@ -51,7 +51,7 @@ class GuessTests {
         val game = Game(secret = "correct", won = true)
         games.save(game)
 
-        val result = guess(game.id, "correct")
+        val result = submitGuess(game.id, "correct")
 
         result shouldBeFailure GameAlreadyCompleted(game.id)
     }
@@ -59,7 +59,7 @@ class GuessTests {
     @Test
     fun `fails when the game is not found`() {
         val nonExistentGameId = GameId()
-        val result = guess(nonExistentGameId, "correct")
+        val result = submitGuess(nonExistentGameId, "correct")
 
         result shouldBeFailure GameNotFound(nonExistentGameId)
     }
