@@ -15,29 +15,33 @@ import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
 import org.http4k.lens.value
+import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
-private data class SubmittedGuess(val secret: String)
-private data class GameUpdated(val id: UUID, val hint: String, val won: Boolean)
-private val gameId = Path.value(GameId).of("id")
-private val submittedGuess = Body.auto<SubmittedGuess>().toLens()
-private val payload = Body.auto<GameUpdated>().toLens()
+fun SubmitGuessApi(submitGuess: SubmitGuess): RoutingHttpHandler {
+    data class SubmittedGuess(val secret: String)
+    data class GameUpdated(val id: UUID, val hint: String, val won: Boolean)
 
-fun SubmitGuessApi(submitGuess: SubmitGuess) = "/games/{id}/guesses" bind POST to {
-    submitGuess(gameId(it), submittedGuess(it).secret)
-        .map { game ->
-            Response(CREATED).with(payload of GameUpdated(
-                id = game.id.value,
-                hint = game.hint,
-                won = game.won
-            ))
-        }
-        .mapFailure { error ->
-            when (error) {
-                is GameNotFound -> Response(NOT_FOUND)
-                is GameAlreadyCompleted -> Response(BAD_REQUEST)
-                else -> Response(INTERNAL_SERVER_ERROR)
+    val gameId = Path.value(GameId).of("id")
+    val submittedGuess = Body.auto<SubmittedGuess>().toLens()
+    val payload = Body.auto<GameUpdated>().toLens()
+
+    return "/games/{id}/guesses" bind POST to {
+        submitGuess(gameId(it), submittedGuess(it).secret)
+            .map { game ->
+                Response(CREATED).with(payload of GameUpdated(
+                    id = game.id.value,
+                    hint = game.hint,
+                    won = game.won
+                ))
             }
-        }
-        .get()
+            .mapFailure { error ->
+                when (error) {
+                    is GameNotFound -> Response(NOT_FOUND)
+                    is GameAlreadyCompleted -> Response(BAD_REQUEST)
+                    else -> Response(INTERNAL_SERVER_ERROR)
+                }
+            }
+            .get()
+    }
 }
