@@ -13,4 +13,8 @@ class InMemoryPlayers : Players {
         return players.any { it.username == username && it.password == password}
     }
 
+    override fun findByUsername(username: String): RegisteredPlayer? {
+        return players.find { it.username == username }
+    }
+
 }
