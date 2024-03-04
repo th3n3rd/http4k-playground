@@ -1,4 +1,4 @@
-package com.example
+package com.example.player
 
 interface Players {
     fun save(player: RegisteredPlayer)

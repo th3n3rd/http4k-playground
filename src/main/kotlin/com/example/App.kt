@@ -1,5 +1,12 @@
 package com.example
 
+import com.example.player.AuthenticatePlayer
+import com.example.player.InMemoryPlayers
+import com.example.player.PasswordEncoder
+import com.example.player.PasswordEncodings
+import com.example.player.Players
+import com.example.player.RegisterNewPlayer
+import com.example.player.RegisterNewPlayerApi
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequest

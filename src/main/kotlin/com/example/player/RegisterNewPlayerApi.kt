@@ -1,4 +1,4 @@
-package com.example
+package com.example.player
 
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
@@ -15,10 +15,12 @@ fun RegisterNewPlayerApi(registerNewPlayer: RegisterNewPlayer): RoutingHttpHandl
 
     return "/players" bind POST to {
         val credentials = submittedCredentials(it)
-        registerNewPlayer(RegisterNewPlayer.Command(
-            credentials.username,
-            credentials.password
-        ))
+        registerNewPlayer(
+            RegisterNewPlayer.Command(
+                credentials.username,
+                credentials.password
+            )
+        )
         Response(CREATED)
     }
 }

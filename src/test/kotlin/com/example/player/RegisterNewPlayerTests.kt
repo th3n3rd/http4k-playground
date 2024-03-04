@@ -1,4 +1,4 @@
-package com.example
+package com.example.player
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

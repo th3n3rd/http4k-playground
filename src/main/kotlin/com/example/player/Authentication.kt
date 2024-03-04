@@ -1,4 +1,4 @@
-package com.example
+package com.example.player
 
 import org.http4k.filter.ServerFilters
 

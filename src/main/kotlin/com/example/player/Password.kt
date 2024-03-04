@@ -1,4 +1,4 @@
-package com.example
+package com.example.player
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 
