@@ -4,20 +4,26 @@ import io.kotest.matchers.shouldBe
 import java.util.*
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
+import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
-import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
+import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
 
-class Player(baseUri: Uri, username: String = "", password: String = "") {
+class Player(
+    baseUri: Uri,
+    username: String = "",
+    password: String = ""
+) {
 
     private val client = SetBaseUriFrom(baseUri)
+        .then(BasicAuth(user = username, password = password))
         .then(JavaHttpClient())
         .debug()
 
@@ -49,6 +55,7 @@ class Player(baseUri: Uri, username: String = "", password: String = "") {
 
     fun receivedHint(game: GameId, hint: String) {
         val response = client(Request(GET, "/games/${game.value}"))
+        response.status.successful shouldBe true
         val details = Body.auto<GameDetails>().toLens()(response)
         details.hint shouldBe hint
     }
@@ -59,7 +66,7 @@ class Player(baseUri: Uri, username: String = "", password: String = "") {
             Request(POST, "/players")
                 .with(payload of Credentials(username, password))
         )
-        response.status shouldBe CREATED
+        response.status.successful shouldBe true
     }
 
     data class Credentials(val username: String, val password: String)

@@ -7,12 +7,17 @@ import org.http4k.routing.routes
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
-fun App(players: Players, games: Games, secrets: Secrets, passwordEncoder: PasswordEncoder) = routes(
-    RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
-    StartNewGameApi(StartNewGame(games, secrets)),
-    GetGameDetailsApi(games),
-    SubmitGuessApi(SubmitGuess(games))
-)
+fun App(players: Players, games: Games, secrets: Secrets, passwordEncoder: PasswordEncoder): HttpHandler {
+
+    val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder)
+
+    return routes(
+        RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
+        authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
+        authenticatePlayer.then(GetGameDetailsApi(games)),
+        authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
+    )
+}
 
 fun main() {
     val printingApp: HttpHandler = PrintRequest().then(App(
