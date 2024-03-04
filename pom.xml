@@ -16,6 +16,9 @@
         <http4kConnectVersion>5.7.0.0</http4kConnectVersion>
         <forkhandlesBomVersion>2.13.1.0</forkhandlesBomVersion>
         <kotestVersion>5.8.0</kotestVersion>
+        <springVersion>6.2.0</springVersion>
+        <apacheCommonLoggingVersion>1.2</apacheCommonLoggingVersion>
+        <bouncyCastlePkiVersion>1.70</bouncyCastlePkiVersion>
     </properties>
 
     <dependencyManagement>
@@ -65,6 +68,21 @@
             <groupId>dev.forkhandles</groupId>
             <artifactId>result4k</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>${springVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${apacheCommonLoggingVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bouncyCastlePkiVersion}</version>
         </dependency>
         <dependency>
                 <groupId>org.http4k</groupId>

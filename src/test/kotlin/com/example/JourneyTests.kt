@@ -12,10 +12,14 @@ class JourneyTests {
         players = InMemoryPlayers(),
         games = InMemoryGames(),
         secrets = RotatingSecrets(listOf("secret")),
-        passwordEncoder = NoPasswordEncoding
+        passwordEncoder = PasswordEncodings.Argon2
     ).debug()
     private val appServer = app.asServer(SunHttp(0)).start()
-    private val player = Player(Uri.of("http://localhost:${appServer.port()}"))
+    private val player = Player(
+        baseUri = Uri.of("http://localhost:${appServer.port()}"),
+        username = "player-1",
+        password = "player-1"
+    )
 
     @Test
     fun `winning gameplay`() {

@@ -24,7 +24,7 @@ fun main() {
         players = InMemoryPlayers(),
         games = InMemoryGames(),
         secrets = RotatingSecrets(listOf("secret")),
-        passwordEncoder = NoPasswordEncoding
+        passwordEncoder = PasswordEncodings.Argon2
     ))
 
     val server = printingApp.asServer(SunHttp(9000)).start()
