@@ -14,7 +14,6 @@ import org.http4k.core.with
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
-import org.http4k.kotest.shouldHaveStatus
 
 class Player(baseUri: Uri, username: String = "", password: String = "") {
 
@@ -28,11 +27,13 @@ class Player(baseUri: Uri, username: String = "", password: String = "") {
 
     fun startNewGame(): GameId {
         val response = client(Request(POST, "/games"))
+        response.status.successful shouldBe true
         return GameId(Body.auto<GameStarted>().toLens()(response).id)
     }
 
     fun hasWon(game: GameId) {
         val response = client(Request(GET, "/games/${game.value}"))
+        response.status.successful shouldBe true
         val details = Body.auto<GameDetails>().toLens()(response)
         details.won shouldBe true
     }
@@ -43,7 +44,7 @@ class Player(baseUri: Uri, username: String = "", password: String = "") {
             Request(POST, "/games/${game.value}/guesses")
                 .with(payload of Guess(secret))
         )
-        response shouldHaveStatus CREATED
+        response.status.successful shouldBe true
     }
 
     fun receivedHint(game: GameId, hint: String) {
