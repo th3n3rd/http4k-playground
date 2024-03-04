@@ -11,7 +11,8 @@ class JourneyTests {
     private val app = App(
         players = InMemoryPlayers(),
         games = InMemoryGames(),
-        secrets = RotatingSecrets(listOf("secret"))
+        secrets = RotatingSecrets(listOf("secret")),
+        passwordEncoder = NoPasswordEncoding
     ).debug()
     private val appServer = app.asServer(SunHttp(0)).start()
     private val player = Player(Uri.of("http://localhost:${appServer.port()}"))

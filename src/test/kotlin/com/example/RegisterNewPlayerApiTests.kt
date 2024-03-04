@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test
 
 class RegisterNewPlayerApiTests {
 
+    private val passwordEncoder = FakePasswordEncoder
     private val players = InMemoryPlayers()
-    private val api = RegisterNewPlayerApi(RegisterNewPlayer(players))
+    private val api = RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder))
 
     @Test
     fun `registers new players`() {
@@ -23,6 +24,6 @@ class RegisterNewPlayerApiTests {
         with(response) {
             status shouldBe CREATED
         }
-        players.existsBy("dont-care", "dont-care") shouldBe true
+        players.existsBy("dont-care", EncodedPassword("encoded-dont-care")) shouldBe true
     }
 }

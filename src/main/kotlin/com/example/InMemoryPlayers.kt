@@ -9,8 +9,8 @@ class InMemoryPlayers : Players {
         players.add(player)
     }
 
-    override fun existsBy(username: String, encodedPassword: String): Boolean {
-        return players.any { it.username == username && it.encodedPassword == encodedPassword}
+    override fun existsBy(username: String, password: EncodedPassword): Boolean {
+        return players.any { it.username == username && it.password == password}
     }
 
 }
