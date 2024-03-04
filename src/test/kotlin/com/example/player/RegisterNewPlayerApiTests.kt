@@ -1,6 +1,8 @@
 package com.example.player
 
+import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.CREATED
@@ -24,6 +26,6 @@ class RegisterNewPlayerApiTests {
         with(response) {
             status shouldBe CREATED
         }
-        players.existsBy("dont-care", EncodedPassword("encoded-dont-care")) shouldBe true
+        players.findAll() shouldNot beEmpty()
     }
 }

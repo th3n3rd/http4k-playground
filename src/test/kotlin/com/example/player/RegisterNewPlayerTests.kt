@@ -17,7 +17,9 @@ class RegisterNewPlayerTests {
             "dont-care"
         ))
 
-        players.existsBy("dont-care", EncodedPassword("encoded-dont-care")) shouldBe true
+        val newPlayer = players.findAll().first()
+        newPlayer.username shouldBe "dont-care"
+        newPlayer.password shouldBe EncodedPassword("encoded-dont-care")
     }
 }
 

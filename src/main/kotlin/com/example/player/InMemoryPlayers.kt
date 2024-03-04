@@ -9,12 +9,11 @@ class InMemoryPlayers : Players {
         players.add(player)
     }
 
-    override fun existsBy(username: String, password: EncodedPassword): Boolean {
-        return players.any { it.username == username && it.password == password}
-    }
-
     override fun findByUsername(username: String): RegisteredPlayer? {
         return players.find { it.username == username }
     }
 
+    fun findAll(): List<RegisteredPlayer> {
+        return players
+    }
 }
