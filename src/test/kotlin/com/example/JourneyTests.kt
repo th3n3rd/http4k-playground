@@ -2,7 +2,7 @@ package com.example
 
 import com.example.gameplay.InMemoryGames
 import com.example.gameplay.RotatingSecrets
-import com.example.player.InMemoryPlayers
+import com.example.player.InMemoryRegisteredPlayers
 import com.example.player.PasswordEncodings
 import org.http4k.core.Uri
 import org.http4k.filter.debug
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 class JourneyTests {
 
     private val app = App(
-        players = InMemoryPlayers(),
+        players = InMemoryRegisteredPlayers(),
         games = InMemoryGames(),
         secrets = RotatingSecrets(listOf("secret")),
         passwordEncoder = PasswordEncodings.Argon2

@@ -1,6 +1,6 @@
 package com.example.player
 
-class RegisterNewPlayer(private val players: Players, private val passwordEncoder: PasswordEncoder) {
+class RegisterNewPlayer(private val players: RegisteredPlayers, private val passwordEncoder: PasswordEncoder) {
 
     data class Command(val username: String, val password: String)
 

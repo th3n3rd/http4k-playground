@@ -1,6 +1,6 @@
 package com.example.player
 
-interface Players {
+interface RegisteredPlayers {
     fun save(player: RegisteredPlayer)
     fun findByUsername(username: String): RegisteredPlayer?
 }

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 class AuthenticationTests {
 
-    private val players = InMemoryPlayers()
+    private val players = InMemoryRegisteredPlayers()
     private val passwordEncoder = FakePasswordEncoder
     private val handler = { _: Request -> Response(OK) }
     private val protectedApi = AuthenticatePlayer(players, passwordEncoder).then(handler)

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class RegisterNewPlayerTests {
 
     private val passwordEncoder = FakePasswordEncoder
-    private val players = InMemoryPlayers()
+    private val players = InMemoryRegisteredPlayers()
     private val registerNewPlayer = RegisterNewPlayer(players, passwordEncoder)
 
     @Test

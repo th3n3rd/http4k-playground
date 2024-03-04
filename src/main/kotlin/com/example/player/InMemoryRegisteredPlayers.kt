@@ -2,7 +2,7 @@ package com.example.player
 
 import java.util.concurrent.CopyOnWriteArrayList
 
-class InMemoryPlayers : Players {
+class InMemoryRegisteredPlayers : RegisteredPlayers {
     private val players = CopyOnWriteArrayList<RegisteredPlayer>()
 
     override fun save(player: RegisteredPlayer) {
