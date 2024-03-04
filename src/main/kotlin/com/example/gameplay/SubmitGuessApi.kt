@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import dev.forkhandles.result4k.get
 import dev.forkhandles.result4k.map

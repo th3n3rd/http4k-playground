@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 class RotatingSecrets(private val secrets: List<String> = listOf()) : Secrets {
     private var position = 0

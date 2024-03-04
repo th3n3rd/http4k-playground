@@ -1,6 +1,6 @@
 @file:JvmName("ApiKt")
 
-package com.example
+package com.example.gameplay
 
 import java.util.*
 import org.http4k.core.Body

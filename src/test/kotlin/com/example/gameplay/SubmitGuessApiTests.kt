@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj

@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import io.kotest.matchers.collections.containOnly
 import io.kotest.matchers.equals.shouldNotBeEqual

@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 class StartNewGame(private val games: Games, private val secrets: Secrets) {
     operator fun invoke(): Game {

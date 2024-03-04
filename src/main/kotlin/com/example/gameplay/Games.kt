@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import java.util.Collections.synchronizedMap
 

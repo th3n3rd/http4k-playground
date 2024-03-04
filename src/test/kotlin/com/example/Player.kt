@@ -1,10 +1,10 @@
 package com.example
 
+import com.example.gameplay.GameId
 import io.kotest.matchers.shouldBe
 import java.util.*
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
-import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request

@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result

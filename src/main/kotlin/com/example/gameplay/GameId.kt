@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory

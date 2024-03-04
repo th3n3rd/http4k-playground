@@ -1,5 +1,7 @@
 package com.example
 
+import com.example.gameplay.InMemoryGames
+import com.example.gameplay.RotatingSecrets
 import com.example.player.InMemoryPlayers
 import com.example.player.PasswordEncodings
 import org.http4k.core.Uri

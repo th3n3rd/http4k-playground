@@ -1,4 +1,4 @@
-package com.example
+package com.example.gameplay
 
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj
@@ -7,10 +7,8 @@ import io.kotest.assertions.json.shouldEqualSpecifiedJson
 import io.kotest.common.ExperimentalKotest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.beUUID
-import org.http4k.core.Method
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
-import org.http4k.core.Status
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.junit.jupiter.api.Test
