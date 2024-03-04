@@ -19,6 +19,7 @@
         <springVersion>6.2.0</springVersion>
         <apacheCommonLoggingVersion>1.2</apacheCommonLoggingVersion>
         <bouncyCastlePkiVersion>1.70</bouncyCastlePkiVersion>
+        <lincheckVersion>2.19</lincheckVersion>
     </properties>
 
     <dependencyManagement>
@@ -135,6 +136,12 @@
         <dependency>
             <groupId>dev.forkhandles</groupId>
             <artifactId>result4k-kotest</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>lincheck-jvm</artifactId>
+            <version>${lincheckVersion}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
