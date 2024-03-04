@@ -4,7 +4,8 @@ import java.util.*
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
@@ -19,13 +20,16 @@ fun GetGameDetailsApi(games: Games = InMemoryGames()): RoutingHttpHandler {
     val payload = Body.auto<GameDetails>().toLens()
 
     return "/games/{id}" bind GET to {
-        val currentGame = games.findById(gameId(it))!!
-        Response(Status.OK).with(
-            payload of GameDetails(
-                id = currentGame.id.value,
-                hint = currentGame.hint,
-                won = currentGame.won
-            )
-        )
+        games.findById(gameId(it))
+            ?.let { currentGame ->
+                Response(OK).with(
+                    payload of GameDetails(
+                        id = currentGame.id.value,
+                        hint = currentGame.hint,
+                        won = currentGame.won
+                    )
+                )
+            }
+            ?: Response(NOT_FOUND)
     }
 }

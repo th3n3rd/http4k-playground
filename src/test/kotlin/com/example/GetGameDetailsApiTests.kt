@@ -7,8 +7,11 @@ import io.kotest.assertions.json.shouldEqualSpecifiedJson
 import io.kotest.common.ExperimentalKotest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.beUUID
+import org.http4k.core.Method
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
+import org.http4k.core.Status
+import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.junit.jupiter.api.Test
 
@@ -42,5 +45,12 @@ class GetGameDetailsApiTests {
             }
             """.trimIndent()
         }
+    }
+
+    @Test
+    fun `fails when the game does not exist`() {
+        val response = api(Request(GET, "/games/${GameId()}"))
+
+        response.status shouldBe NOT_FOUND
     }
 }
