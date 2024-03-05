@@ -2,7 +2,9 @@ package com.example.gameplay
 
 import java.util.concurrent.atomic.AtomicInteger
 
-class RotatingSecrets(private val secrets: List<String> = listOf()) : Secrets {
+fun Secrets.Companion.Rotating(secrets: List<String>) = RotatingSecrets(secrets)
+
+class RotatingSecrets(private val secrets: List<String>) : Secrets {
     private val position = AtomicInteger(0)
 
     override fun next(): String {

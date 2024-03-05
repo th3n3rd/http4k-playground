@@ -2,6 +2,8 @@ package com.example.player
 
 import java.util.concurrent.CopyOnWriteArrayList
 
+fun RegisteredPlayers.Companion.InMemory() = InMemoryRegisteredPlayers()
+
 class InMemoryRegisteredPlayers : RegisteredPlayers {
     private val players = CopyOnWriteArrayList<RegisteredPlayer>()
 

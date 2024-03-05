@@ -17,7 +17,7 @@ object GetGameDetailsApi {
     private val gameId = Path.value(GameId).of("id")
     private val payload = Body.auto<GameDetails>().toLens()
 
-    operator fun invoke(games: Games = InMemoryGames()): RoutingHttpHandler {
+    operator fun invoke(games: Games): RoutingHttpHandler {
         return "/games/{id}" bind GET to {
             games.findById(gameId(it))
                 ?.let { currentGame ->

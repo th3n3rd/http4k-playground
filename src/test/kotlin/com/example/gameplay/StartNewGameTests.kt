@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test
 
 class StartNewGameTests {
 
-    private val secrets = RotatingSecrets(listOf("first", "second"))
-    private val games = InMemoryGames()
+    private val secrets = Secrets.Rotating(listOf("first", "second"))
+    private val games = Games.InMemory()
     private val startNewGame = StartNewGame(games, secrets)
 
     @Test

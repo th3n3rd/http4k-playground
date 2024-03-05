@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 class RegisterNewPlayerApiTests {
 
     private val passwordEncoder = FakePasswordEncoder
-    private val players = InMemoryRegisteredPlayers()
+    private val players = RegisteredPlayers.InMemory()
     private val api = RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder))
 
     @Test

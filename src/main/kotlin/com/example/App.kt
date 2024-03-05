@@ -2,20 +2,20 @@ package com.example
 
 import com.example.gameplay.Games
 import com.example.gameplay.GetGameDetailsApi
-import com.example.gameplay.InMemoryGames
-import com.example.gameplay.RotatingSecrets
+import com.example.gameplay.InMemory
+import com.example.gameplay.Rotating
 import com.example.gameplay.Secrets
 import com.example.gameplay.StartNewGame
 import com.example.gameplay.StartNewGameApi
 import com.example.gameplay.SubmitGuess
 import com.example.gameplay.SubmitGuessApi
 import com.example.player.AuthenticatePlayer
-import com.example.player.InMemoryRegisteredPlayers
+import com.example.player.InMemory
 import com.example.player.PasswordEncoder
 import com.example.player.PasswordEncodings
-import com.example.player.RegisteredPlayers
 import com.example.player.RegisterNewPlayer
 import com.example.player.RegisterNewPlayerApi
+import com.example.player.RegisteredPlayers
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequest
@@ -38,9 +38,9 @@ object App {
 
 fun main() {
     val printingApp: HttpHandler = PrintRequest().then(App(
-        players = InMemoryRegisteredPlayers(),
-        games = InMemoryGames(),
-        secrets = RotatingSecrets(listOf("secret")),
+        players = RegisteredPlayers.InMemory(),
+        games = Games.InMemory(),
+        secrets = Secrets.Rotating(listOf("secret")),
         passwordEncoder = PasswordEncodings.Argon2
     ))
 

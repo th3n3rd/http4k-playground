@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalKotest::class)
 class SubmitGuessApiTests {
 
-    private val games = InMemoryGames()
+    private val games = Games.InMemory()
     private val api = SubmitGuessApi(SubmitGuess(games))
 
     @Test

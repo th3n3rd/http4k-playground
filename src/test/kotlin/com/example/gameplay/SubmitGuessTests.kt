@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 class SubmitGuessTests {
 
-    private val games = InMemoryGames()
+    private val games = Games.InMemory()
     private val submitGuess = SubmitGuess(games)
 
     @Test

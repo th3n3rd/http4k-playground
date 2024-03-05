@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 @ThreadSafetyTests
 class RotatingSecretsThreadSafetyTests {
 
-    private val rotatingSecrets = RotatingSecrets(listOf("first", "second"))
+    private val rotatingSecrets = Secrets.Rotating(listOf("first", "second"))
 
     @Operation
     fun nextSecret() = rotatingSecrets.next()
