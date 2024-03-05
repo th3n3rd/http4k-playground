@@ -13,23 +13,25 @@ import org.http4k.lens.value
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
-fun GetGameDetailsApi(games: Games = InMemoryGames()): RoutingHttpHandler {
-    data class GameDetails(val id: UUID, val hint: String, val won: Boolean)
+object GetGameDetailsApi {
+    private val gameId = Path.value(GameId).of("id")
+    private val payload = Body.auto<GameDetails>().toLens()
 
-    val gameId = Path.value(GameId).of("id")
-    val payload = Body.auto<GameDetails>().toLens()
-
-    return "/games/{id}" bind GET to {
-        games.findById(gameId(it))
-            ?.let { currentGame ->
-                Response(OK).with(
-                    payload of GameDetails(
-                        id = currentGame.id.value,
-                        hint = currentGame.hint,
-                        won = currentGame.won
+    operator fun invoke(games: Games = InMemoryGames()): RoutingHttpHandler {
+        return "/games/{id}" bind GET to {
+            games.findById(gameId(it))
+                ?.let { currentGame ->
+                    Response(OK).with(
+                        payload of GameDetails(
+                            id = currentGame.id.value,
+                            hint = currentGame.hint,
+                            won = currentGame.won
+                        )
                     )
-                )
-            }
-            ?: Response(NOT_FOUND)
+                }
+                ?: Response(NOT_FOUND)
+        }
     }
+
+    data class GameDetails(val id: UUID, val hint: String, val won: Boolean)
 }

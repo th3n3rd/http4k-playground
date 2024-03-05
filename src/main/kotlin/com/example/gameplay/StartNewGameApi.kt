@@ -12,14 +12,15 @@ import org.http4k.format.Jackson.auto
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
+object StartNewGameApi {
+    private val payload = Body.auto<GameStarted>().toLens()
 
-fun StartNewGameApi(startNewGame: StartNewGame): RoutingHttpHandler {
-    data class GameStarted(val id: UUID)
-
-    val payload = Body.auto<GameStarted>().toLens()
-
-    return "/games" bind POST to {
-        val newGame = startNewGame()
-        Response(CREATED).with(payload of GameStarted(newGame.id.value))
+    operator fun invoke(startNewGame: StartNewGame): RoutingHttpHandler {
+        return "/games" bind POST to {
+            val newGame = startNewGame()
+            Response(CREATED).with(payload of GameStarted(newGame.id.value))
+        }
     }
+
+    data class GameStarted(val id: UUID)
 }

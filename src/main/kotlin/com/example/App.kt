@@ -23,16 +23,17 @@ import org.http4k.routing.routes
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
-fun App(players: RegisteredPlayers, games: Games, secrets: Secrets, passwordEncoder: PasswordEncoder): HttpHandler {
+object App {
+    operator fun invoke(players: RegisteredPlayers, games: Games, secrets: Secrets, passwordEncoder: PasswordEncoder): HttpHandler {
+        val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder)
 
-    val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder)
-
-    return routes(
-        RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
-        authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
-        authenticatePlayer.then(GetGameDetailsApi(games)),
-        authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
-    )
+        return routes(
+            RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
+            authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
+            authenticatePlayer.then(GetGameDetailsApi(games)),
+            authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
+        )
+    }
 }
 
 fun main() {
