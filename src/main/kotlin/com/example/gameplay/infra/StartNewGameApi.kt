@@ -1,7 +1,8 @@
 @file:JvmName("ApiKt")
 
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.StartNewGame
 import java.util.*
 import org.http4k.core.Body
 import org.http4k.core.Method.POST

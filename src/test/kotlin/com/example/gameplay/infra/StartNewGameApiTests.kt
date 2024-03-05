@@ -1,5 +1,8 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.Games
+import com.example.gameplay.Secrets
+import com.example.gameplay.StartNewGame
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj
 import io.kotest.assertions.json.schema.shouldMatchSchema

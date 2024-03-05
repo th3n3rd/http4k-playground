@@ -1,5 +1,7 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.GameId
+import com.example.gameplay.Games
 import java.util.*
 import org.http4k.core.Body
 import org.http4k.core.Method.GET

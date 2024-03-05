@@ -1,6 +1,7 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
 import com.example.ThreadSafetyTests
+import com.example.gameplay.Secrets
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions

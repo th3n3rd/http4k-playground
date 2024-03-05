@@ -1,5 +1,9 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.GameAlreadyCompleted
+import com.example.gameplay.GameId
+import com.example.gameplay.GameNotFound
+import com.example.gameplay.SubmitGuess
 import dev.forkhandles.result4k.get
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.mapFailure
@@ -27,11 +31,13 @@ object SubmitGuessApi {
         return "/games/{id}/guesses" bind POST to {
             submitGuess(gameId(it), submittedGuess(it).secret)
                 .map { game ->
-                    Response(CREATED).with(payload of GameUpdated(
+                    Response(CREATED).with(
+                        payload of GameUpdated(
                         id = game.id.value,
                         hint = game.hint,
                         won = game.won
-                    ))
+                    )
+                    )
                 }
                 .mapFailure { error ->
                     when (error) {

@@ -1,5 +1,6 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.Secrets
 import java.util.concurrent.atomic.AtomicInteger
 
 fun Secrets.Companion.Rotating(secrets: List<String>) = RotatingSecrets(secrets)

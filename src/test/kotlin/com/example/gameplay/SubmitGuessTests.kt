@@ -1,5 +1,6 @@
 package com.example.gameplay
 
+import com.example.gameplay.infra.InMemory
 import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.shouldBe

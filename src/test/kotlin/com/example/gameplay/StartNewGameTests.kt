@@ -1,5 +1,7 @@
 package com.example.gameplay
 
+import com.example.gameplay.infra.InMemory
+import com.example.gameplay.infra.Rotating
 import io.kotest.matchers.collections.containOnly
 import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.should

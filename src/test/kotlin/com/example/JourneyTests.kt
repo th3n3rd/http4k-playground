@@ -1,8 +1,8 @@
 package com.example
 
 import com.example.gameplay.Games
-import com.example.gameplay.InMemory
-import com.example.gameplay.Rotating
+import com.example.gameplay.infra.InMemory
+import com.example.gameplay.infra.Rotating
 import com.example.gameplay.Secrets
 import com.example.player.Argon2
 import com.example.player.InMemory

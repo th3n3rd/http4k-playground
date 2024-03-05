@@ -1,5 +1,8 @@
-package com.example.gameplay
+package com.example.gameplay.infra
 
+import com.example.gameplay.Game
+import com.example.gameplay.GameId
+import com.example.gameplay.Games
 import java.util.*
 
 fun Games.Companion.InMemory() = InMemoryGames()
