@@ -1,11 +1,13 @@
 package com.example.gameplay
 
+import com.example.ThreadSafetyTests
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
 
-class RotatingSecretsTests {
+@ThreadSafetyTests
+class RotatingSecretsThreadSafetyTests {
 
     private val rotatingSecrets = RotatingSecrets(listOf("first", "second"))
 
