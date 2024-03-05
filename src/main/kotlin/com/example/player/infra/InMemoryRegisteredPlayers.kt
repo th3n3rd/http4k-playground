@@ -1,5 +1,7 @@
-package com.example.player
+package com.example.player.infra
 
+import com.example.player.RegisteredPlayer
+import com.example.player.RegisteredPlayers
 import java.util.concurrent.CopyOnWriteArrayList
 
 fun RegisteredPlayers.Companion.InMemory() = InMemoryRegisteredPlayers()

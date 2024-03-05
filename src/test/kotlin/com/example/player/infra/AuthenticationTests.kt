@@ -1,5 +1,9 @@
-package com.example.player
+package com.example.player.infra
 
+import com.example.player.Password
+import com.example.player.PasswordEncoder
+import com.example.player.RegisteredPlayer
+import com.example.player.RegisteredPlayers
 import io.kotest.matchers.shouldBe
 import org.http4k.core.Credentials
 import org.http4k.core.Method.GET

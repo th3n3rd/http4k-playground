@@ -1,5 +1,6 @@
-package com.example.player
+package com.example.player.infra
 
+import com.example.player.RegisterNewPlayer
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response

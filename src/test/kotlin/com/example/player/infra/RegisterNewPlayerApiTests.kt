@@ -1,5 +1,8 @@
-package com.example.player
+package com.example.player.infra
 
+import com.example.player.PasswordEncoder
+import com.example.player.RegisterNewPlayer
+import com.example.player.RegisteredPlayers
 import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot

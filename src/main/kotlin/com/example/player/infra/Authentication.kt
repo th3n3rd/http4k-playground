@@ -1,9 +1,12 @@
-package com.example.player
+package com.example.player.infra
 
-import org.http4k.filter.ServerFilters
+import com.example.player.Password
+import com.example.player.PasswordEncoder
+import com.example.player.RegisteredPlayers
+import org.http4k.filter.ServerFilters.BasicAuth
 
 fun AuthenticatePlayer(players: RegisteredPlayers, passwordEncoder: PasswordEncoder) =
-    ServerFilters.BasicAuth("example") {
+    BasicAuth("example") {
         players.findByUsername(it.user)
             ?.let { player -> passwordEncoder(Password(it.password), player.password) }
             ?: false

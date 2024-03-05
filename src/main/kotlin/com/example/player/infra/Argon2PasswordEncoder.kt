@@ -1,5 +1,8 @@
-package com.example.player
+package com.example.player.infra
 
+import com.example.player.EncodedPassword
+import com.example.player.Password
+import com.example.player.PasswordEncoder
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 
 fun PasswordEncoder.Companion.Argon2() = Argon2
