@@ -1,6 +1,6 @@
 package com.example.player.infra
 
-import com.example.player.Password
+import com.example.player.EncodedPassword
 import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
@@ -19,13 +19,13 @@ class AuthenticationTests {
 
     private val players = RegisteredPlayers.InMemory()
     private val passwordEncoder = PasswordEncoder.Fake()
-    private val handler = { _: Request -> Response(OK) }
-    private val protectedApi = AuthenticatePlayer(players, passwordEncoder).then(handler)
+    private val dummyApi = { _: Request -> Response(OK) }
+    private val protectedApi = AuthenticatePlayer(players, passwordEncoder).then(dummyApi)
     private val validCredentials = Credentials("valid", "valid")
     private val invalidCredentials = Credentials("invalid", "invalid")
     private val registeredPlayer = RegisteredPlayer(
-        validCredentials.user,
-        passwordEncoder(Password(validCredentials.password))
+        "valid",
+        EncodedPassword("encoded-valid")
     )
 
     @Test
