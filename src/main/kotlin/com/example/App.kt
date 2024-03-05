@@ -9,10 +9,10 @@ import com.example.gameplay.StartNewGame
 import com.example.gameplay.StartNewGameApi
 import com.example.gameplay.SubmitGuess
 import com.example.gameplay.SubmitGuessApi
+import com.example.player.Argon2
 import com.example.player.AuthenticatePlayer
 import com.example.player.InMemory
 import com.example.player.PasswordEncoder
-import com.example.player.PasswordEncodings
 import com.example.player.RegisterNewPlayer
 import com.example.player.RegisterNewPlayerApi
 import com.example.player.RegisteredPlayers
@@ -41,7 +41,7 @@ fun main() {
         players = RegisteredPlayers.InMemory(),
         games = Games.InMemory(),
         secrets = Secrets.Rotating(listOf("secret")),
-        passwordEncoder = PasswordEncodings.Argon2
+        passwordEncoder = PasswordEncoder.Argon2()
     ))
 
     val server = printingApp.asServer(SunHttp(9000)).start()

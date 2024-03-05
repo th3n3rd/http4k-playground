@@ -4,8 +4,9 @@ import com.example.gameplay.Games
 import com.example.gameplay.InMemory
 import com.example.gameplay.Rotating
 import com.example.gameplay.Secrets
+import com.example.player.Argon2
 import com.example.player.InMemory
-import com.example.player.PasswordEncodings
+import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayers
 import org.http4k.core.Uri
 import org.http4k.filter.debug
@@ -19,7 +20,7 @@ class JourneyTests {
         players = RegisteredPlayers.InMemory(),
         games = Games.InMemory(),
         secrets = Secrets.Rotating(listOf("secret")),
-        passwordEncoder = PasswordEncodings.Argon2
+        passwordEncoder = PasswordEncoder.Argon2()
     ).debug()
     private val appServer = app.asServer(SunHttp(0)).start()
     private val player = Player(
