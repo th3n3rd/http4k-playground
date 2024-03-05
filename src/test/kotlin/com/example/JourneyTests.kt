@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.common.infra.DatabaseMigrations
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.infra.InMemory
@@ -22,7 +23,11 @@ class JourneyTests {
         secrets = Secrets.Rotating(listOf("secret")),
         passwordEncoder = PasswordEncoder.Argon2()
     ).debug()
+
+    private val dbMigrations = DatabaseMigrations()
+
     private val appServer = app.asServer(SunHttp(0)).start()
+
     private val player = Player(
         baseUri = Uri.of("http://localhost:${appServer.port()}"),
         username = "player-1",

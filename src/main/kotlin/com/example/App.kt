@@ -24,7 +24,12 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
 object App {
-    operator fun invoke(players: RegisteredPlayers, games: Games, secrets: Secrets, passwordEncoder: PasswordEncoder): HttpHandler {
+    operator fun invoke(
+        players: RegisteredPlayers,
+        games: Games,
+        secrets: Secrets,
+        passwordEncoder: PasswordEncoder
+    ): HttpHandler {
         val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder)
 
         return routes(

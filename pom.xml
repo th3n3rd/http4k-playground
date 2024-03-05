@@ -20,6 +20,8 @@
         <apacheCommonLoggingVersion>1.2</apacheCommonLoggingVersion>
         <bouncyCastlePkiVersion>1.70</bouncyCastlePkiVersion>
         <lincheckVersion>2.19</lincheckVersion>
+        <flywayVersion>10.8.1</flywayVersion>
+        <h2Version>2.2.220</h2Version>
     </properties>
 
     <dependencyManagement>
@@ -84,6 +86,16 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncyCastlePkiVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flywayVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2Version}</version>
         </dependency>
         <dependency>
                 <groupId>org.http4k</groupId>
