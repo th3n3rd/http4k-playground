@@ -25,6 +25,7 @@
         <jooqVersion>3.19.5</jooqVersion>
         <slf4jVersion>2.0.12</slf4jVersion>
         <logbackClassicVersion>1.5.3</logbackClassicVersion>
+        <HikariCpVersion>5.1.0</HikariCpVersion>
     </properties>
 
     <dependencyManagement>
@@ -109,6 +110,11 @@
             <groupId>org.jooq</groupId>
             <artifactId>jooq-codegen</artifactId>
             <version>${jooqVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${HikariCpVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

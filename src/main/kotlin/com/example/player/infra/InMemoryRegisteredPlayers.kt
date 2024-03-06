@@ -17,6 +17,10 @@ class InMemoryRegisteredPlayers : RegisteredPlayers {
         return players.find { it.username == username }
     }
 
+    override fun existByUsername(username: String): Boolean {
+        return players.any { it.username == username }
+    }
+
     fun findAll(): List<RegisteredPlayer> {
         return players
     }
