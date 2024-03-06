@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.common.infra.DatabaseContext
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.StartNewGame
@@ -14,8 +15,11 @@ import com.example.player.RegisterNewPlayer
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.Argon2
 import com.example.player.infra.AuthenticatePlayer
+import com.example.player.infra.Database
 import com.example.player.infra.InMemory
 import com.example.player.infra.RegisterNewPlayerApi
+import org.http4k.cloudnative.env.Environment
+import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequest
@@ -42,8 +46,10 @@ object App {
 }
 
 fun main() {
+    val database = DatabaseContext(ENV)
+
     val printingApp: HttpHandler = PrintRequest().then(App(
-        players = RegisteredPlayers.InMemory(),
+        players = RegisteredPlayers.Database(database),
         games = Games.InMemory(),
         secrets = Secrets.Rotating(listOf("secret")),
         passwordEncoder = PasswordEncoder.Argon2()

@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.common.infra.DatabaseContext
 import com.example.common.infra.RunDatabaseMigrations
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -8,6 +9,7 @@ import com.example.gameplay.infra.Rotating
 import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.Argon2
+import com.example.player.infra.Database
 import com.example.player.infra.InMemory
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.Uri
@@ -22,8 +24,10 @@ class JourneyTests {
         RunDatabaseMigrations(ENV)
     }
 
+    private val database = DatabaseContext(ENV)
+
     private val app = App(
-        players = RegisteredPlayers.InMemory(),
+        players = RegisteredPlayers.Database(database),
         games = Games.InMemory(),
         secrets = Secrets.Rotating(listOf("secret")),
         passwordEncoder = PasswordEncoder.Argon2()
