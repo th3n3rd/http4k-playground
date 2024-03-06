@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.common.infra.DatabaseMigrations
+import com.example.common.infra.RunDatabaseMigrations
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.infra.InMemory
@@ -17,14 +17,16 @@ import org.junit.jupiter.api.Test
 
 class JourneyTests {
 
+    init {
+        RunDatabaseMigrations()
+    }
+
     private val app = App(
         players = RegisteredPlayers.InMemory(),
         games = Games.InMemory(),
         secrets = Secrets.Rotating(listOf("secret")),
         passwordEncoder = PasswordEncoder.Argon2()
     ).debug()
-
-    private val dbMigrations = DatabaseMigrations()
 
     private val appServer = app.asServer(SunHttp(0)).start()
 

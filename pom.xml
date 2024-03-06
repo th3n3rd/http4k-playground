@@ -22,6 +22,7 @@
         <lincheckVersion>2.19</lincheckVersion>
         <flywayVersion>10.8.1</flywayVersion>
         <h2Version>2.2.220</h2Version>
+        <jooqVersion>3.19.5</jooqVersion>
         <slf4jVersion>2.0.12</slf4jVersion>
         <logbackClassicVersion>1.5.3</logbackClassicVersion>
     </properties>
@@ -43,11 +44,6 @@
                 <groupId>org.http4k</groupId>
                 <artifactId>http4k-cloudnative</artifactId>
                 <version>${http4kVersion}</version>
-        </dependency>
-        <dependency>
-                <groupId>org.http4k</groupId>
-                <artifactId>http4k-connect-storage-jdbc</artifactId>
-                <version>${http4kConnectVersion}</version>
         </dependency>
         <dependency>
                 <groupId>org.http4k</groupId>
@@ -98,6 +94,21 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2Version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooqVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>${jooqVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>${jooqVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
