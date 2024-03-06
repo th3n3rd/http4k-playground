@@ -1,5 +1,7 @@
 package com.example.common.infra
 
+import org.http4k.cloudnative.env.Environment
+import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.Configuration
 import org.jooq.meta.jaxb.Database
@@ -8,13 +10,17 @@ import org.jooq.meta.jaxb.Jdbc
 import org.jooq.meta.jaxb.Target
 
 object GenerateDatabaseMeta {
-    operator fun invoke() {
+    operator fun invoke(environment: Environment) {
+        val url = AppProperties.DataSource.Url(environment)
+        val username = AppProperties.DataSource.Username(environment)
+        val password = AppProperties.DataSource.Password(environment)
+
         val config = Configuration()
             .withJdbc(
                 Jdbc()
-                    .withUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1")
-                    .withUser("example")
-                    .withPassword("example")
+                    .withUrl(url)
+                    .withUser(username)
+                    .withPassword(password)
             )
             .withGenerator(
                 Generator()
@@ -37,6 +43,6 @@ object GenerateDatabaseMeta {
 }
 
 fun main() {
-    RunDatabaseMigrations()
-    GenerateDatabaseMeta()
+    RunDatabaseMigrations(ENV)
+    GenerateDatabaseMeta(ENV)
 }

@@ -9,6 +9,7 @@ import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.Argon2
 import com.example.player.infra.InMemory
+import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.Uri
 import org.http4k.filter.debug
 import org.http4k.server.SunHttp
@@ -18,7 +19,7 @@ import org.junit.jupiter.api.Test
 class JourneyTests {
 
     init {
-        RunDatabaseMigrations()
+        RunDatabaseMigrations(ENV)
     }
 
     private val app = App(
