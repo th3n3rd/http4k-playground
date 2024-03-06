@@ -22,6 +22,8 @@
         <lincheckVersion>2.19</lincheckVersion>
         <flywayVersion>10.8.1</flywayVersion>
         <h2Version>2.2.220</h2Version>
+        <slf4jVersion>2.0.12</slf4jVersion>
+        <logbackClassicVersion>1.5.3</logbackClassicVersion>
     </properties>
 
     <dependencyManagement>
@@ -96,6 +98,16 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2Version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4jVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logbackClassicVersion}</version>
         </dependency>
         <dependency>
                 <groupId>org.http4k</groupId>
