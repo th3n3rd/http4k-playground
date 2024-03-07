@@ -8,19 +8,19 @@ import org.jooq.DSLContext
 
 fun RegisteredPlayers.Companion.Database(database: DSLContext) = DatabaseRegisteredPlayers(database)
 
-class DatabaseRegisteredPlayers(private val context: DSLContext) : RegisteredPlayers {
+class DatabaseRegisteredPlayers(private val database: DSLContext) : RegisteredPlayers {
     override fun save(player: RegisteredPlayer) {
-        val playerRecord = context.newRecord(PLAYERS, player)
+        val playerRecord = database.newRecord(PLAYERS, player)
             .with(PLAYERS.ID, UUID.randomUUID())
 
-        context
+        database
             .insertInto(PLAYERS)
             .set(playerRecord)
             .execute()
     }
 
     override fun findByUsername(username: String): RegisteredPlayer? {
-        return context
+        return database
             .select()
             .from(PLAYERS)
             .where(PLAYERS.USERNAME.eq(username))
@@ -29,8 +29,8 @@ class DatabaseRegisteredPlayers(private val context: DSLContext) : RegisteredPla
     }
 
     override fun existByUsername(username: String): Boolean {
-        return context.fetchExists(
-            context.select()
+        return database.fetchExists(
+            database.select()
                 .from(PLAYERS)
                 .where(PLAYERS.USERNAME.eq(username))
         )
