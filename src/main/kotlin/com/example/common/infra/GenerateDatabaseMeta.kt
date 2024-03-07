@@ -29,7 +29,7 @@ object GenerateDatabaseMeta {
                         Database()
                             .withName("org.jooq.meta.h2.H2Database")
                             .withIncludes(".*")
-                            .withExcludes("")
+                            .withExcludes("flyway.*")
                             .withInputSchema("PUBLIC")
                     )
                     .withTarget(
@@ -38,6 +38,7 @@ object GenerateDatabaseMeta {
                             .withDirectory("target/generated-sources/jooq")
                     )
             )
+
         GenerationTool.generate(config)
     }
 }
