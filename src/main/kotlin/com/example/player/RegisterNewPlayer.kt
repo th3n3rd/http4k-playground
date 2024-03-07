@@ -7,8 +7,8 @@ class RegisterNewPlayer(private val players: RegisteredPlayers, private val pass
     operator fun invoke(command: Command) {
         players.save(
             RegisteredPlayer(
-                command.username,
-                passwordEncoder(Password(command.password))
+                username = command.username,
+                password = passwordEncoder(Password(command.password))
             )
         )
     }

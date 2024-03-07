@@ -11,7 +11,6 @@ fun RegisteredPlayers.Companion.Database(database: DSLContext) = DatabaseRegiste
 class DatabaseRegisteredPlayers(private val database: DSLContext) : RegisteredPlayers {
     override fun save(player: RegisteredPlayer) {
         val playerRecord = database.newRecord(PLAYERS, player)
-            .with(PLAYERS.ID, UUID.randomUUID())
 
         database
             .insertInto(PLAYERS)

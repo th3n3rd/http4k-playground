@@ -24,8 +24,8 @@ class AuthenticationTests {
     private val validCredentials = Credentials("valid", "valid")
     private val invalidCredentials = Credentials("invalid", "invalid")
     private val registeredPlayer = RegisteredPlayer(
-        "valid",
-        EncodedPassword("encoded-valid")
+        username = "valid",
+        password = EncodedPassword("encoded-valid")
     )
 
     @Test

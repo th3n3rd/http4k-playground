@@ -5,6 +5,7 @@ import com.example.common.infra.RunDatabaseMigrations
 import com.example.common.infra.TestEnvironment
 import com.example.common.infra.database.tables.references.PLAYERS
 import com.example.player.EncodedPassword
+import com.example.player.PlayerId
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
 import io.kotest.matchers.equals.shouldBeEqual
@@ -28,14 +29,18 @@ class DatabaseRegisteredPlayersTests {
 
     @Test
     fun `persist new registered players`() {
-        val newPlayer = RegisteredPlayer("new", EncodedPassword("encoded-new"))
+        val newPlayer = RegisteredPlayer(
+            username = "new",
+            password = EncodedPassword("encoded-new")
+        )
 
         players.save(newPlayer)
 
         val persistedPlayer = context
             .select()
             .from(PLAYERS)
-            .where(PLAYERS.USERNAME.eq("new"))
+            .where(PLAYERS.ID.eq(newPlayer.id.value))
+            .and(PLAYERS.USERNAME.eq("new"))
             .and(PLAYERS.PASSWORD.eq("encoded-new"))
             .fetchSingle()
 
@@ -44,15 +49,17 @@ class DatabaseRegisteredPlayersTests {
 
     @Test
     fun `find persisted players by username`() {
+        val existingPlayerId = PlayerId()
         context
             .insertInto(PLAYERS)
-            .values(UUID.randomUUID(), "existing-one", "encoded-existing-one")
+            .values(existingPlayerId.value, "existing-one", "encoded-existing-one")
             .values(UUID.randomUUID(), "existing-two", "encoded-existing-two")
             .execute()
 
         val foundPlayer = players.findByUsername("existing-one")!!
 
         foundPlayer shouldBeEqual RegisteredPlayer(
+            id = existingPlayerId,
             username = "existing-one",
             password = EncodedPassword("encoded-existing-one")
         )
