@@ -26,6 +26,9 @@
         <slf4jVersion>2.0.12</slf4jVersion>
         <logbackClassicVersion>1.5.3</logbackClassicVersion>
         <HikariCpVersion>5.1.0</HikariCpVersion>
+        <codegenDbUrl>jdbc:h2:${project.basedir}/target/database</codegenDbUrl>
+        <codegenDbUsername>example</codegenDbUsername>
+        <codegenDbPassword>example</codegenDbPassword>
     </properties>
 
     <dependencyManagement>
@@ -223,6 +226,62 @@
                 <configuration>
                     <jvmTarget>${javaVersion}</jvmTarget>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>9.22.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <url>${codegenDbUrl}</url>
+                    <user>${codegenDbUsername}</user>
+                    <password>${codegenDbPassword}</password>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooqVersion}</version>
+                <executions>
+                    <execution>
+                        <id>jooq-codegen</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jdbc>
+                                <url>${codegenDbUrl}</url>
+                                <user>${codegenDbUsername}</user>
+                                <password>${codegenDbPassword}</password>
+                            </jdbc>
+                            <generator>
+                                <name>org.jooq.codegen.KotlinGenerator</name>
+                                <database>
+                                    <name>org.jooq.meta.h2.H2Database</name>
+                                    <includes>.*</includes>
+                                    <excludes>flyway.*</excludes>
+                                    <inputSchema>PUBLIC</inputSchema>
+                                </database>
+                                <generate/>
+                                <target>
+                                    <packageName>com.example.common.infra.database</packageName>
+                                    <directory>${project.basedir}/target/generated-sources/jooq</directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
