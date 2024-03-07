@@ -29,7 +29,7 @@ class SubmitGuessApiTests {
         val existingGame = Game(secret = "correct")
         games.save(existingGame)
 
-        val response = api(Request(POST, "/games/${existingGame.id}/guesses").body("""
+        val response = api(Request(POST, "/games/${existingGame.id.value}/guesses").body("""
         {
             "secret": "correct"
         }            
@@ -57,7 +57,7 @@ class SubmitGuessApiTests {
 
     @Test
     fun `fails when a game is not found`() {
-        val response = api(Request(POST, "/games/${GameId()}/guesses").body("""
+        val response = api(Request(POST, "/games/${GameId().value}/guesses").body("""
         {
             "secret": "correct"
         }            
@@ -71,7 +71,7 @@ class SubmitGuessApiTests {
         val completedGame = Game(secret = "correct", won = true)
         games.save(completedGame)
 
-        val response = api(Request(POST, "/games/${completedGame.id}/guesses").body("""
+        val response = api(Request(POST, "/games/${completedGame.id.value}/guesses").body("""
         {
             "secret": "correct"
         }            

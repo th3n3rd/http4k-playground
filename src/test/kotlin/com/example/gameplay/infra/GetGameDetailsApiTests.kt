@@ -27,7 +27,7 @@ class GetGameDetailsApiTests {
         val existingGame = Game(secret = "dont-care")
         games.save(existingGame)
 
-        val response = api(Request(GET, "/games/${existingGame.id}"))
+        val response = api(Request(GET, "/games/${existingGame.id.value}"))
 
         with(response) {
             status shouldBe OK
@@ -50,7 +50,7 @@ class GetGameDetailsApiTests {
 
     @Test
     fun `fails when the game does not exist`() {
-        val response = api(Request(GET, "/games/${GameId()}"))
+        val response = api(Request(GET, "/games/${GameId().value}"))
 
         response.status shouldBe NOT_FOUND
     }

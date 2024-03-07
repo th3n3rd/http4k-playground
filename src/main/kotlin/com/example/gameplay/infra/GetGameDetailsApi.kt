@@ -11,12 +11,11 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
-import org.http4k.lens.value
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object GetGameDetailsApi {
-    private val gameId = Path.value(GameId).of("id")
+    private val gameId = Path.map { GameId.parse(it) }.of("id")
     private val payload = Body.auto<GameDetails>().toLens()
 
     operator fun invoke(games: Games): RoutingHttpHandler {

@@ -6,7 +6,7 @@ import com.example.player.RegisteredPlayers
 import java.util.*
 import org.jooq.DSLContext
 
-fun RegisteredPlayers.Companion.Database(context: DSLContext) = DatabaseRegisteredPlayers(context)
+fun RegisteredPlayers.Companion.Database(database: DSLContext) = DatabaseRegisteredPlayers(database)
 
 class DatabaseRegisteredPlayers(private val context: DSLContext) : RegisteredPlayers {
     override fun save(player: RegisteredPlayer) {
