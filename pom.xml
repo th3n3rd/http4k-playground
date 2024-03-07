@@ -235,11 +235,13 @@
                     <execution>
                         <phase>generate-sources</phase>
                         <goals>
+                            <goal>clean</goal>
                             <goal>migrate</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <cleanDisabled>false</cleanDisabled>
                     <url>${codegenDbUrl}</url>
                     <user>${codegenDbUsername}</user>
                     <password>${codegenDbPassword}</password>
