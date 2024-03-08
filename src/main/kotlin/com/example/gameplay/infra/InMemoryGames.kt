@@ -4,11 +4,12 @@ import com.example.gameplay.Game
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 fun Games.Companion.InMemory() = InMemoryGames()
 
 class InMemoryGames: Games {
-    private val gamesById = Collections.synchronizedMap(mutableMapOf<GameId, Game>())
+    private val gamesById = ConcurrentHashMap<GameId, Game>()
 
     override fun save(game: Game) {
         gamesById[game.id] = game
