@@ -34,13 +34,14 @@ object App {
         secrets: Secrets,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
-        val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder, authenticatedPlayerId())
+        val authenticatedPlayerId = authenticatedPlayerId()
+        val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder, authenticatedPlayerId)
 
         return AppRequestContext()
             .then(
                 routes(
                     RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
-                    authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
+                    authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets), authenticatedPlayerId)),
                     authenticatePlayer.then(GetGameDetailsApi(games)),
                     authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
                 )

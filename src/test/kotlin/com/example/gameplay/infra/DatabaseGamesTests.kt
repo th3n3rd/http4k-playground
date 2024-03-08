@@ -7,6 +7,7 @@ import com.example.common.infra.database.tables.references.GAMES
 import com.example.gameplay.Game
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
+import com.example.player.PlayerId
 import dev.forkhandles.result4k.orThrow
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.beNull
@@ -39,6 +40,7 @@ class DatabaseGamesTests {
             .select()
             .from(GAMES)
             .where(GAMES.ID.eq(newGame.id.value))
+            .and(GAMES.PLAYER_ID.eq(newGame.playerId.value))
             .and(GAMES.SECRET.eq("new"))
             .and(GAMES.WON.eq(false))
             .fetchSingle()
@@ -49,15 +51,17 @@ class DatabaseGamesTests {
     @Test
     fun `find persisted games by id`() {
         val existingGameId = GameId()
+        val playerId = PlayerId()
         database
-            .insertInto(GAMES)
-            .values(existingGameId.value, "existing-one", true)
-            .values(GameId().value, "existing-two", false)
+            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
+            .values(existingGameId.value, playerId.value, "existing-one", true)
+            .values(GameId().value, playerId.value, "existing-two", false)
             .execute()
 
         val foundGame = games.findById(existingGameId)!!
         foundGame shouldBeEqual Game(
             id = existingGameId,
+            playerId = playerId,
             secret = "existing-one",
             won = true
         )
@@ -78,6 +82,7 @@ class DatabaseGamesTests {
             .select()
             .from(GAMES)
             .where(GAMES.ID.eq(uncompletedGame.id.value))
+            .and(GAMES.PLAYER_ID.eq(uncompletedGame.playerId.value))
             .and(GAMES.SECRET.eq("updated"))
             .and(GAMES.WON.eq(true))
             .fetchSingle()

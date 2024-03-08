@@ -1,10 +1,16 @@
 package com.example.gameplay
 
+import com.example.player.PlayerId
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 
-data class Game(val id: GameId = GameId(), val secret: String = "", val won: Boolean = false) {
+data class Game(
+    val id: GameId = GameId(),
+    val playerId: PlayerId = PlayerId(),
+    val secret: String = "",
+    val won: Boolean = false
+) {
 
     val hint = "_".repeat(secret.length)
 

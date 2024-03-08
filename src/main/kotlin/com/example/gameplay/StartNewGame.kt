@@ -1,8 +1,10 @@
 package com.example.gameplay
 
+import com.example.player.PlayerId
+
 class StartNewGame(private val games: Games, private val secrets: Secrets) {
-    operator fun invoke(): Game {
-        val newGame = Game(secret = secrets.next())
+    operator fun invoke(playerId: PlayerId): Game {
+        val newGame = Game(playerId = playerId, secret = secrets.next())
         games.save(newGame)
         return newGame
     }
