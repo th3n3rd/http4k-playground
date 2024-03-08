@@ -1,5 +1,7 @@
 package com.example
 
+import com.example.common.infra.AppRequestContext
+import com.example.common.infra.AppRequestContext.authenticatedPlayerId
 import com.example.common.infra.DatabaseContext
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -32,26 +34,31 @@ object App {
         secrets: Secrets,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
-        val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder)
+        val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder, authenticatedPlayerId())
 
-        return routes(
-            RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
-            authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
-            authenticatePlayer.then(GetGameDetailsApi(games)),
-            authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
-        )
+        return AppRequestContext()
+            .then(
+                routes(
+                    RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
+                    authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets))),
+                    authenticatePlayer.then(GetGameDetailsApi(games)),
+                    authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
+                )
+            )
     }
 }
 
 fun main() {
     val database = DatabaseContext(ENV)
 
-    val printingApp: HttpHandler = PrintRequest().then(App(
-        players = RegisteredPlayers.Database(database),
-        games = Games.Database(database),
-        secrets = Secrets.Rotating(listOf("secret")),
-        passwordEncoder = PasswordEncoder.Argon2()
-    ))
+    val printingApp: HttpHandler = PrintRequest().then(
+        App(
+            players = RegisteredPlayers.Database(database),
+            games = Games.Database(database),
+            secrets = Secrets.Rotating(listOf("secret")),
+            passwordEncoder = PasswordEncoder.Argon2()
+        )
+    )
 
     val server = printingApp.asServer(SunHttp(9000)).start()
 
