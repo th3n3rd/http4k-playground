@@ -43,7 +43,7 @@ object App {
                     RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
                     authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets), authenticatedPlayerId)),
                     authenticatePlayer.then(GetGameDetailsApi(games)),
-                    authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games)))
+                    authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games), authenticatedPlayerId))
                 )
             )
     }
