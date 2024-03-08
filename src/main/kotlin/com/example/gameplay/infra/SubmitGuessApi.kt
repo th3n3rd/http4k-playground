@@ -22,20 +22,20 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object SubmitGuessApi {
-    private val gameId = Path.map { GameId.parse(it) }.of("id")
-    private val submittedGuess = Body.auto<SubmittedGuess>().toLens()
-    private val payload = Body.auto<GameUpdated>().toLens()
+    private val gameIdLens = Path.map { GameId.parse(it) }.of("id")
+    private val submittedGuessLens = Body.auto<SubmittedGuess>().toLens()
+    private val gameUpdatedLens = Body.auto<GameUpdated>().toLens()
 
     operator fun invoke(submitGuess: SubmitGuess): RoutingHttpHandler {
         return "/games/{id}/guesses" bind POST to {
-            submitGuess(gameId(it), submittedGuess(it).secret)
+            submitGuess(gameIdLens(it), submittedGuessLens(it).secret)
                 .map { game ->
                     Response(CREATED).with(
-                        payload of GameUpdated(
-                        id = game.id.value,
-                        hint = game.hint,
-                        won = game.won
-                    )
+                        gameUpdatedLens of GameUpdated(
+                            id = game.id.value,
+                            hint = game.hint,
+                            won = game.won
+                        )
                     )
                 }
                 .mapFailure { error ->

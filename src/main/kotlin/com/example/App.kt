@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.common.infra.AppRequestContext
-import com.example.common.infra.AppRequestContext.authenticatedPlayerId
+import com.example.common.infra.AppRequestContext.authenticatedPlayerIdLens
 import com.example.common.infra.DatabaseContext
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -34,7 +34,7 @@ object App {
         secrets: Secrets,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
-        val authenticatedPlayerId = authenticatedPlayerId()
+        val authenticatedPlayerId = authenticatedPlayerIdLens()
         val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder, authenticatedPlayerId)
 
         return AppRequestContext()

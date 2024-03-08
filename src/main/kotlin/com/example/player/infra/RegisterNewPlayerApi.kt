@@ -10,11 +10,11 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object RegisterNewPlayerApi {
-    private val submittedCredentials = Body.auto<SubmittedCredentials>().toLens()
+    private val submittedCredentialsLens = Body.auto<SubmittedCredentials>().toLens()
 
     operator fun invoke(registerNewPlayer: RegisterNewPlayer): RoutingHttpHandler {
         return "/players" bind POST to {
-            val credentials = submittedCredentials(it)
+            val credentials = submittedCredentialsLens(it)
             registerNewPlayer(
                 RegisterNewPlayer.Command(
                     credentials.username,

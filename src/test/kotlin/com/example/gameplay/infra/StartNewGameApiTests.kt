@@ -1,7 +1,6 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.AppRequestContext
-import com.example.common.infra.AppRequestContext.authenticatedPlayerId
+import com.example.common.infra.AppRequestContext.authenticatedPlayerIdLens
 import com.example.common.infra.PlayerAuthenticated
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -26,8 +25,8 @@ class StartNewGameApiTests {
     private val authenticatedPlayerId = PlayerId()
     private val secrets = Secrets.Rotating(listOf("secret"))
     private val games = Games.InMemory()
-    private val api = PlayerAuthenticated(authenticatedPlayerId(), authenticatedPlayerId)
-        .then(StartNewGameApi(StartNewGame(games, secrets), authenticatedPlayerId()))
+    private val api = PlayerAuthenticated(authenticatedPlayerIdLens(), authenticatedPlayerId)
+        .then(StartNewGameApi(StartNewGame(games, secrets), authenticatedPlayerIdLens()))
 
     @Test
     fun `starts a new game for the authenticated player`() {

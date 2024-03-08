@@ -21,6 +21,10 @@ class Player(
     username: String = "",
     password: String = ""
 ) {
+    private val credentialsLens = Body.auto<Credentials>().toLens()
+    private val gameStartedLens = Body.auto<GameStarted>().toLens()
+    private val gameDetailsLens = Body.auto<GameDetails>().toLens()
+    private val guessLens = Body.auto<Guess>().toLens()
 
     private val client = SetBaseUriFrom(baseUri)
         .then(BasicAuth(user = username, password = password))
@@ -34,21 +38,20 @@ class Player(
     fun startNewGame(): GameId {
         val response = client(Request(POST, "/games"))
         response.status.successful shouldBe true
-        return GameId(Body.auto<GameStarted>().toLens()(response).id)
+        return GameId(gameStartedLens(response).id)
     }
 
     fun hasWon(game: GameId) {
         val response = client(Request(GET, "/games/${game.value}"))
         response.status.successful shouldBe true
-        val details = Body.auto<GameDetails>().toLens()(response)
+        val details = gameDetailsLens(response)
         details.won shouldBe true
     }
 
     fun guess(game: GameId, secret: String) {
-        val payload = Body.auto<Guess>().toLens()
         val response = client(
             Request(POST, "/games/${game.value}/guesses")
-                .with(payload of Guess(secret))
+                .with(guessLens of Guess(secret))
         )
         response.status.successful shouldBe true
     }
@@ -56,15 +59,14 @@ class Player(
     fun receivedHint(game: GameId, hint: String) {
         val response = client(Request(GET, "/games/${game.value}"))
         response.status.successful shouldBe true
-        val details = Body.auto<GameDetails>().toLens()(response)
+        val details = gameDetailsLens(response)
         details.hint shouldBe hint
     }
 
     private fun register(username: String, password: String) {
-        val payload = Body.auto<Credentials>().toLens()
         val response = client(
             Request(POST, "/players")
-                .with(payload of Credentials(username, password))
+                .with(credentialsLens of Credentials(username, password))
         )
         response.status.successful shouldBe true
     }

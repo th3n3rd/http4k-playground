@@ -15,15 +15,15 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object GetGameDetailsApi {
-    private val gameId = Path.map { GameId.parse(it) }.of("id")
-    private val payload = Body.auto<GameDetails>().toLens()
+    private val gameIdLens = Path.map { GameId.parse(it) }.of("id")
+    private val gameDetailsLens = Body.auto<GameDetails>().toLens()
 
     operator fun invoke(games: Games): RoutingHttpHandler {
         return "/games/{id}" bind GET to {
-            games.findById(gameId(it))
+            games.findById(gameIdLens(it))
                 ?.let { currentGame ->
                     Response(OK).with(
-                        payload of GameDetails(
+                        gameDetailsLens of GameDetails(
                             id = currentGame.id.value,
                             hint = currentGame.hint,
                             won = currentGame.won
