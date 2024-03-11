@@ -20,4 +20,6 @@ data class Game(
         }
         return Success(copy(won = this.secret == secret))
     }
+
+    fun ownedBy(playerId: PlayerId) = this.playerId == playerId
 }

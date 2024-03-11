@@ -1,6 +1,7 @@
 package com.example.gameplay
 
 import com.example.gameplay.infra.InMemory
+import com.example.player.PlayerId
 import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.shouldBe
@@ -12,11 +13,11 @@ class SubmitGuessTests {
     private val submitGuess = SubmitGuess(games)
 
     @Test
-    fun `marks the game as won then guess is correct`() {
+    fun `marks the game as won when the guess is correct`() {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = submitGuess(game.id, "correct")
+        val result = submitGuess(game.id, "correct", game.playerId)
 
         result shouldBeSuccess {
             it.won shouldBe true
@@ -24,11 +25,11 @@ class SubmitGuessTests {
     }
 
     @Test
-    fun `marks the game has NOT won when the guess is incorrect`() {
+    fun `leaves the game as NOT won when the guess is incorrect`() {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = submitGuess(game.id, "incorrect")
+        val result = submitGuess(game.id, "incorrect", game.playerId)
 
         result shouldBeSuccess {
             it.won shouldBe false
@@ -40,7 +41,7 @@ class SubmitGuessTests {
         val game = Game(secret = "correct")
         games.save(game)
 
-        val result = submitGuess(game.id, "correct")
+        val result = submitGuess(game.id, "correct", game.playerId)
 
         result shouldBeSuccess {
             games.findById(it.id) shouldBe it
@@ -52,7 +53,7 @@ class SubmitGuessTests {
         val game = Game(secret = "correct", won = true)
         games.save(game)
 
-        val result = submitGuess(game.id, "correct")
+        val result = submitGuess(game.id, "correct", game.playerId)
 
         result shouldBeFailure GameAlreadyCompleted(game.id)
     }
@@ -60,8 +61,18 @@ class SubmitGuessTests {
     @Test
     fun `fails when the game is not found`() {
         val nonExistentGameId = GameId()
-        val result = submitGuess(nonExistentGameId, "correct")
+        val result = submitGuess(nonExistentGameId, "correct", PlayerId())
 
         result shouldBeFailure GameNotFound(nonExistentGameId)
+    }
+
+    @Test
+    fun `fails when the game is owned by a different player`() {
+        val game = Game(secret = "correct", won = true)
+        games.save(game)
+
+        val result = submitGuess(game.id, "correct", PlayerId())
+
+        result shouldBeFailure GameOwnershipMismatch(game.id)
     }
 }

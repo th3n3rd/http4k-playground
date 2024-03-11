@@ -17,6 +17,7 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
+import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.then
 import org.junit.jupiter.api.Test
@@ -92,5 +93,23 @@ class SubmitGuessApiTests {
         """.trimIndent()))
 
         response.status shouldBe BAD_REQUEST
+    }
+
+    @Test
+    fun `fails when the game is owned by another player`() {
+        val completedGame = Game(
+            playerId = PlayerId(),
+            secret = "correct",
+            won = true
+        )
+        games.save(completedGame)
+
+        val response = api(Request(POST, "/games/${completedGame.id.value}/guesses").body("""
+        {
+            "secret": "correct"
+        }            
+        """.trimIndent()))
+
+        response.status shouldBe FORBIDDEN
     }
 }
