@@ -2,7 +2,6 @@ package com.example.gameplay.infra
 
 import com.example.common.infra.PlayerAuthenticated
 import com.example.gameplay.Game
-import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.gameplay.SubmitGuess
 import com.example.player.PlayerId
@@ -17,7 +16,6 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
-import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.then
 import org.junit.jupiter.api.Test
@@ -26,6 +24,7 @@ import org.junit.jupiter.api.Test
 class SubmitGuessApiTests {
 
     private val authenticatedPlayerId = PlayerId()
+    private val anotherPlayerId = PlayerId()
     private val games = Games.InMemory()
     private val api = PlayerAuthenticated(authenticatedPlayerId)
         .then(SubmitGuessApi(SubmitGuess(games), PlayerAuthenticated.playerIdLens))
@@ -67,8 +66,15 @@ class SubmitGuessApiTests {
     }
 
     @Test
-    fun `fails when a game is not found`() {
-        val response = api(Request(POST, "/games/${GameId().value}/guesses").body("""
+    fun `fails when a game is not found for the authenticated player`() {
+        val existingGame = Game(
+            playerId = anotherPlayerId,
+            secret = "correct",
+            won = false
+        )
+        games.save(existingGame)
+
+        val response = api(Request(POST, "/games/${existingGame.id.value}/guesses").body("""
         {
             "secret": "correct"
         }            
@@ -93,23 +99,5 @@ class SubmitGuessApiTests {
         """.trimIndent()))
 
         response.status shouldBe BAD_REQUEST
-    }
-
-    @Test
-    fun `fails when the game is owned by another player`() {
-        val completedGame = Game(
-            playerId = PlayerId(),
-            secret = "correct",
-            won = false
-        )
-        games.save(completedGame)
-
-        val response = api(Request(POST, "/games/${completedGame.id.value}/guesses").body("""
-        {
-            "secret": "correct"
-        }            
-        """.trimIndent()))
-
-        response.status shouldBe FORBIDDEN
     }
 }

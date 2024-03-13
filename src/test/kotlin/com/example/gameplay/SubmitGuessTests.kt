@@ -67,12 +67,13 @@ class SubmitGuessTests {
     }
 
     @Test
-    fun `fails when the game is owned by a different player`() {
-        val game = Game(secret = "correct", won = false)
+    fun `fails when the game is not found for the given player`() {
+        val currentPlayerId = PlayerId()
+        val game = Game(playerId = PlayerId(), secret = "correct", won = false)
         games.save(game)
 
-        val result = submitGuess(game.id, "correct", PlayerId())
+        val result = submitGuess(game.id, "correct", currentPlayerId)
 
-        result shouldBeFailure GameOwnershipMismatch(game.id)
+        result shouldBeFailure GameNotFound(game.id)
     }
 }
