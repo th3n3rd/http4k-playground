@@ -68,7 +68,7 @@ class SubmitGuessTests {
 
     @Test
     fun `fails when the game is owned by a different player`() {
-        val game = Game(secret = "correct", won = true)
+        val game = Game(secret = "correct", won = false)
         games.save(game)
 
         val result = submitGuess(game.id, "correct", PlayerId())

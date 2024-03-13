@@ -14,9 +14,12 @@ data class Game(
 
     val hint = "_".repeat(secret.length)
 
-    fun guess(secret: String): Result<Game, Exception> {
+    fun guess(playerId: PlayerId, secret: String): Result<Game, Exception> {
         if (won) {
             return Failure(GameAlreadyCompleted(id))
+        }
+        if (!ownedBy(playerId)) {
+            return Failure(GameOwnershipMismatch(id))
         }
         return Success(copy(won = this.secret == secret))
     }
