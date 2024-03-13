@@ -8,6 +8,7 @@ import io.kotest.matchers.collections.containOnly
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 class StartNewGameTests {
@@ -36,6 +37,13 @@ class StartNewGameTests {
         val second = startNewGame(PlayerId())
 
         first.secret shouldNotBeEqual second.secret
+    }
+
+    @Test
+    fun `new games have no attempts recorded yet`() {
+        val newGame = startNewGame(PlayerId())
+
+        newGame.attempts shouldBe 0
     }
 
     @Test

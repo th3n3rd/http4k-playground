@@ -25,6 +25,18 @@ class SubmitGuessTests {
     }
 
     @Test
+    fun `each guess increases the recorded number of attempts`() {
+        val game = Game(attempts = 3, secret = "correct")
+        games.save(game)
+
+        val result = submitGuess(game.id, "correct", game.playerId)
+
+        result shouldBeSuccess {
+            it.attempts shouldBe 4
+        }
+    }
+
+    @Test
     fun `leaves the game as NOT won when the guess is incorrect`() {
         val game = Game(secret = "correct")
         games.save(game)

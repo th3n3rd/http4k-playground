@@ -9,6 +9,7 @@ data class Game(
     val id: GameId = GameId(),
     val playerId: PlayerId = PlayerId(),
     val secret: String = "",
+    val attempts: Int = 0,
     val won: Boolean = false
 ) {
 
@@ -18,7 +19,10 @@ data class Game(
         if (won) {
             return Failure(GameAlreadyCompleted(id))
         }
-        return Success(copy(won = this.secret == secret))
+        return Success(copy(
+            attempts = attempts + 1,
+            won = this.secret == secret
+        ))
     }
 
     fun ownedBy(playerId: PlayerId) = this.playerId == playerId
