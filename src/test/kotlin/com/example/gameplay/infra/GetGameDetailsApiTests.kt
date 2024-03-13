@@ -1,8 +1,10 @@
 package com.example.gameplay.infra
 
+import com.example.common.infra.PlayerAuthenticated
 import com.example.gameplay.Game
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
+import com.example.player.PlayerId
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj
 import io.kotest.assertions.json.schema.shouldMatchSchema
@@ -14,17 +16,21 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.then
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalKotest::class)
 class GetGameDetailsApiTests {
 
+    private val anotherPlayer = PlayerId()
+    private val authenticatedPlayerId = PlayerId()
     private val games = Games.InMemory()
-    private val api = GetGameDetailsApi(games)
+    private val api = PlayerAuthenticated(authenticatedPlayerId)
+        .then(GetGameDetailsApi(games, PlayerAuthenticated.playerIdLens))
 
     @Test
     fun `present the details of an existing game`() {
-        val existingGame = Game(secret = "dont-care")
+        val existingGame = Game(playerId = authenticatedPlayerId, secret = "dont-care")
         games.save(existingGame)
 
         val response = api(Request(GET, "/games/${existingGame.id.value}"))
@@ -49,8 +55,11 @@ class GetGameDetailsApiTests {
     }
 
     @Test
-    fun `fails when the game does not exist`() {
-        val response = api(Request(GET, "/games/${GameId().value}"))
+    fun `fails when the game does not exist for the authenticated player`() {
+        val existingGame = Game(playerId = anotherPlayer)
+        games.save(existingGame)
+
+        val response = api(Request(GET, "/games/${existingGame.id.value}"))
 
         response.status shouldBe NOT_FOUND
     }

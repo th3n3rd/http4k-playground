@@ -42,7 +42,7 @@ object App {
                 routes(
                     RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
                     authenticatePlayer.then(StartNewGameApi(StartNewGame(games, secrets), authenticatedPlayerId)),
-                    authenticatePlayer.then(GetGameDetailsApi(games)),
+                    authenticatePlayer.then(GetGameDetailsApi(games, authenticatedPlayerId)),
                     authenticatePlayer.then(SubmitGuessApi(SubmitGuess(games), authenticatedPlayerId))
                 )
             )
