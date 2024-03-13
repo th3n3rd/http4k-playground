@@ -13,7 +13,7 @@ data class Game(
     val won: Boolean = false
 ) {
 
-    val hint = "_".repeat(secret.length)
+    val hint = HintProgression(secret, attempts)
 
     fun guess(secret: String): Result<Game, Exception> {
         if (won) {

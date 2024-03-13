@@ -57,7 +57,7 @@ class SubmitGuessApiTests {
             bodyString() shouldEqualSpecifiedJson """
             {
                 "playerId": "${authenticatedPlayerId.value}",
-                "hint": "_______",
+                "hint": "c______",
                 "won": true
             }
             """.trimIndent()

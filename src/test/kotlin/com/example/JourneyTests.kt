@@ -28,7 +28,7 @@ class JourneyTests {
     private val app = App(
         players = RegisteredPlayers.Database(database),
         games = Games.Database(database),
-        secrets = Secrets.Rotating(listOf("secret")),
+        secrets = Secrets.Rotating(listOf("correct")),
         passwordEncoder = PasswordEncoder.Argon2()
     ).debug()
 
@@ -43,9 +43,15 @@ class JourneyTests {
     @Test
     fun `winning gameplay`() {
         val newGame = player.startNewGame()
+        player.receivedHint(newGame, "_______")
 
-        player.receivedHint(newGame, "______")
-        player.guess(newGame, "secret")
+        player.guess(newGame, "incorrect")
+        player.receivedHint(newGame, "c______")
+
+        player.guess(newGame, "incorrect")
+        player.receivedHint(newGame, "c_____t")
+
+        player.guess(newGame, "correct")
 
         player.hasWon(newGame)
     }
