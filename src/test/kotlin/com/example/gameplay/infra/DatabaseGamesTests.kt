@@ -75,7 +75,7 @@ class DatabaseGamesTests {
         )
         games.save(uncompletedGame)
 
-        val completedGame = uncompletedGame.guess(uncompletedGame.playerId, "updated").orThrow()
+        val completedGame = uncompletedGame.guess("updated").orThrow()
         games.save(completedGame)
 
         val persistedGame = database

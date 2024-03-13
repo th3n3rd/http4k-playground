@@ -8,7 +8,7 @@ import dev.forkhandles.result4k.peek
 class SubmitGuess(private val games: Games) {
     operator fun invoke(gameId: GameId, secret: String, playerId: PlayerId): Result<Game, Exception> {
         val game = games.findByIdAndPlayerId(gameId, playerId) ?: return Failure(GameNotFound(gameId))
-        return game.guess(playerId, secret).peek {
+        return game.guess(secret).peek {
             games.save(it)
         }
     }

@@ -3,7 +3,6 @@ package com.example.gameplay.infra
 import com.example.gameplay.GameAlreadyCompleted
 import com.example.gameplay.GameId
 import com.example.gameplay.GameNotFound
-import com.example.gameplay.GameOwnershipMismatch
 import com.example.gameplay.SubmitGuess
 import com.example.player.PlayerId
 import dev.forkhandles.result4k.get
@@ -15,7 +14,6 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
-import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.with
@@ -47,7 +45,6 @@ object SubmitGuessApi {
                     when (error) {
                         is GameNotFound -> Response(NOT_FOUND)
                         is GameAlreadyCompleted -> Response(BAD_REQUEST)
-                        is GameOwnershipMismatch -> Response(FORBIDDEN)
                         else -> Response(INTERNAL_SERVER_ERROR)
                     }
                 }
