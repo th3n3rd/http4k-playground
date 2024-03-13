@@ -3,7 +3,7 @@ package com.example.gameplay.infra
 import com.example.gameplay.Game
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
-import java.util.*
+import com.example.player.PlayerId
 import java.util.concurrent.ConcurrentHashMap
 
 fun Games.Companion.InMemory() = InMemoryGames()
@@ -17,6 +17,10 @@ class InMemoryGames: Games {
 
     override fun findById(id: GameId): Game? {
         return gamesById[id]
+    }
+
+    override fun findByIdAndPlayerId(id: GameId, playerId: PlayerId): Game? {
+        return gamesById[id]?.takeIf { it.ownedBy(playerId) }
     }
 
     fun findAll(): List<Game> {

@@ -92,10 +92,29 @@ class DatabaseGamesTests {
 
     @Test
     fun `returns nothing if cannot find a game by id`() {
+        database
+            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
+            .values(GameId().value, PlayerId().value, "another", false)
+            .execute()
+
         val foundGame = games.findById(GameId())
 
         foundGame shouldBe null
     }
 
+    @Test
+    fun `returns nothing if cannot find a game by id and player id`() {
+        val existingGameId = GameId()
+        val anotherPlayerId = PlayerId()
+        val currentPlayerId = PlayerId()
+        database
+            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
+            .values(existingGameId.value, anotherPlayerId.value, "another-player", true)
+            .execute()
+
+        val foundGame = games.findByIdAndPlayerId(existingGameId, currentPlayerId)
+
+        foundGame shouldBe null
+    }
 }
 
