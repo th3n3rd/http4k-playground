@@ -2,8 +2,11 @@ package com.example.gameplay
 
 import com.example.gameplay.infra.InMemory
 import com.example.player.PlayerId
+import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
+import io.kotest.matchers.collections.shouldContainOnly
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -33,6 +36,24 @@ class SubmitGuessTests {
 
         result shouldBeSuccess {
             it.attempts shouldBe 4
+        }
+    }
+
+    @Test
+    fun `each guess is recorded`() {
+        val game = Game(secret = "correct", guesses = listOf())
+        games.save(game)
+
+        val result = submitGuess(game.id, "first", game.playerId)
+            .flatMap { submitGuess(game.id, "second", game.playerId) }
+            .flatMap { submitGuess(game.id, "third", game.playerId) }
+
+        result.shouldBeSuccess {
+            it.guesses!! shouldBeEqual listOf(
+                Game.Guess("first"),
+                Game.Guess("second"),
+                Game.Guess("third"),
+            )
         }
     }
 

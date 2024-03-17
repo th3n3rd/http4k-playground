@@ -4,6 +4,7 @@ import com.example.gameplay.infra.InMemory
 import com.example.gameplay.infra.Rotating
 import com.example.player.PlayerId
 import com.example.player.Players.anyPlayer
+import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.collections.containOnly
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldNotBeEqual
@@ -29,6 +30,13 @@ class StartNewGameTests {
         firstGame shouldNotBeEqual secondGame
         secondGame shouldNotBeEqual thirdGame
         firstGame shouldNotBeEqual thirdGame
+    }
+
+    @Test
+    fun `new games have not recorded guesses`() {
+        val newGame = startNewGame(PlayerId())
+
+        newGame.guesses shouldBe emptyList()
     }
 
     @Test

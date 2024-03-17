@@ -10,7 +10,8 @@ data class Game(
     val playerId: PlayerId = PlayerId(),
     val secret: String = "",
     val attempts: Int = 0,
-    val won: Boolean = false
+    val won: Boolean = false,
+    val guesses: List<Guess>? = null
 ) {
 
     val hint = HintProgression(secret, attempts)
@@ -21,9 +22,12 @@ data class Game(
         }
         return Success(copy(
             attempts = attempts + 1,
-            won = this.secret == secret
+            won = this.secret == secret,
+            guesses = guesses.orEmpty() + Guess(secret)
         ))
     }
 
     fun ownedBy(playerId: PlayerId) = this.playerId == playerId
+
+    data class Guess(val secret: String)
 }
