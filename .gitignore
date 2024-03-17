@@ -168,3 +168,6 @@ buildNumber.properties
 .classpath
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,maven,macos,intellij+all
+
+# Whole IntelliJ idea folder
+.idea
