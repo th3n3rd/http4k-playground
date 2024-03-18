@@ -9,17 +9,16 @@ import com.example.gameplay.Game
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.player.PlayerId
-import com.natpryce.hamkrest.greaterThan
 import dev.forkhandles.result4k.orThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldHave
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class DatabaseGamesTests {
 
@@ -43,23 +42,16 @@ class DatabaseGamesTests {
 
         games.save(newGame)
 
-        val persistedGame = database
-            .select()
-            .from(GAMES)
-            .where(GAMES.ID.eq(newGame.id.value))
-            .and(GAMES.PLAYER_ID.eq(newGame.playerId.value))
-            .and(GAMES.SECRET.eq("new"))
-            .and(GAMES.WON.eq(false))
-            .and(GAMES.ATTEMPTS.eq(5))
-            .fetchSingle()
+        val persistedGame = lookupPersistedGame(
+            gameId = newGame.id.value,
+            playerId = newGame.playerId.value,
+            secret = "new",
+            won = false,
+            attempts = 5
+        )
+        val persistedGuesses = lookupPersistedGuesses(newGame.id)
 
-        val persistedGuesses = database
-            .select()
-            .from(GAME_GUESSES)
-            .where(GAME_GUESSES.GAME_ID.eq(newGame.id.value))
-            .fetch()
-
-        persistedGame shouldNot beNull()
+        persistedGame shouldNotBe null
         persistedGuesses shouldHaveSize 2
     }
 
@@ -67,13 +59,11 @@ class DatabaseGamesTests {
     fun `find persisted games by id and player`() {
         val existingGameId = GameId()
         val playerId = PlayerId()
-        database
-            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
-            .values(existingGameId.value, playerId.value, "existing-one", true)
-            .values(GameId().value, playerId.value, "existing-two", false)
-            .execute()
+        persistGame(gameId = existingGameId, playerId = playerId, secret = "existing-one", won = true)
+        persistGame(gameId = GameId(), playerId = playerId, secret = "existing-two", won = false)
 
         val foundGame = games.findByIdAndPlayerId(existingGameId, playerId)!!
+
         foundGame shouldBeEqual Game(
             id = existingGameId,
             playerId = playerId,
@@ -87,15 +77,13 @@ class DatabaseGamesTests {
     fun `find games with recorded guesses`() {
         val existingGameId = GameId()
         val playerId = PlayerId()
-        database
-            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
-            .values(existingGameId.value, playerId.value, "with-guesses", true)
-            .execute()
-        database
-            .insertInto(GAME_GUESSES, GAME_GUESSES.GAME_ID, GAME_GUESSES.SECRET)
-            .values(existingGameId.value, "first")
-            .values(existingGameId.value, "second")
-            .execute()
+        persistGame(
+            gameId = existingGameId,
+            playerId = playerId,
+            secret = "with-guesses",
+            won = true
+        )
+        persistGuesses(existingGameId, listOf("first", "second"))
 
         val foundGame = games.findByIdAndPlayerId(existingGameId, playerId)!!
         foundGame shouldBeEqual Game(
@@ -105,6 +93,15 @@ class DatabaseGamesTests {
             won = true,
             guesses = listOf(Game.Guess("first"), Game.Guess("second"))
         )
+    }
+
+    private fun persistGuesses(existingGameId: GameId, guesses: List<String>) {
+        guesses.forEach {
+            database
+                .insertInto(GAME_GUESSES, GAME_GUESSES.GAME_ID, GAME_GUESSES.SECRET)
+                .values(existingGameId.value, it)
+                .execute()
+        }
     }
 
     @Test
@@ -119,20 +116,14 @@ class DatabaseGamesTests {
         val completedGame = uncompletedGame.guess("updated").orThrow()
         games.save(completedGame)
 
-        val persistedGame = database
-            .select()
-            .from(GAMES)
-            .where(GAMES.ID.eq(uncompletedGame.id.value))
-            .and(GAMES.PLAYER_ID.eq(uncompletedGame.playerId.value))
-            .and(GAMES.SECRET.eq("updated"))
-            .and(GAMES.WON.eq(true))
-            .fetchSingle()
-
-        val persistedGuesses = database
-            .select()
-            .from(GAME_GUESSES)
-            .where(GAME_GUESSES.GAME_ID.eq(uncompletedGame.id.value))
-            .fetch()
+        val persistedGame = lookupPersistedGame(
+            uncompletedGame.id.value,
+            uncompletedGame.playerId.value,
+            "updated",
+            true,
+            1
+        )
+        val persistedGuesses = lookupPersistedGuesses(uncompletedGame.id)
 
         persistedGame shouldNot beNull()
         persistedGuesses shouldHaveSize 2
@@ -140,10 +131,12 @@ class DatabaseGamesTests {
 
     @Test
     fun `returns nothing if cannot find a game by id`() {
-        database
-            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
-            .values(GameId().value, PlayerId().value, "another", false)
-            .execute()
+        persistGame(
+            gameId = GameId(),
+            playerId = PlayerId(),
+            secret = "another",
+            won = false
+        )
 
         val foundGame = games.findById(GameId())
 
@@ -155,14 +148,39 @@ class DatabaseGamesTests {
         val existingGameId = GameId()
         val anotherPlayerId = PlayerId()
         val currentPlayerId = PlayerId()
-        database
-            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
-            .values(existingGameId.value, anotherPlayerId.value, "another-player", true)
-            .execute()
+        persistGame(
+            gameId = existingGameId,
+            playerId = anotherPlayerId,
+            secret = "another-player",
+            won = true
+        )
 
         val foundGame = games.findByIdAndPlayerId(existingGameId, currentPlayerId)
 
         foundGame shouldBe null
     }
+
+    private fun persistGame(gameId: GameId, playerId: PlayerId, secret: String, won: Boolean) {
+        database
+            .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET, GAMES.WON)
+            .values(gameId.value, playerId.value, secret, won)
+            .execute()
+    }
+
+    private fun lookupPersistedGuesses(gameId: GameId) = database
+        .select()
+        .from(GAME_GUESSES)
+        .where(GAME_GUESSES.GAME_ID.eq(gameId.value))
+        .fetch()
+
+    private fun lookupPersistedGame(gameId: UUID, playerId: UUID, secret: String, won: Boolean, attempts: Int) = database
+        .select()
+        .from(GAMES)
+        .where(GAMES.ID.eq(gameId))
+        .and(GAMES.PLAYER_ID.eq(playerId))
+        .and(GAMES.SECRET.eq(secret))
+        .and(GAMES.WON.eq(won))
+        .and(GAMES.ATTEMPTS.eq(attempts))
+        .fetchSingle()
 }
 
