@@ -52,8 +52,6 @@ class DatabaseGames(private val database: DSLContext) : Games {
                 GAMES.ID,
                 GAMES.PLAYER_ID,
                 GAMES.SECRET,
-                GAMES.WON,
-                GAMES.ATTEMPTS,
                 multiset(
                     select(GAME_GUESSES.SECRET)
                         .from(GAME_GUESSES)
