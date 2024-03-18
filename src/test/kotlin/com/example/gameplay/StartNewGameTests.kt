@@ -3,8 +3,6 @@ package com.example.gameplay
 import com.example.gameplay.infra.InMemory
 import com.example.gameplay.infra.Rotating
 import com.example.player.PlayerId
-import com.example.player.Players.anyPlayer
-import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.collections.containOnly
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldNotBeEqual
