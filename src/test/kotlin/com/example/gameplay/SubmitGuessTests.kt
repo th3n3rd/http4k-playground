@@ -5,7 +5,6 @@ import com.example.player.PlayerId
 import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
-import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -29,7 +28,11 @@ class SubmitGuessTests {
 
     @Test
     fun `each guess increases the recorded number of attempts`() {
-        val game = Game(attempts = 3, secret = "correct")
+        val game = Game(secret = "correct", guesses = listOf(
+            Game.Guess("first"),
+            Game.Guess("second"),
+            Game.Guess("third")
+        ))
         games.save(game)
 
         val result = submitGuess(game.id, "correct", game.playerId)

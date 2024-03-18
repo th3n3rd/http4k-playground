@@ -36,8 +36,10 @@ class DatabaseGamesTests {
         val newGame = Game(
             secret = "new",
             won = false,
-            attempts = 5,
-            guesses = listOf(Game.Guess("first"), Game.Guess("second"))
+            guesses = listOf(
+                Game.Guess("first"),
+                Game.Guess("second")
+            )
         )
 
         games.save(newGame)
@@ -47,7 +49,7 @@ class DatabaseGamesTests {
             playerId = newGame.playerId.value,
             secret = "new",
             won = false,
-            attempts = 5
+            attempts = 2
         )
         val persistedGuesses = lookupPersistedGuesses(newGame.id)
 
@@ -121,7 +123,7 @@ class DatabaseGamesTests {
             uncompletedGame.playerId.value,
             "updated",
             true,
-            1
+            2
         )
         val persistedGuesses = lookupPersistedGuesses(uncompletedGame.id)
 
