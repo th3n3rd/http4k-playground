@@ -106,7 +106,7 @@ class DatabaseGamesTests {
             .values(game.id.value, game.playerId.value, game.secret)
             .execute()
 
-        game.guesses?.forEach {
+        game.guesses.forEach {
             database
                 .insertInto(GAME_GUESSES, GAME_GUESSES.GAME_ID, GAME_GUESSES.SECRET)
                 .values(game.id.value, it.secret)

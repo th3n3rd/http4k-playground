@@ -27,7 +27,7 @@ class DatabaseGames(private val database: DSLContext) : Games {
             .where(GAME_GUESSES.GAME_ID.eq(game.id.value))
             .execute()
 
-        game.guesses?.forEach {
+        game.guesses.forEach {
             val guessRecord = database
                 .newRecord(GAME_GUESSES, it)
                 .with(GAME_GUESSES.GAME_ID, game.id.value)

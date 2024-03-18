@@ -44,7 +44,7 @@ class SubmitGuessTests {
 
     @Test
     fun `each guess is recorded`() {
-        val game = Game(secret = "correct", guesses = listOf())
+        val game = Game(secret = "correct")
         games.save(game)
 
         val result = submitGuess(game.id, "first", game.playerId)
@@ -52,7 +52,7 @@ class SubmitGuessTests {
             .flatMap { submitGuess(game.id, "third", game.playerId) }
 
         result.shouldBeSuccess {
-            it.guesses!! shouldBeEqual listOf(
+            it.guesses shouldBeEqual listOf(
                 Game.Guess("first"),
                 Game.Guess("second"),
                 Game.Guess("third"),
