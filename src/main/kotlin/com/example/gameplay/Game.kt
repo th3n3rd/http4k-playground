@@ -9,7 +9,7 @@ data class Game(
     val id: GameId = GameId(),
     val playerId: PlayerId = PlayerId(),
     val secret: String = "",
-    val guesses: List<Guess>? = null
+    val guesses: List<Guess>? = listOf()
 ) {
     val attempts = guesses.orEmpty().size
     val hint = HintProgression(secret, attempts)

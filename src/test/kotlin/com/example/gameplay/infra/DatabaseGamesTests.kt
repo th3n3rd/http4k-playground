@@ -6,19 +6,15 @@ import com.example.common.infra.TestEnvironment
 import com.example.common.infra.database.tables.references.GAMES
 import com.example.common.infra.database.tables.references.GAME_GUESSES
 import com.example.gameplay.Game
-import com.example.gameplay.GameId
 import com.example.gameplay.Games
-import com.example.player.PlayerId
 import dev.forkhandles.result4k.orThrow
-import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.equals.shouldBeEqual
-import io.kotest.matchers.nulls.beNull
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
-import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
 
 class DatabaseGamesTests {
 
@@ -33,8 +29,18 @@ class DatabaseGamesTests {
 
     @Test
     fun `persist new games`() {
+        val newGame = Game(secret = "new")
+
+        games.save(newGame)
+
+        newGame should bePersisted()
+        newGame should havePersistedGuesses(emptyList())
+    }
+
+    @Test
+    fun `persist games with guesses`() {
         val newGame = Game(
-            secret = "new",
+            secret = "new-with-guesses",
             guesses = listOf(
                 Game.Guess("first"),
                 Game.Guess("second")
@@ -43,133 +49,99 @@ class DatabaseGamesTests {
 
         games.save(newGame)
 
-        val persistedGame = lookupPersistedGame(
-            gameId = newGame.id.value,
-            playerId = newGame.playerId.value,
-            secret = "new"
-        )
-        val persistedGuesses = lookupPersistedGuesses(newGame.id)
-
-        persistedGame shouldNotBe null
-        persistedGuesses shouldHaveSize 2
+        newGame should bePersisted()
+        newGame should havePersistedGuesses(listOf("first", "second"))
     }
 
     @Test
     fun `find persisted games by id and player`() {
-        val existingGameId = GameId()
-        val playerId = PlayerId()
-        persistGame(gameId = existingGameId, playerId = playerId, secret = "existing-one")
-        persistGame(gameId = GameId(), playerId = playerId, secret = "existing-two")
+        val first = persist(Game(secret = "existing-one"))
+        val second = persist(Game(secret = "existing-two"))
 
-        val foundGame = games.findByIdAndPlayerId(existingGameId, playerId)!!
+        val foundFirst = games.findByIdAndPlayerId(first.id, first.playerId)!!
+        val foundSecond = games.findByIdAndPlayerId(second.id, second.playerId)!!
 
-        foundGame shouldBeEqual Game(
-            id = existingGameId,
-            playerId = playerId,
-            secret = "existing-one",
-            guesses = listOf()
-        )
+        foundFirst shouldBeEqual first
+        foundSecond shouldBeEqual second
     }
 
     @Test
     fun `find games with recorded guesses`() {
-        val existingGameId = GameId()
-        val playerId = PlayerId()
-        persistGame(
-            gameId = existingGameId,
-            playerId = playerId,
-            secret = "with-guesses"
-        )
-        persistGuesses(existingGameId, listOf("first", "second"))
-
-        val foundGame = games.findByIdAndPlayerId(existingGameId, playerId)!!
-        foundGame shouldBeEqual Game(
-            id = existingGameId,
-            playerId = playerId,
+        val existingGame = persist(Game(
             secret = "with-guesses",
             guesses = listOf(Game.Guess("first"), Game.Guess("second"))
-        )
-    }
+        ))
 
-    private fun persistGuesses(existingGameId: GameId, guesses: List<String>) {
-        guesses.forEach {
-            database
-                .insertInto(GAME_GUESSES, GAME_GUESSES.GAME_ID, GAME_GUESSES.SECRET)
-                .values(existingGameId.value, it)
-                .execute()
-        }
+        val foundGame = games.findByIdAndPlayerId(existingGame.id, existingGame.playerId)!!
+
+        foundGame shouldBeEqual existingGame
     }
 
     @Test
     fun `persist updates for existing games`() {
-        val uncompletedGame = Game(
-            secret = "updated",
-            guesses = listOf(Game.Guess("first"))
-        )
-        games.save(uncompletedGame)
+        val existingGame = persist(Game(
+            secret = "with-guesses",
+            guesses = listOf(Game.Guess("first"), Game.Guess("second"))
+        ))
 
-        val completedGame = uncompletedGame.guess("updated").orThrow()
-        games.save(completedGame)
+        val updatedGame = existingGame.guess("third").orThrow()
+        games.save(updatedGame)
 
-        val persistedGame = lookupPersistedGame(
-            uncompletedGame.id.value,
-            uncompletedGame.playerId.value,
-            "updated"
-        )
-        val persistedGuesses = lookupPersistedGuesses(uncompletedGame.id)
-
-        persistedGame shouldNot beNull()
-        persistedGuesses shouldHaveSize 2
-    }
-
-    @Test
-    fun `returns nothing if cannot find a game by id`() {
-        persistGame(
-            gameId = GameId(),
-            playerId = PlayerId(),
-            secret = "another"
-        )
-
-        val foundGame = games.findById(GameId())
-
-        foundGame shouldBe null
+        existingGame should havePersistedGuesses(listOf("first", "second", "third"))
     }
 
     @Test
     fun `returns nothing if cannot find a game by id and player id`() {
-        val existingGameId = GameId()
-        val anotherPlayerId = PlayerId()
-        val currentPlayerId = PlayerId()
-        persistGame(
-            gameId = existingGameId,
-            playerId = anotherPlayerId,
-            secret = "another-player"
-        )
+        val first = persist(Game(secret = "another-game"))
+        val second = persist(Game(secret = "another-player"))
 
-        val foundGame = games.findByIdAndPlayerId(existingGameId, currentPlayerId)
+        val foundGame = games.findByIdAndPlayerId(first.id, second.playerId)
 
         foundGame shouldBe null
     }
 
-    private fun persistGame(gameId: GameId, playerId: PlayerId, secret: String) {
+    private fun persist(game: Game): Game {
         database
             .insertInto(GAMES, GAMES.ID, GAMES.PLAYER_ID, GAMES.SECRET)
-            .values(gameId.value, playerId.value, secret)
+            .values(game.id.value, game.playerId.value, game.secret)
             .execute()
+
+        game.guesses?.forEach {
+            database
+                .insertInto(GAME_GUESSES, GAME_GUESSES.GAME_ID, GAME_GUESSES.SECRET)
+                .values(game.id.value, it.secret)
+                .execute()
+        }
+
+        return game
     }
 
-    private fun lookupPersistedGuesses(gameId: GameId) = database
-        .select()
-        .from(GAME_GUESSES)
-        .where(GAME_GUESSES.GAME_ID.eq(gameId.value))
-        .fetch()
+    private fun bePersisted() = Matcher<Game> { game ->
+        MatcherResult(
+            database
+                .fetchExists(
+                    database.select()
+                        .from(GAMES)
+                        .where(GAMES.ID.eq(game.id.value))
+                        .and(GAMES.PLAYER_ID.eq(game.playerId.value))
+                        .and(GAMES.SECRET.eq(game.secret))
+                ),
+            { "$game was not persisted" },
+            { "$game should not have been persisted" },
+        )
+    }
 
-    private fun lookupPersistedGame(gameId: UUID, playerId: UUID, secret: String) = database
-        .select()
-        .from(GAMES)
-        .where(GAMES.ID.eq(gameId))
-        .and(GAMES.PLAYER_ID.eq(playerId))
-        .and(GAMES.SECRET.eq(secret))
-        .fetchSingle()
+    private fun havePersistedGuesses(expected: List<String>) = Matcher<Game> { game ->
+        val actual = database.select(GAME_GUESSES.SECRET)
+            .from(GAME_GUESSES)
+            .where(GAME_GUESSES.GAME_ID.eq(game.id.value))
+            .fetchInto(String::class.java)
+
+        MatcherResult(
+            actual.sorted() == expected.sorted(),
+            { "Expected persisted guesses $actual to contain $expected" },
+            { "Expected persisted guesses $actual not to contain $expected" },
+        )
+    }
 }
 
