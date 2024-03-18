@@ -70,7 +70,6 @@ class SubmitGuessApiTests {
         val existingGame = Game(
             playerId = anotherPlayerId,
             secret = "correct",
-            won = false
         )
         games.save(existingGame)
 
@@ -88,7 +87,9 @@ class SubmitGuessApiTests {
         val completedGame = Game(
             playerId = authenticatedPlayerId,
             secret = "correct",
-            won = true
+            guesses = listOf(
+                Game.Guess("correct")
+            )
         )
         games.save(completedGame)
 

@@ -9,18 +9,17 @@ data class Game(
     val id: GameId = GameId(),
     val playerId: PlayerId = PlayerId(),
     val secret: String = "",
-    val won: Boolean = false,
     val guesses: List<Guess>? = null
 ) {
     val attempts = guesses.orEmpty().size
     val hint = HintProgression(secret, attempts)
+    val won = guesses.orEmpty().any { it.secret == secret }
 
     fun guess(secret: String): Result<Game, Exception> {
         if (won) {
             return Failure(GameAlreadyCompleted(id))
         }
         return Success(copy(
-            won = this.secret == secret,
             guesses = guesses.orEmpty() + Guess(secret)
         ))
     }

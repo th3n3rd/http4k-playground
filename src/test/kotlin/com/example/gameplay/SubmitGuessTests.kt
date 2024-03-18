@@ -86,7 +86,7 @@ class SubmitGuessTests {
 
     @Test
     fun `fails when the game has already been marked as won`() {
-        val game = Game(secret = "correct", won = true)
+        val game = Game(secret = "correct", guesses = listOf(Game.Guess("correct")))
         games.save(game)
 
         val result = submitGuess(game.id, "correct", game.playerId)
@@ -105,7 +105,7 @@ class SubmitGuessTests {
     @Test
     fun `fails when the game is not found for the given player`() {
         val currentPlayerId = PlayerId()
-        val game = Game(playerId = PlayerId(), secret = "correct", won = false)
+        val game = Game(playerId = PlayerId(), secret = "correct")
         games.save(game)
 
         val result = submitGuess(game.id, "correct", currentPlayerId)

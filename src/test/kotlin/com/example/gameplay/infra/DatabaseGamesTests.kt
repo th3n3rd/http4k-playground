@@ -35,7 +35,6 @@ class DatabaseGamesTests {
     fun `persist new games`() {
         val newGame = Game(
             secret = "new",
-            won = false,
             guesses = listOf(
                 Game.Guess("first"),
                 Game.Guess("second")
@@ -70,7 +69,6 @@ class DatabaseGamesTests {
             id = existingGameId,
             playerId = playerId,
             secret = "existing-one",
-            won = true,
             guesses = listOf()
         )
     }
@@ -92,7 +90,6 @@ class DatabaseGamesTests {
             id = existingGameId,
             playerId = playerId,
             secret = "with-guesses",
-            won = true,
             guesses = listOf(Game.Guess("first"), Game.Guess("second"))
         )
     }
@@ -110,7 +107,6 @@ class DatabaseGamesTests {
     fun `persist updates for existing games`() {
         val uncompletedGame = Game(
             secret = "updated",
-            won = false,
             guesses = listOf(Game.Guess("first"))
         )
         games.save(uncompletedGame)
