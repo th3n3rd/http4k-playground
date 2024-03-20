@@ -37,15 +37,6 @@ class DatabaseGames(private val database: DSLContext) : Games {
         }
     }
 
-    override fun findById(id: GameId): Game? {
-        return database
-            .select()
-            .from(GAMES)
-            .where(GAMES.ID.eq(id.value))
-            .fetchOne()
-            ?.into(Game::class.java)
-    }
-
     override fun findByIdAndPlayerId(id: GameId, playerId: PlayerId): Game? {
         return database
             .select(

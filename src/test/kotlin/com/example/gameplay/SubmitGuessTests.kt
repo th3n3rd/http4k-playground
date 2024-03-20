@@ -80,7 +80,7 @@ class SubmitGuessTests {
         val result = submitGuess(game.id, "correct", game.playerId)
 
         result shouldBeSuccess {
-            games.findById(it.id) shouldBe it
+            games.findByIdAndPlayerId(it.id, it.playerId) shouldBe it
         }
     }
 

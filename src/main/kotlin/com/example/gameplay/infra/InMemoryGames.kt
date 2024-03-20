@@ -15,10 +15,6 @@ class InMemoryGames: Games {
         gamesById[game.id] = game
     }
 
-    override fun findById(id: GameId): Game? {
-        return gamesById[id]
-    }
-
     override fun findByIdAndPlayerId(id: GameId, playerId: PlayerId): Game? {
         return gamesById[id]?.takeIf { it.ownedBy(playerId) }
     }

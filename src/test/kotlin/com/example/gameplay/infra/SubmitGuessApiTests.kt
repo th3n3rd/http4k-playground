@@ -62,7 +62,7 @@ class SubmitGuessApiTests {
             }
             """.trimIndent()
         }
-        games.findById(existingGame.id)!!.won shouldBe true
+        games.findByIdAndPlayerId(existingGame.id, authenticatedPlayerId)!!.won shouldBe true
     }
 
     @Test
