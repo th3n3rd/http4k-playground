@@ -1,8 +1,9 @@
 package com.example
 
+import com.example.common.infra.ClientTracing
+import com.example.common.infra.NameEvents
 import com.example.gameplay.GameId
 import io.kotest.matchers.shouldBe
-import java.util.*
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
@@ -11,22 +12,26 @@ import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
+import org.http4k.events.Events
 import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
+import java.util.*
 
 class Player(
     baseUri: Uri,
     username: String = "",
-    password: String = ""
+    password: String = "",
+    events: Events
 ) {
     private val credentialsLens = Body.auto<Credentials>().toLens()
     private val gameStartedLens = Body.auto<GameStarted>().toLens()
     private val gameDetailsLens = Body.auto<GameDetails>().toLens()
     private val guessLens = Body.auto<Guess>().toLens()
 
-    private val client = SetBaseUriFrom(baseUri)
+    private val client = ClientTracing(NameEvents("player", events))
+        .then(SetBaseUriFrom(baseUri))
         .then(BasicAuth(user = username, password = password))
         .then(JavaHttpClient())
         .debug()

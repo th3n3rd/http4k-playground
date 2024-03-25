@@ -3,6 +3,8 @@ package com.example
 import com.example.common.infra.AppRequestContext
 import com.example.common.infra.AppRequestContext.authenticatedPlayerIdLens
 import com.example.common.infra.DatabaseContext
+import com.example.common.infra.NameEvents
+import com.example.common.infra.ServerTracing
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.StartNewGame
@@ -22,6 +24,7 @@ import com.example.player.infra.RegisterNewPlayerApi
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
+import org.http4k.events.Events
 import org.http4k.filter.DebuggingFilters.PrintRequest
 import org.http4k.routing.routes
 import org.http4k.server.SunHttp
@@ -32,12 +35,14 @@ object App {
         players: RegisteredPlayers,
         games: Games,
         secrets: Secrets,
-        passwordEncoder: PasswordEncoder
+        passwordEncoder: PasswordEncoder,
+        events: Events = {}
     ): HttpHandler {
         val authenticatedPlayerId = authenticatedPlayerIdLens()
         val authenticatePlayer = AuthenticatePlayer(players, passwordEncoder, authenticatedPlayerId)
 
-        return AppRequestContext()
+        return ServerTracing(NameEvents("app", events))
+            .then(AppRequestContext())
             .then(
                 routes(
                     RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),

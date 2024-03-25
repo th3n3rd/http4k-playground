@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.common.infra.DatabaseContext
+import com.example.common.infra.RecordTraces
 import com.example.common.infra.RunDatabaseMigrations
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -17,7 +18,7 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 import org.junit.jupiter.api.Test
 
-class JourneyTests {
+class JourneyTests: RecordTraces() {
 
     init {
         RunDatabaseMigrations(ENV)
@@ -29,7 +30,8 @@ class JourneyTests {
         players = RegisteredPlayers.Database(database),
         games = Games.Database(database),
         secrets = Secrets.Rotating(listOf("correct")),
-        passwordEncoder = PasswordEncoder.Argon2()
+        passwordEncoder = PasswordEncoder.Argon2(),
+        events = events
     ).debug()
 
     private val appServer = app.asServer(SunHttp(0)).start()
@@ -37,7 +39,8 @@ class JourneyTests {
     private val player = Player(
         baseUri = Uri.of("http://localhost:${appServer.port()}"),
         username = "player-1",
-        password = "player-1"
+        password = "player-1",
+        events = events
     )
 
     @Test
