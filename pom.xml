@@ -12,8 +12,7 @@
         <javaVersion>11</javaVersion>
         <kotlinVersion>1.9.22</kotlinVersion>
         <junitVersion>5.10.2</junitVersion>
-        <http4kVersion>5.13.8.0</http4kVersion>
-        <http4kConnectVersion>5.7.0.0</http4kConnectVersion>
+        <http4kVersion>5.15.0.0</http4kVersion>
         <forkhandlesBomVersion>2.13.1.0</forkhandlesBomVersion>
         <kotestVersion>5.8.0</kotestVersion>
         <springVersion>6.2.0</springVersion>
