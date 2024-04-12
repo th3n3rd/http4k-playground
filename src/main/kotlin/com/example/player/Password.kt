@@ -8,7 +8,7 @@ value class EncodedPassword(val value: String)
 
 interface PasswordEncoder {
     operator fun invoke(password: Password): EncodedPassword
-    operator fun invoke(password: Password, encodedPassword: EncodedPassword): Boolean = encodedPassword == this(password)
+    operator fun invoke(password: Password, encodedPassword: EncodedPassword): Boolean
 
     companion object
 }
