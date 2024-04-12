@@ -5,10 +5,8 @@ import com.example.gameplay.GameId
 import com.example.gameplay.GameNotFound
 import com.example.gameplay.SubmitGuess
 import com.example.player.PlayerId
-import dev.forkhandles.result4k.get
 import dev.forkhandles.result4k.map
-import dev.forkhandles.result4k.mapFailure
-import java.util.*
+import dev.forkhandles.result4k.recover
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -22,6 +20,7 @@ import org.http4k.lens.Path
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
+import java.util.*
 
 object SubmitGuessApi {
     private val gameIdLens = Path.map { GameId.parse(it) }.of("id")
@@ -41,14 +40,13 @@ object SubmitGuessApi {
                         )
                     )
                 }
-                .mapFailure { error ->
+                .recover { error ->
                     when (error) {
                         is GameNotFound -> Response(NOT_FOUND)
                         is GameAlreadyCompleted -> Response(BAD_REQUEST)
                         else -> Response(INTERNAL_SERVER_ERROR)
                     }
                 }
-                .get()
         }
     }
 
