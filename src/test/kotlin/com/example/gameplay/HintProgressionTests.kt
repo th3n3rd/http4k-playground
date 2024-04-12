@@ -8,13 +8,13 @@ class HintProgressionTests {
     @Test
     fun `reveals a given secret incrementally`() {
         val secret = "secret"
-        HintProgression(secret, 0) shouldBe "______"
-        HintProgression(secret, 1) shouldBe "s_____"
-        HintProgression(secret, 2) shouldBe "s____t"
-        HintProgression(secret, 3) shouldBe "se___t"
-        HintProgression(secret, 4) shouldBe "se__et"
-        HintProgression(secret, 5) shouldBe "sec_et"
-        HintProgression(secret, 6) shouldBe "secret"
+        HintProgression(secret, attempts = 0) shouldBe "______"
+        HintProgression(secret, attempts = 1) shouldBe "s_____"
+        HintProgression(secret, attempts = 2) shouldBe "s____t"
+        HintProgression(secret, attempts = 3) shouldBe "se___t"
+        HintProgression(secret, attempts = 4) shouldBe "se__et"
+        HintProgression(secret, attempts = 5) shouldBe "sec_et"
+        HintProgression(secret, attempts = 6) shouldBe "secret"
     }
 
     @Test

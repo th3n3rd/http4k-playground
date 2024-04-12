@@ -3,13 +3,17 @@ package com.example.gameplay
 import kotlin.math.min
 
 object HintProgression {
+    private const val Placeholder = "_"
+
     operator fun invoke(secret: String, attempts: Int): String {
-        val hint = StringBuilder("_".repeat(secret.length))
         val cappedAttempts = min(attempts, secret.length)
+        val hint = initialHint(secret)
         revealFromLeft(cappedAttempts, hint, secret)
         revealFromRight(cappedAttempts, hint, secret)
         return hint.toString()
     }
+
+    private fun initialHint(secret: String) = StringBuilder(Placeholder.repeat(secret.length))
 
     private fun revealFromLeft(attempts: Int, hint: StringBuilder, secret: String) {
         val left = (attempts + 1) / 2
