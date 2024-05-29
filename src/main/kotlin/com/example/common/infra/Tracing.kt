@@ -11,9 +11,9 @@ import org.http4k.filter.ClientFilters
 import org.http4k.filter.ResponseFilters.ReportHttpTransaction
 import org.http4k.filter.ServerFilters
 
-object NameEvents {
-    operator fun invoke(actorName: String, events: Events) = AddZipkinTraces()
-        .then(AddServiceName(actorName))
+object OriginAwareEvents {
+    operator fun invoke(origin: String, events: Events) = AddZipkinTraces()
+        .then(AddServiceName(origin))
         .then(events)
 }
 
