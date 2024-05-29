@@ -17,6 +17,7 @@ import com.example.player.RegisterNewPlayer
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.AuthenticatePlayer
 import com.example.player.infra.RegisterNewPlayerApi
+import com.example.player.infra.TracingRegisteredPlayers
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.events.Events
@@ -35,12 +36,13 @@ object App {
 
         val appEvents = OriginAwareEvents("app", events)
         val tracingGames = TracingGames(appEvents, games)
+        val tracingPlayers = TracingRegisteredPlayers(appEvents, players)
 
         return ServerTracing(appEvents)
             .then(AppRequestContext())
             .then(
                 routes(
-                    RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder)),
+                    RegisterNewPlayerApi(RegisterNewPlayer(tracingPlayers, passwordEncoder)),
                     authenticatePlayer.then(StartNewGameApi(StartNewGame(tracingGames, secrets), authenticatedPlayerId)),
                     authenticatePlayer.then(GetGameDetailsApi(tracingGames, authenticatedPlayerId)),
                     authenticatePlayer.then(SubmitGuessApi(SubmitGuess(tracingGames), authenticatedPlayerId))
