@@ -1,6 +1,5 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.AppRequestContext
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.player.PlayerId
@@ -18,15 +17,13 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object GetGameDetailsApi {
-    private val gameIdLens = Path.map { GameId.parse(it) }.of("id")
-    private val gameDetailsLens = Body.auto<GameDetails>().toLens()
 
     operator fun invoke(games: Games, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games/{id}" bind GET to {
-            games.findByIdAndPlayerId(gameIdLens(it), authenticatedPlayerIdLens(it))
+            games.findByIdAndPlayerId(Request.gameId(it), authenticatedPlayerIdLens(it))
                 ?.let { currentGame ->
                     Response(OK).with(
-                        gameDetailsLens of GameDetails(
+                        Response.gameDetails of GameDetails(
                             id = currentGame.id.value,
                             hint = currentGame.hint,
                             won = currentGame.won
@@ -38,4 +35,12 @@ object GetGameDetailsApi {
     }
 
     data class GameDetails(val id: UUID, val hint: String, val won: Boolean)
+
+    private object Request {
+        val gameId = Path.map { GameId.parse(it) }.of("id")
+    }
+
+    private object Response {
+        val gameDetails = Body.auto<GameDetails>().toLens()
+    }
 }

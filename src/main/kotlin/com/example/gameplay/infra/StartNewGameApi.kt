@@ -16,14 +16,17 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object StartNewGameApi {
-    private val gameStartedLens = Body.auto<GameStarted>().toLens()
 
     operator fun invoke(startNewGame: StartNewGame, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games" bind POST to {
             val newGame = startNewGame(authenticatedPlayerIdLens(it))
-            Response(CREATED).with(gameStartedLens of GameStarted(newGame.id.value))
+            Response(CREATED).with(Response.gameStarted of GameStarted(newGame.id.value))
         }
     }
 
     data class GameStarted(val id: UUID)
+
+    private object Response {
+        val gameStarted = Body.auto<GameStarted>().toLens()
+    }
 }

@@ -23,16 +23,13 @@ import org.http4k.routing.bind
 import java.util.*
 
 object SubmitGuessApi {
-    private val gameIdLens = Path.map { GameId.parse(it) }.of("id")
-    private val submittedGuessLens = Body.auto<SubmittedGuess>().toLens()
-    private val gameUpdatedLens = Body.auto<GameUpdated>().toLens()
 
     operator fun invoke(submitGuess: SubmitGuess, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games/{id}/guesses" bind POST to {
-            submitGuess(gameIdLens(it), submittedGuessLens(it).secret, authenticatedPlayerIdLens(it))
+            submitGuess(Request.gameId(it), Request.submittedGuess(it).secret, authenticatedPlayerIdLens(it))
                 .map { game ->
                     Response(CREATED).with(
-                        gameUpdatedLens of GameUpdated(
+                        Response.gameUpdated of GameUpdated(
                             id = game.id.value,
                             playerId = game.playerId.value,
                             hint = game.hint,
@@ -52,4 +49,13 @@ object SubmitGuessApi {
 
     data class SubmittedGuess(val secret: String)
     data class GameUpdated(val id: UUID, val playerId: UUID, val hint: String, val won: Boolean)
+
+    private object Request {
+        val gameId = Path.map { GameId.parse(it) }.of("id")
+        val submittedGuess = Body.auto<SubmittedGuess>().toLens()
+    }
+
+    private object Response {
+        val gameUpdated = Body.auto<GameUpdated>().toLens()
+    }
 }
