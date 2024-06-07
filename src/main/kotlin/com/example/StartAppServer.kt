@@ -15,6 +15,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.events.Events
 import org.http4k.filter.DebuggingFilters
+import org.http4k.filter.DebuggingFilters.PrintRequest
 import org.http4k.server.Http4kServer
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -23,8 +24,8 @@ object StartAppServer {
     operator fun invoke(environment: Environment, events: Events = {}, port: Int = 0): Http4kServer {
         val database = DatabaseContext(environment)
 
-        val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(
-            App(
+        val printingApp: HttpHandler = PrintRequest().then(
+            TracingAwareApp(
                 players = RegisteredPlayers.Database(database),
                 games = Games.Database(database),
                 secrets = Secrets.Rotating(listOf("correct")),

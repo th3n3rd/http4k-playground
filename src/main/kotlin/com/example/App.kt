@@ -19,7 +19,7 @@ import org.http4k.core.then
 import org.http4k.events.Events
 import org.http4k.routing.routes
 
-object App {
+object TracingAwareApp {
     operator fun invoke(
         players: RegisteredPlayers,
         games: Games,
@@ -27,25 +27,40 @@ object App {
         passwordEncoder: PasswordEncoder,
         events: Events
     ): HttpHandler {
-        val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
-
         val appEvents = OriginAwareEvents("app", events)
         val tracingGames = TracingGames(appEvents, games)
         val tracingPlayers = TracingRegisteredPlayers(appEvents, players)
 
         return ServerTracing(appEvents)
-            .then(AppRequestContext())
+            .then(App(
+                tracingPlayers,
+                tracingGames,
+                secrets,
+                passwordEncoder
+            ))
+    }
+}
+
+object App {
+    operator fun invoke(
+        players: RegisteredPlayers,
+        games: Games,
+        secrets: Secrets,
+        passwordEncoder: PasswordEncoder
+    ): HttpHandler {
+        val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
+        return AppRequestContext()
             .then(
                 routes(
-                    RegisterNewPlayer(tracingPlayers, passwordEncoder)
+                    RegisterNewPlayer(players, passwordEncoder)
                         .asRoute(),
-                    StartNewGame(tracingGames, secrets)
+                    StartNewGame(games, secrets)
                         .asRoute(withPlayerId)
                         .protectedBy(authentication),
-                    GetGameDetails(tracingGames)
+                    GetGameDetails(games)
                         .asRoute(withPlayerId)
                         .protectedBy(authentication),
-                    SubmitGuess(tracingGames)
+                    SubmitGuess(games)
                         .asRoute(withPlayerId)
                         .protectedBy(authentication)
                 )
