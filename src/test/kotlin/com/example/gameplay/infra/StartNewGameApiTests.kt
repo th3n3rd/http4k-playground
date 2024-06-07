@@ -25,7 +25,7 @@ class StartNewGameApiTests {
     private val secrets = Secrets.Rotating(listOf("secret"))
     private val games = Games.InMemory()
     private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(StartNewGameApi(StartNewGame(games, secrets), PlayerAuthenticated.playerIdLens))
+        .then(StartNewGame(games, secrets).asRoute(PlayerAuthenticated.playerIdLens))
 
     @Test
     fun `starts a new game for the authenticated player`() {

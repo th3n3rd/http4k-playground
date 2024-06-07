@@ -2,8 +2,8 @@ package com.example.gameplay.infra
 
 import com.example.common.infra.PlayerAuthenticated
 import com.example.gameplay.Game
-import com.example.gameplay.GameId
 import com.example.gameplay.Games
+import com.example.gameplay.GetGameDetails
 import com.example.player.PlayerId
 import io.kotest.assertions.json.schema.jsonSchema
 import io.kotest.assertions.json.schema.obj
@@ -26,7 +26,7 @@ class GetGameDetailsApiTests {
     private val authenticatedPlayerId = PlayerId()
     private val games = Games.InMemory()
     private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(GetGameDetailsApi(games, PlayerAuthenticated.playerIdLens))
+        .then(GetGameDetails(games).asRoute(PlayerAuthenticated.playerIdLens))
 
     @Test
     fun `present the details of an existing game`() {

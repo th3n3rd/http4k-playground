@@ -27,7 +27,7 @@ class SubmitGuessApiTests {
     private val anotherPlayerId = PlayerId()
     private val games = Games.InMemory()
     private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(SubmitGuessApi(SubmitGuess(games), PlayerAuthenticated.playerIdLens))
+        .then(SubmitGuess(games).asRoute(PlayerAuthenticated.playerIdLens))
 
     @Test
     fun `mark the game as won when the guess is right`() {

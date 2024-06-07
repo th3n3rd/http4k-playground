@@ -15,7 +15,7 @@ class RegisterNewPlayerApiTests {
 
     private val passwordEncoder = PasswordEncoder.Fake()
     private val players = RegisteredPlayers.InMemory()
-    private val api = RegisterNewPlayerApi(RegisterNewPlayer(players, passwordEncoder))
+    private val api = RegisterNewPlayer(players, passwordEncoder).asRoute()
 
     @Test
     fun `registers new players`() {

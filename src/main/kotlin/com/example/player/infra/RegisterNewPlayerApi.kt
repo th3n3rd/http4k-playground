@@ -30,3 +30,5 @@ object RegisterNewPlayerApi {
         val submittedCredentials = Body.auto<SubmittedCredentials>().toLens()
     }
 }
+
+fun RegisterNewPlayer.asRoute() = RegisterNewPlayerApi(this)

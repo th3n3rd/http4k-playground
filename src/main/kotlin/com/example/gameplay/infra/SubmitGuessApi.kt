@@ -59,3 +59,5 @@ object SubmitGuessApi {
         val gameUpdated = Body.auto<GameUpdated>().toLens()
     }
 }
+
+fun SubmitGuess.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = SubmitGuessApi(this, authenticatedPlayerIdLens)

@@ -2,8 +2,8 @@ package com.example.gameplay.infra
 
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
+import com.example.gameplay.GetGameDetails
 import com.example.player.PlayerId
-import java.util.*
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Response
@@ -15,6 +15,7 @@ import org.http4k.lens.Path
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
+import java.util.*
 
 object GetGameDetailsApi {
 
@@ -44,3 +45,5 @@ object GetGameDetailsApi {
         val gameDetails = Body.auto<GameDetails>().toLens()
     }
 }
+
+fun GetGameDetails.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = GetGameDetailsApi(games, authenticatedPlayerIdLens)

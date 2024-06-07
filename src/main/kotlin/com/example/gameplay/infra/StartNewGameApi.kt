@@ -4,7 +4,6 @@ package com.example.gameplay.infra
 
 import com.example.gameplay.StartNewGame
 import com.example.player.PlayerId
-import java.util.*
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -14,6 +13,7 @@ import org.http4k.format.Jackson.auto
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
+import java.util.*
 
 object StartNewGameApi {
 
@@ -30,3 +30,5 @@ object StartNewGameApi {
         val gameStarted = Body.auto<GameStarted>().toLens()
     }
 }
+
+fun StartNewGame.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = StartNewGameApi(this, authenticatedPlayerIdLens)
