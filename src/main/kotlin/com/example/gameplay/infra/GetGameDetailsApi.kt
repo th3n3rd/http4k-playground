@@ -19,9 +19,9 @@ import java.util.*
 
 object GetGameDetailsApi {
 
-    operator fun invoke(games: Games, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
+    operator fun invoke(games: Games, withPlayerId: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games/{id}" bind GET to {
-            games.findByIdAndPlayerId(Request.gameId(it), authenticatedPlayerIdLens(it))
+            games.findByIdAndPlayerId(Request.gameId(it), withPlayerId(it))
                 ?.let { currentGame ->
                     Response(OK).with(
                         Response.gameDetails of GameDetails(
@@ -46,4 +46,4 @@ object GetGameDetailsApi {
     }
 }
 
-fun GetGameDetails.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = GetGameDetailsApi(games, authenticatedPlayerIdLens)
+fun GetGameDetails.asRoute(withPlayerId: RequestContextLens<PlayerId>) = GetGameDetailsApi(games, withPlayerId)

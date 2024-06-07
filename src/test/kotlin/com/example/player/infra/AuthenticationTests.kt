@@ -1,7 +1,7 @@
 package com.example.player.infra
 
 import com.example.common.infra.AppRequestContext
-import com.example.common.infra.AppRequestContext.authenticatedPlayerIdLens
+import com.example.common.infra.AppRequestContext.withPlayerId
 import com.example.player.EncodedPassword
 import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayer
@@ -28,10 +28,9 @@ class AuthenticationTests {
         password = EncodedPassword("encoded-valid")
     )
 
-    private val authenticatedPlayerIdLens = authenticatedPlayerIdLens()
-    private val dummyApi = { request: Request -> Response(OK).body(authenticatedPlayerIdLens(request).value.toString()) }
+    private val dummyApi = { request: Request -> Response(OK).body(withPlayerId(request).value.toString()) }
     private val protectedApi = AppRequestContext()
-        .then(AuthenticatePlayer(players, PasswordEncoder.Fake(), authenticatedPlayerIdLens))
+        .then(AuthenticatePlayer(players, PasswordEncoder.Fake(), withPlayerId))
         .then(dummyApi)
 
     @Test

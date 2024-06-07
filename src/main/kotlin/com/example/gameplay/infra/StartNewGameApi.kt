@@ -17,9 +17,9 @@ import java.util.*
 
 object StartNewGameApi {
 
-    operator fun invoke(startNewGame: StartNewGame, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
+    operator fun invoke(startNewGame: StartNewGame, withPlayerId: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games" bind POST to {
-            val newGame = startNewGame(authenticatedPlayerIdLens(it))
+            val newGame = startNewGame(withPlayerId(it))
             Response(CREATED).with(Response.gameStarted of GameStarted(newGame.id.value))
         }
     }
@@ -31,4 +31,4 @@ object StartNewGameApi {
     }
 }
 
-fun StartNewGame.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = StartNewGameApi(this, authenticatedPlayerIdLens)
+fun StartNewGame.asRoute(withPlayerId: RequestContextLens<PlayerId>) = StartNewGameApi(this, withPlayerId)

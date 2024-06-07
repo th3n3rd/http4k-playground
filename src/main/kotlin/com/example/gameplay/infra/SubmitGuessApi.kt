@@ -24,9 +24,9 @@ import java.util.*
 
 object SubmitGuessApi {
 
-    operator fun invoke(submitGuess: SubmitGuess, authenticatedPlayerIdLens: RequestContextLens<PlayerId>): RoutingHttpHandler {
+    operator fun invoke(submitGuess: SubmitGuess, withPlayerId: RequestContextLens<PlayerId>): RoutingHttpHandler {
         return "/games/{id}/guesses" bind POST to {
-            submitGuess(Request.gameId(it), Request.submittedGuess(it).secret, authenticatedPlayerIdLens(it))
+            submitGuess(Request.gameId(it), Request.submittedGuess(it).secret, withPlayerId(it))
                 .map { game ->
                     Response(CREATED).with(
                         Response.gameUpdated of GameUpdated(
@@ -60,4 +60,4 @@ object SubmitGuessApi {
     }
 }
 
-fun SubmitGuess.asRoute(authenticatedPlayerIdLens: RequestContextLens<PlayerId>) = SubmitGuessApi(this, authenticatedPlayerIdLens)
+fun SubmitGuess.asRoute(withPlayerId: RequestContextLens<PlayerId>) = SubmitGuessApi(this, withPlayerId)

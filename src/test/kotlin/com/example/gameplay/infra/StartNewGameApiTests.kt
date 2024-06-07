@@ -1,6 +1,7 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.PlayerAuthenticated
+import com.example.common.infra.AppRequestContext.withPlayerId
+import com.example.common.infra.authenticatedAs
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.StartNewGame
@@ -15,7 +16,6 @@ import io.kotest.matchers.string.beUUID
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.CREATED
-import org.http4k.core.then
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalKotest::class)
@@ -24,8 +24,9 @@ class StartNewGameApiTests {
     private val authenticatedPlayerId = PlayerId()
     private val secrets = Secrets.Rotating(listOf("secret"))
     private val games = Games.InMemory()
-    private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(StartNewGame(games, secrets).asRoute(PlayerAuthenticated.playerIdLens))
+    private val api = StartNewGame(games, secrets)
+        .asRoute(withPlayerId)
+        .authenticatedAs(authenticatedPlayerId)
 
     @Test
     fun `starts a new game for the authenticated player`() {

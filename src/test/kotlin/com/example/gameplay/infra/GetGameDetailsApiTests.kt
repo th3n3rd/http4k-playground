@@ -1,6 +1,7 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.PlayerAuthenticated
+import com.example.common.infra.AppRequestContext.withPlayerId
+import com.example.common.infra.authenticatedAs
 import com.example.gameplay.Game
 import com.example.gameplay.Games
 import com.example.gameplay.GetGameDetails
@@ -16,7 +17,6 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
-import org.http4k.core.then
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalKotest::class)
@@ -25,8 +25,9 @@ class GetGameDetailsApiTests {
     private val anotherPlayer = PlayerId()
     private val authenticatedPlayerId = PlayerId()
     private val games = Games.InMemory()
-    private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(GetGameDetails(games).asRoute(PlayerAuthenticated.playerIdLens))
+    private val api = GetGameDetails(games)
+        .asRoute(withPlayerId)
+        .authenticatedAs(authenticatedPlayerId)
 
     @Test
     fun `present the details of an existing game`() {

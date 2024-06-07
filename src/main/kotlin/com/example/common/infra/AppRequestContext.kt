@@ -8,7 +8,7 @@ import org.http4k.lens.RequestContextKey
 object AppRequestContext {
     private val context = RequestContexts()
 
-    fun authenticatedPlayerIdLens() = RequestContextKey.required<PlayerId>(context, name = "authenticated-player-id")
+    val withPlayerId = RequestContextKey.required<PlayerId>(context, name = "authenticated-player-id")
 
     operator fun invoke() = InitialiseRequestContext(context)
 }

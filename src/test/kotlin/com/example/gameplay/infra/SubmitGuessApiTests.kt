@@ -1,6 +1,7 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.PlayerAuthenticated
+import com.example.common.infra.AppRequestContext.withPlayerId
+import com.example.common.infra.authenticatedAs
 import com.example.gameplay.Game
 import com.example.gameplay.Games
 import com.example.gameplay.SubmitGuess
@@ -17,7 +18,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.NOT_FOUND
-import org.http4k.core.then
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalKotest::class)
@@ -26,8 +26,9 @@ class SubmitGuessApiTests {
     private val authenticatedPlayerId = PlayerId()
     private val anotherPlayerId = PlayerId()
     private val games = Games.InMemory()
-    private val api = PlayerAuthenticated(authenticatedPlayerId)
-        .then(SubmitGuess(games).asRoute(PlayerAuthenticated.playerIdLens))
+    private val api = SubmitGuess(games)
+        .asRoute(withPlayerId)
+        .authenticatedAs(authenticatedPlayerId)
 
     @Test
     fun `mark the game as won when the guess is right`() {
