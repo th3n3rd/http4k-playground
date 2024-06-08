@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.common.infra.DatabaseContext
-import com.example.common.infra.OriginAwareEvents
+import com.example.common.infra.TracingEvents
 import com.example.common.infra.ServerTracing
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
@@ -26,7 +26,7 @@ import org.http4k.server.asServer
 object StartGuessTheSecretAppServer {
     operator fun invoke(environment: Environment, events: Events = {}, port: Int = 0): Http4kServer {
         val database = DatabaseContext(environment)
-        val appEvents = OriginAwareEvents("app", events)
+        val appEvents = TracingEvents("app", events)
 
         val games = TracingGames(appEvents, Games.Database(database))
         val players = TracingRegisteredPlayers(appEvents, RegisteredPlayers.Database(database))

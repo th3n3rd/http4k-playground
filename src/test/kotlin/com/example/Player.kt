@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.common.infra.ClientTracing
-import com.example.common.infra.OriginAwareEvents
+import com.example.common.infra.TracingEvents
 import com.example.gameplay.GameId
 import io.kotest.matchers.shouldBe
 import org.http4k.client.JavaHttpClient
@@ -30,7 +30,7 @@ class Player(
     private val gameDetailsLens = Body.auto<GameDetails>().toLens()
     private val guessLens = Body.auto<Guess>().toLens()
 
-    private val client = ClientTracing(OriginAwareEvents("player", events))
+    private val client = ClientTracing(TracingEvents("player", events))
         .then(SetBaseUriFrom(baseUri))
         .then(BasicAuth(user = username, password = password))
         .then(JavaHttpClient())
