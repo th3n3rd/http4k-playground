@@ -15,7 +15,7 @@ import org.http4k.filter.ServerFilters
 object OriginAwareEvents {
     operator fun invoke(origin: String, events: Events) = AddZipkinTraces()
         .then(AddServiceName(origin))
-        .then(events)
+        .then(events.and(::println))
 }
 
 object ClientTracing {
