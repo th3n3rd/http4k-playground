@@ -12,7 +12,7 @@ class JourneyTests: RecordTraces() {
         RunDatabaseMigrations(ENV)
     }
 
-    private val appServer = StartAppServer(
+    private val appServer = StartGuessTheSecretAppServer(
         environment = ENV,
         events = events
     )

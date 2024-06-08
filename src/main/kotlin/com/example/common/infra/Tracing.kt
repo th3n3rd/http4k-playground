@@ -6,6 +6,7 @@ import org.http4k.events.EventFilters.AddZipkinTraces
 import org.http4k.events.Events
 import org.http4k.events.HttpEvent.Incoming
 import org.http4k.events.HttpEvent.Outgoing
+import org.http4k.events.and
 import org.http4k.events.then
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ResponseFilters.ReportHttpTransaction
