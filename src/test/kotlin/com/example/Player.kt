@@ -5,13 +5,9 @@ import com.example.common.infra.TracingEvents
 import com.example.gameplay.GameId
 import io.kotest.matchers.shouldBe
 import org.http4k.client.JavaHttpClient
-import org.http4k.core.Body
+import org.http4k.core.*
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
-import org.http4k.core.Request
-import org.http4k.core.Uri
-import org.http4k.core.then
-import org.http4k.core.with
 import org.http4k.events.Events
 import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
@@ -21,7 +17,7 @@ import java.util.*
 
 class Player(
     baseUri: Uri,
-    username: String = "",
+    val username: String = "",
     password: String = "",
     events: Events
 ) {
@@ -29,6 +25,7 @@ class Player(
     private val gameStartedLens = Body.auto<GameStarted>().toLens()
     private val gameDetailsLens = Body.auto<GameDetails>().toLens()
     private val guessLens = Body.auto<Guess>().toLens()
+    private val leaderboardLens = Body.auto<Leaderboard>().toLens()
 
     private val client = ClientTracing(TracingEvents("player", events))
         .then(SetBaseUriFrom(baseUri))
@@ -68,6 +65,13 @@ class Player(
         details.hint shouldBe hint
     }
 
+    fun checkLeaderboard(rankings: Map<String, Int>) {
+        val response = client(Request(GET, "/leaderboard"))
+        response.status.successful shouldBe true
+        val leaderboard = leaderboardLens(response)
+        leaderboard.rankings shouldBe rankings
+    }
+
     private fun register(username: String, password: String) {
         val response = client(
             Request(POST, "/players")
@@ -80,4 +84,5 @@ class Player(
     data class Guess(val secret: String)
     data class GameStarted(val id: UUID)
     data class GameDetails(val hint: String, val won: Boolean)
+    data class Leaderboard(val rankings: Map<String, Int>)
 }

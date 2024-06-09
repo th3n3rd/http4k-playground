@@ -4,6 +4,8 @@ import com.example.common.infra.AppRequestContext
 import com.example.common.infra.AppRequestContext.withPlayerId
 import com.example.gameplay.*
 import com.example.gameplay.infra.asRoute
+import com.example.leaderboard.infra.ShowLeaderboard
+import com.example.leaderboard.infra.asRoute
 import com.example.player.PasswordEncoder
 import com.example.player.RegisterNewPlayer
 import com.example.player.RegisteredPlayers
@@ -35,7 +37,9 @@ object GuessTheSecretApp {
                         .protectedBy(authentication),
                     SubmitGuess(games)
                         .asRoute(withPlayerId)
-                        .protectedBy(authentication)
+                        .protectedBy(authentication),
+                    ShowLeaderboard()
+                        .asRoute()
                 )
             )
     }

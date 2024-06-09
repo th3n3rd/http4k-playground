@@ -7,7 +7,7 @@ import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
-class JourneyTests: RecordTraces() {
+class JourneyTests : RecordTraces() {
 
     init {
         RunDatabaseMigrations(ENV)
@@ -18,11 +18,11 @@ class JourneyTests: RecordTraces() {
         events = events
     )
 
-    private val player = newPlayer()
-
     @Test
     fun `winning gameplay`() {
+        val player = newPlayer()
         val newGame = player.startNewGame()
+
         player.receivedHint(newGame, "_______")
 
         player.guess(newGame, "incorrect")
@@ -36,12 +36,41 @@ class JourneyTests: RecordTraces() {
         player.hasWon(newGame)
     }
 
-    private fun newPlayer(): Player {
-        val randomCredentials = "player-${Random.nextInt()}"
+    @Test
+    fun `track performance`() {
+        val firstPlayer = newPlayer("player-1").also {
+            val newGame = it.startNewGame()
+            it.guess(newGame, "incorrect")
+            it.guess(newGame, "incorrect")
+            it.guess(newGame, "incorrect")
+            it.guess(newGame, "correct")
+        }
+
+        val secondPlayer = newPlayer("player-2").also {
+            val newGame = it.startNewGame()
+            it.guess(newGame, "correct")
+        }
+
+        val thirdPlayer = newPlayer("player-3").also {
+            val newGame = it.startNewGame()
+            it.guess(newGame, "incorrect")
+            it.guess(newGame, "correct")
+        }
+
+        secondPlayer.checkLeaderboard(
+            mapOf(
+                secondPlayer.username to 100,
+                thirdPlayer.username to 50,
+                firstPlayer.username to 25
+            )
+        )
+    }
+
+    private fun newPlayer(username: String = "player-${Random.nextInt()}"): Player {
         return Player(
             baseUri = Uri.of("http://localhost:${appServer.port()}"),
-            username = randomCredentials,
-            password = randomCredentials,
+            username = username,
+            password = username,
             events = events
         )
     }
