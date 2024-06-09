@@ -7,12 +7,14 @@ import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
+import org.http4k.testing.RecordingEvents
 import org.junit.jupiter.api.Test
 
 class SubmitGuessTests {
 
+    private val events = RecordingEvents()
     private val games = Games.InMemory()
-    private val submitGuess = SubmitGuess(games)
+    private val submitGuess = SubmitGuess(games, events)
 
     @Test
     fun `marks the game as won when the guess is correct`() {
@@ -82,6 +84,26 @@ class SubmitGuessTests {
         result shouldBeSuccess {
             games.findByIdAndPlayerId(it.id, it.playerId) shouldBe it
         }
+    }
+
+    @Test
+    fun `publish an event when a game is completed`() {
+        val first = Game(secret = "correct")
+        val second = Game(secret = "correct")
+        val third = Game(secret = "correct")
+        games.save(first)
+        games.save(second)
+        games.save(third)
+
+        submitGuess(first.id, "correct", first.playerId)
+        submitGuess(second.id, "incorrect", second.playerId)
+        submitGuess(third.id, "incorrect", third.playerId)
+        submitGuess(third.id, "correct", third.playerId)
+
+        events.toList() shouldBe listOf(
+            GameCompleted(gameId = first.id, playerId = first.playerId, attempts = 1),
+            GameCompleted(gameId = third.id, playerId = third.playerId, attempts = 2),
+        )
     }
 
     @Test
