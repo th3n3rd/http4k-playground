@@ -5,6 +5,7 @@ import com.example.common.infra.RunDatabaseMigrations
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 class JourneyTests: RecordTraces() {
 
@@ -17,12 +18,7 @@ class JourneyTests: RecordTraces() {
         events = events
     )
 
-    private val player = Player(
-        baseUri = Uri.of("http://localhost:${appServer.port()}"),
-        username = "player-1",
-        password = "player-1",
-        events = events
-    )
+    private val player = newPlayer()
 
     @Test
     fun `winning gameplay`() {
@@ -38,5 +34,15 @@ class JourneyTests: RecordTraces() {
         player.guess(newGame, "correct")
 
         player.hasWon(newGame)
+    }
+
+    private fun newPlayer(): Player {
+        val randomCredentials = "player-${Random.nextInt()}"
+        return Player(
+            baseUri = Uri.of("http://localhost:${appServer.port()}"),
+            username = randomCredentials,
+            password = randomCredentials,
+            events = events
+        )
     }
 }
