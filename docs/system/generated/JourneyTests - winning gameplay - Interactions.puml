@@ -1,0 +1,14 @@
+@startuml
+title JourneyTests - winning gameplay
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+
+Person(player1, "player-1")
+System(app, "app")
+ContainerDb(players, "players")
+ContainerDb(games, "games")    
+Rel_D(player1, app, " ") 
+Rel_D(app, players, " ") 
+Rel_D(app, games, " ")     
+@enduml

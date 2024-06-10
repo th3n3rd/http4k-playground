@@ -1,0 +1,63 @@
+@startuml
+title JourneyTests - winning gameplay
+participant "player-1"
+participant "app"
+database "players"
+database "games"
+"player-1" -> "app": POST players
+activate "app"
+"app" <-> "players": save
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+deactivate "app"
+"player-1" -> "app": POST games
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": save
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+deactivate "app"
+"player-1" -> "app": GET games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 200 
+deactivate "app"
+"player-1" -> "app": POST games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7/guesses
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" <-> "games": save
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+deactivate "app"
+"player-1" -> "app": GET games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 200 
+deactivate "app"
+"player-1" -> "app": POST games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7/guesses
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" <-> "games": save
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+deactivate "app"
+"player-1" -> "app": GET games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 200 
+deactivate "app"
+"player-1" -> "app": POST games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7/guesses
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" <-> "games": save
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+deactivate "app"
+"player-1" -> "app": GET games/6db3e665-c308-4ca8-bcfb-fb4ebe1188e7
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 200 
+deactivate "app"
+@enduml

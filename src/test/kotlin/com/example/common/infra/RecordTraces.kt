@@ -26,7 +26,7 @@ abstract class RecordTraces {
     val events = TracerBulletEvents(
         tracers = listOf(HttpTracer(resolveOrigin), DatabaseTracer(resolveOrigin)),
         renderers = listOf(PumlSequenceDiagram, PumlInteractionDiagram),
-        traceRenderPersistence = TraceRenderPersistence.FileSystem(File("target/tracing")),
+        traceRenderPersistence = TraceRenderPersistence.FileSystem(File("docs/system/generated")),
         reportingMode = Always
     )
 }
