@@ -20,7 +20,7 @@ class JourneyTests : RecordTraces() {
 
     @Test
     fun `winning gameplay`() {
-        val player = newPlayer()
+        val player = newPlayer("player-1")
         val newGame = player.startNewGame()
 
         player.receivedHint(newGame, "_______")
@@ -66,7 +66,7 @@ class JourneyTests : RecordTraces() {
         )
     }
 
-    private fun newPlayer(username: String = "player-${Random.nextInt()}"): Player {
+    private fun newPlayer(username: String): Player {
         return Player(
             baseUri = Uri.of("http://localhost:${appServer.port()}"),
             username = username,
