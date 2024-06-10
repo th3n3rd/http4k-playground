@@ -34,6 +34,7 @@ object StartGuessTheSecretAppServer {
 
         val games = TracingGames(appEvents, Games.Database(database))
         val players = TracingRegisteredPlayers(appEvents, RegisteredPlayers.Database(database))
+        val secrets = Secrets.Rotating(listOf("correct"))
         val rankings = Rankings.InMemory().apply {
             save(Ranking(PlayerId(), "alice", 25))
             save(Ranking(PlayerId(), "bob", 100))
@@ -45,7 +46,7 @@ object StartGuessTheSecretAppServer {
             .then(GuessTheSecretApp(
                 players = players,
                 games = games,
-                secrets = Secrets.Rotating(listOf("correct")),
+                secrets = secrets,
                 rankings = rankings,
                 passwordEncoder = PasswordEncoder.Argon2(),
             ))
