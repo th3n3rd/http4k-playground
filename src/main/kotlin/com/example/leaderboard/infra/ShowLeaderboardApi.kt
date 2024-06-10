@@ -1,5 +1,6 @@
 package com.example.leaderboard.infra
 
+import com.example.leaderboard.ShowLeaderboard
 import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Response
