@@ -1,96 +1,96 @@
 @startuml
 title JourneyTests - track performance
-participant "player-1"
-participant "player-2"
-participant "player-3"
+participant "alice"
+participant "bob"
+participant "charlie"
 participant "app"
 database "players"
 database "games"
-"player-1" -> "app": POST players
+"alice" -> "app": POST players
 activate "app"
 "app" <-> "players": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"player-1" -> "app": POST games
+"alice" -> "app": POST games
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"player-1" -> "app": POST games/d77999a7-78ba-4a42-8e9c-3b2c433099d1/guesses
-activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
-deactivate "app"
-"player-1" -> "app": POST games/d77999a7-78ba-4a42-8e9c-3b2c433099d1/guesses
+"alice" -> "app": POST games/1be11b8f-5e1d-45ef-bdcc-d8c3441a75fb/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"player-1" -> "app": POST games/d77999a7-78ba-4a42-8e9c-3b2c433099d1/guesses
+"alice" -> "app": POST games/1be11b8f-5e1d-45ef-bdcc-d8c3441a75fb/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"player-1" -> "app": POST games/d77999a7-78ba-4a42-8e9c-3b2c433099d1/guesses
+"alice" -> "app": POST games/1be11b8f-5e1d-45ef-bdcc-d8c3441a75fb/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-1": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"player-2" -> "app": POST players
+"alice" -> "app": POST games/1be11b8f-5e1d-45ef-bdcc-d8c3441a75fb/guesses
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" <-> "games": save
+"app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
+deactivate "app"
+"bob" -> "app": POST players
 activate "app"
 "app" <-> "players": save
-"app" -[#DarkGreen]> "player-2": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
-"player-2" -> "app": POST games
+"bob" -> "app": POST games
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-2": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
-"player-2" -> "app": POST games/488d5b1f-3870-4390-a19f-0d15b3ece26b/guesses
+"bob" -> "app": POST games/c83784f7-aa08-4ea2-8f17-9692e9d3df24/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-2": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
-"player-3" -> "app": POST players
+"charlie" -> "app": POST players
 activate "app"
 "app" <-> "players": save
-"app" -[#DarkGreen]> "player-3": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
-"player-3" -> "app": POST games
+"charlie" -> "app": POST games
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-3": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
-"player-3" -> "app": POST games/05ae3547-f525-4814-a100-9987c20f1470/guesses
-activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
-"app" -[#DarkGreen]> "player-3": <color:DarkGreen> 201 
-deactivate "app"
-"player-3" -> "app": POST games/05ae3547-f525-4814-a100-9987c20f1470/guesses
+"charlie" -> "app": POST games/ceb01616-9567-4b1c-b11f-0047d24a370f/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
-"app" -[#DarkGreen]> "player-3": <color:DarkGreen> 201 
+"app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
-"player-2" -> "app": GET leaderboard
+"charlie" -> "app": POST games/ceb01616-9567-4b1c-b11f-0047d24a370f/guesses
+activate "app"
+"app" <-> "players": find by username
+"app" <-> "games": find by id and player id
+"app" <-> "games": save
+"app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
+deactivate "app"
+"bob" -> "app": GET leaderboard
 activate "app"
 
-"app" -[#DarkGreen]> "player-2": <color:DarkGreen> 200 
+"app" -[#DarkGreen]> "bob": <color:DarkGreen> 200 
 deactivate "app"
 @enduml

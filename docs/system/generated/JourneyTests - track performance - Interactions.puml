@@ -4,15 +4,15 @@ title JourneyTests - track performance
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 
-Person(player1, "player-1")
-Person(player2, "player-2")
-Person(player3, "player-3")
+System(alice, "alice")
+System(bob, "bob")
+System(charlie, "charlie")
 System(app, "app")
 ContainerDb(players, "players")
 ContainerDb(games, "games")    
-Rel_D(player1, app, " ") 
+Rel_D(alice, app, " ") 
 Rel_D(app, players, " ") 
 Rel_D(app, games, " ") 
-Rel_D(player2, app, " ") 
-Rel_D(player3, app, " ")     
+Rel_D(bob, app, " ") 
+Rel_D(charlie, app, " ")     
 @enduml

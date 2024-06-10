@@ -16,9 +16,9 @@ object ShowLeaderboardApi {
             Response(OK).with(
                 Response.leaderboard of Leaderboard(
                     rankings = mapOf(
-                        "player-2" to 100,
-                        "player-3" to 50,
-                        "player-1" to 25
+                        "bob" to 100,
+                        "charlie" to 50,
+                        "alice" to 25
                     )
                 )
             )
