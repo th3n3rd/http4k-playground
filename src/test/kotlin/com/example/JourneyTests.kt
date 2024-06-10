@@ -2,6 +2,7 @@ package com.example
 
 import com.example.common.infra.RecordTraces
 import com.example.common.infra.RunDatabaseMigrations
+import com.example.common.infra.TestEnvironment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
@@ -9,12 +10,14 @@ import kotlin.random.Random
 
 class JourneyTests : RecordTraces() {
 
+    private val env = TestEnvironment()
+
     init {
-        RunDatabaseMigrations(ENV)
+        RunDatabaseMigrations(env)
     }
 
     private val appServer = StartGuessTheSecretAppServer(
-        environment = ENV,
+        environment = env,
         events = events
     )
 
