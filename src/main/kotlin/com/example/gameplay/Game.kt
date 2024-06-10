@@ -4,7 +4,6 @@ import com.example.player.PlayerId
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
-import org.http4k.events.Event
 
 data class Game(
     val id: GameId = GameId(),
@@ -29,9 +28,3 @@ data class Game(
 
     data class Guess(val secret: String)
 }
-
-data class GameCompleted(
-    val gameId: GameId,
-    val playerId: PlayerId,
-    val attempts: Int
-): Event
