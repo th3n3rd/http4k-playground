@@ -1,5 +1,6 @@
 package com.example.leaderboard.infra
 
+import com.example.leaderboard.Rankings
 import com.example.leaderboard.ShowLeaderboard
 import org.http4k.core.Body
 import org.http4k.core.Method
@@ -11,15 +12,13 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
 object ShowLeaderboardApi {
-    operator fun invoke(): RoutingHttpHandler {
+    operator fun invoke(rankings: Rankings): RoutingHttpHandler {
         return "/leaderboard" bind Method.GET to {
             Response(OK).with(
                 Response.leaderboard of Leaderboard(
-                    rankings = mapOf(
-                        "bob" to 100,
-                        "charlie" to 50,
-                        "alice" to 25
-                    )
+                    rankings = rankings
+                        .findAll()
+                        .associate { it.playerUsername to it.score }
                 )
             )
         }
@@ -32,4 +31,4 @@ object ShowLeaderboardApi {
     data class Leaderboard(val rankings: Map<String, Int>)
 }
 
-fun ShowLeaderboard.asRoute() = ShowLeaderboardApi()
+fun ShowLeaderboard.asRoute(rankings: Rankings) = ShowLeaderboardApi(rankings)

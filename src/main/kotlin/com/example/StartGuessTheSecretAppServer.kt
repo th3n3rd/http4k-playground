@@ -8,7 +8,11 @@ import com.example.gameplay.Secrets
 import com.example.gameplay.infra.Database
 import com.example.gameplay.infra.Rotating
 import com.example.gameplay.infra.TracingGames
+import com.example.leaderboard.infra.InMemory
+import com.example.leaderboard.Ranking
+import com.example.leaderboard.Rankings
 import com.example.player.PasswordEncoder
+import com.example.player.PlayerId
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.Argon2
 import com.example.player.infra.Database
@@ -30,6 +34,11 @@ object StartGuessTheSecretAppServer {
 
         val games = TracingGames(appEvents, Games.Database(database))
         val players = TracingRegisteredPlayers(appEvents, RegisteredPlayers.Database(database))
+        val rankings = Rankings.InMemory().apply {
+            save(Ranking(PlayerId(), "alice", 25))
+            save(Ranking(PlayerId(), "bob", 100))
+            save(Ranking(PlayerId(), "charlie", 50))
+        }
 
         val printingApp: HttpHandler = PrintRequest()
             .then(ServerTracing(appEvents))
@@ -37,6 +46,7 @@ object StartGuessTheSecretAppServer {
                 players = players,
                 games = games,
                 secrets = Secrets.Rotating(listOf("correct")),
+                rankings = rankings,
                 passwordEncoder = PasswordEncoder.Argon2(),
             ))
 

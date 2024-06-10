@@ -15,46 +15,46 @@ activate "app"
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": GET games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4
+"alice" -> "app": GET games/d8a4938b-8d2c-4e05-81dd-28077d1111d7
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 200 
 deactivate "app"
-"alice" -> "app": POST games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4/guesses
+"alice" -> "app": POST games/d8a4938b-8d2c-4e05-81dd-28077d1111d7/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": GET games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4
+"alice" -> "app": GET games/d8a4938b-8d2c-4e05-81dd-28077d1111d7
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 200 
 deactivate "app"
-"alice" -> "app": POST games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4/guesses
+"alice" -> "app": POST games/d8a4938b-8d2c-4e05-81dd-28077d1111d7/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": GET games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4
+"alice" -> "app": GET games/d8a4938b-8d2c-4e05-81dd-28077d1111d7
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 200 
 deactivate "app"
-"alice" -> "app": POST games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4/guesses
+"alice" -> "app": POST games/d8a4938b-8d2c-4e05-81dd-28077d1111d7/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": GET games/e193e9fd-ef0a-441d-bdad-cd4ed08defb4
+"alice" -> "app": GET games/d8a4938b-8d2c-4e05-81dd-28077d1111d7
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id

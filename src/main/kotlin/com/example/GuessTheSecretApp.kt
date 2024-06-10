@@ -5,6 +5,8 @@ import com.example.common.infra.AppRequestContext.withPlayerId
 import com.example.gameplay.*
 import com.example.gameplay.infra.asRoute
 import com.example.leaderboard.ShowLeaderboard
+import com.example.leaderboard.infra.InMemory
+import com.example.leaderboard.Rankings
 import com.example.leaderboard.infra.asRoute
 import com.example.player.PasswordEncoder
 import com.example.player.RegisterNewPlayer
@@ -21,6 +23,7 @@ object GuessTheSecretApp {
         players: RegisteredPlayers,
         games: Games,
         secrets: Secrets,
+        rankings: Rankings,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
         val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
@@ -39,7 +42,7 @@ object GuessTheSecretApp {
                         .asRoute(withPlayerId)
                         .protectedBy(authentication),
                     ShowLeaderboard()
-                        .asRoute()
+                        .asRoute(rankings)
                 )
             )
     }
