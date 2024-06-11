@@ -13,6 +13,7 @@ import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
+import org.http4k.routing.RoutedRequest
 import java.util.*
 
 class Player(
@@ -44,7 +45,7 @@ class Player(
     }
 
     fun hasWon(game: GameId) {
-        val response = client(Request(GET, "/games/${game.value}"))
+        val response = client(RoutedRequest(Request(GET, "/games/${game.value}"), UriTemplate.from("/games/{gameId}")))
         response.status.successful shouldBe true
         val details = gameDetailsLens(response)
         details.won shouldBe true
@@ -52,14 +53,14 @@ class Player(
 
     fun guess(game: GameId, secret: String) {
         val response = client(
-            Request(POST, "/games/${game.value}/guesses")
+            RoutedRequest(Request(POST, "/games/${game.value}/guesses"), UriTemplate.from("/games/{gameId}/guesses"))
                 .with(guessLens of Guess(secret))
         )
         response.status.successful shouldBe true
     }
 
     fun receivedHint(game: GameId, hint: String) {
-        val response = client(Request(GET, "/games/${game.value}"))
+        val response = client(RoutedRequest(Request(GET, "/games/${game.value}"), UriTemplate.from("/games/{gameId}")))
         response.status.successful shouldBe true
         val details = gameDetailsLens(response)
         details.hint shouldBe hint

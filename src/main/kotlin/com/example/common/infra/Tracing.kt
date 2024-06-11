@@ -12,6 +12,7 @@ import org.http4k.events.then
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ResponseFilters.ReportHttpTransaction
 import org.http4k.filter.ServerFilters
+import org.http4k.routing.RoutedRequest
 
 object TracingEvents {
     operator fun invoke(origin: String, events: Events) = AddZipkinTraces()
@@ -22,7 +23,13 @@ object TracingEvents {
 
 object ClientTracing {
     operator fun invoke(events: Events) = ClientFilters.RequestTracing()
-        .then(ReportHttpTransaction { events(Outgoing(it)) })
+        .then(ReportHttpTransaction { events(Outgoing(
+            uri = it.request.uri,
+            method = it.request.method,
+            status = it.response.status,
+            latency = it.duration.toMillis(),
+            xUriTemplate = if (it.request is RoutedRequest) (it.request as RoutedRequest).xUriTemplate.toString() else it.request.uri.path.trimStart('/')
+        )) })
 }
 
 object ServerTracing {

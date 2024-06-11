@@ -17,28 +17,28 @@ activate "app"
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": POST games/3a5f757a-e2cc-419c-abac-cdf40484602d/guesses
+"alice" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": POST games/3a5f757a-e2cc-419c-abac-cdf40484602d/guesses
+"alice" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": POST games/3a5f757a-e2cc-419c-abac-cdf40484602d/guesses
+"alice" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
-"alice" -> "app": POST games/3a5f757a-e2cc-419c-abac-cdf40484602d/guesses
+"alice" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
@@ -56,7 +56,7 @@ activate "app"
 "app" <-> "games": save
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
-"bob" -> "app": POST games/2b1bcca6-2278-4601-8a3a-1bc57f28072b/guesses
+"bob" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
@@ -74,14 +74,14 @@ activate "app"
 "app" <-> "games": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
-"charlie" -> "app": POST games/5421e709-4f4a-44ee-be13-c8f6aba6ff3b/guesses
+"charlie" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
-"charlie" -> "app": POST games/5421e709-4f4a-44ee-be13-c8f6aba6ff3b/guesses
+"charlie" -> "app": POST games/{gameId}/guesses
 activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
