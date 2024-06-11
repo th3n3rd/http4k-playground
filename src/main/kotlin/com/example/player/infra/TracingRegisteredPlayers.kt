@@ -1,6 +1,7 @@
 package com.example.player.infra
 
 import com.example.common.infra.DatabaseCall
+import com.example.player.PlayerId
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
 import org.http4k.events.Events
@@ -21,6 +22,11 @@ class TracingRegisteredPlayers(private val events: Events, private val players: 
     override fun existByUsername(username: String): Boolean {
         trace("exist by username")
         return players.existByUsername(username)
+    }
+
+    override fun findById(id: PlayerId): RegisteredPlayer?{
+        trace("find by id")
+        return players.findById(id)
     }
 
     private fun trace(operation: String) {

@@ -1,6 +1,7 @@
 package com.example.player.infra
 
 import com.example.common.infra.database.tables.references.PLAYERS
+import com.example.player.PlayerId
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
 import java.util.*
@@ -33,5 +34,14 @@ class DatabaseRegisteredPlayers(private val database: DSLContext) : RegisteredPl
                 .from(PLAYERS)
                 .where(PLAYERS.USERNAME.eq(username))
         )
+    }
+
+    override fun findById(id: PlayerId): RegisteredPlayer? {
+        return database
+            .select()
+            .from(PLAYERS)
+            .where(PLAYERS.ID.eq(id.value))
+            .fetchOne()
+            ?.into(RegisteredPlayer::class.java)
     }
 }

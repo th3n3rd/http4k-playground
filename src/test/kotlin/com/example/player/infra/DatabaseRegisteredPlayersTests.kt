@@ -77,10 +77,27 @@ class DatabaseRegisteredPlayersTests {
     }
 
     @Test
-    fun `returns nothing if cannot find a player by username`() {
-        val foundPlayer = players.findByUsername("non-existing")
+    fun `find persisted players by id`() {
+        val existingPlayerId = PlayerId()
+        context
+            .insertInto(PLAYERS)
+            .values(existingPlayerId.value, "existing-one", "encoded-existing-one")
+            .values(UUID.randomUUID(), "existing-two", "encoded-existing-two")
+            .execute()
 
-        foundPlayer shouldBe null
+        val foundPlayer = players.findById(existingPlayerId)!!
+
+        foundPlayer shouldBeEqual RegisteredPlayer(
+            id = existingPlayerId,
+            username = "existing-one",
+            password = EncodedPassword("encoded-existing-one")
+        )
+    }
+
+    @Test
+    fun `returns nothing if cannot find a player`() {
+        players.findByUsername("non-existing") shouldBe null
+        players.findById(PlayerId()) shouldBe null
     }
 }
 

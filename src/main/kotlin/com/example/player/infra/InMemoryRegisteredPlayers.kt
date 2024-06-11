@@ -1,5 +1,6 @@
 package com.example.player.infra
 
+import com.example.player.PlayerId
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
 import java.util.concurrent.CopyOnWriteArrayList
@@ -19,6 +20,10 @@ class InMemoryRegisteredPlayers : RegisteredPlayers {
 
     override fun existByUsername(username: String): Boolean {
         return players.any { it.username == username }
+    }
+
+    override fun findById(id: PlayerId): RegisteredPlayer? {
+        return players.find { it.id == id }
     }
 
     fun findAll(): List<RegisteredPlayer> {

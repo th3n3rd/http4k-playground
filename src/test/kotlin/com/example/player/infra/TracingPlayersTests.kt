@@ -61,4 +61,19 @@ class TracingPlayersTests {
             DatabaseCall("players", "exist by username"),
         )
     }
+
+    @Test
+    fun `publish a new event when retrieving an existing player by id`() {
+        val existingPlayer = RegisteredPlayer(
+            username = "existing-player",
+            password = EncodedPassword("dont-care")
+        )
+        players.save(existingPlayer)
+
+        val retrievedPlayer = tracingPlayers.findById(existingPlayer.id)
+
+        retrievedPlayer shouldBe existingPlayer
+        events.toList() shouldBe listOf(DatabaseCall("players", "find by id"))
+    }
+
 }
