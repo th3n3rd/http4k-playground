@@ -2,17 +2,22 @@ package com.example.leaderboard.infra
 
 import com.example.leaderboard.Ranking
 import com.example.leaderboard.Rankings
-import java.util.concurrent.CopyOnWriteArrayList
+import com.example.player.PlayerId
+import java.util.concurrent.ConcurrentHashMap
 
 fun Rankings.Companion.InMemory() = object: Rankings {
-    private val rankings = CopyOnWriteArrayList<Ranking>()
+    private val rankingsByPlayer = ConcurrentHashMap<PlayerId, Ranking>()
 
     override fun save(ranking: Ranking) {
-        rankings.add(ranking)
+        rankingsByPlayer[ranking.playerId] = ranking
     }
 
     override fun findAll(): List<Ranking> {
-        return rankings.toList()
+        return rankingsByPlayer.values.toList()
+    }
+
+    override fun findByPlayerId(playerId: PlayerId): Ranking? {
+        return rankingsByPlayer[playerId]
     }
 }
 
