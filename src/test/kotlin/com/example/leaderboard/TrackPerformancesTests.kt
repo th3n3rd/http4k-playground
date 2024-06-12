@@ -10,8 +10,8 @@ import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -38,7 +38,9 @@ class TrackPerformancesTests {
         val result = trackPerformances(playerId = alice.id, attempts = 1)
 
         result shouldBeSuccess Unit
-        rankings.findAll().single() shouldBe Ranking(alice.id, alice.username, 100)
+        rankings.findAll() shouldContainOnly listOf(
+            Ranking(alice.id, alice.username, 100)
+        )
     }
 
     @Test
@@ -47,7 +49,9 @@ class TrackPerformancesTests {
         val result = trackPerformances(playerId = alice.id, attempts = 1)
 
         result shouldBeSuccess Unit
-        rankings.findAll().single() shouldBe Ranking(alice.id, alice.username, 200)
+        rankings.findAll() shouldContainOnly listOf(
+            Ranking(alice.id, alice.username, 200)
+        )
     }
 
     @Test
@@ -55,7 +59,7 @@ class TrackPerformancesTests {
         trackPerformances(playerId = alice.id, attempts = 1)
         trackPerformances(playerId = bob.id, attempts = 1)
 
-        rankings.findAll().sortedBy { it.playerUsername } shouldBe listOf(
+        rankings.findAll() shouldContainOnly listOf(
             Ranking(alice.id, alice.username, 100),
             Ranking(bob.id, bob.username, 100),
         )
