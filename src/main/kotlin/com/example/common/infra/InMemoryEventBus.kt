@@ -5,7 +5,7 @@ import org.http4k.events.Events
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
-fun EventsBus.Companion.InMemory(events: Events) = InMemoryEventBus(events)
+fun EventsBus.Companion.InMemory(events: Events = {}) = InMemoryEventBus(events)
 
 class InMemoryEventBus(private val events: Events): com.example.common.infra.EventsBus {
     private val listeners = ConcurrentHashMap<KClass<out Event>, List<(Event) -> Unit>>()
