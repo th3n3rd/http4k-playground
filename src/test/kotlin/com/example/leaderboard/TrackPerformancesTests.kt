@@ -6,6 +6,7 @@ import com.example.player.PlayerId
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.InMemory
+import dev.forkhandles.result4k.kotest.shouldBeFailure
 import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -79,6 +80,15 @@ class TrackPerformancesTests {
             charlie.username to 33,
             dave.username to 25,
         ))
+    }
+
+    @Test
+    fun `fails when ranking a player that does not exist`() {
+        val nonExistingPlayer = PlayerId()
+
+        val result = trackPerformances(nonExistingPlayer, attempts = 1)
+
+        result shouldBeFailure TrackPerformanceError.PlayerNotFound(nonExistingPlayer)
     }
 
     private fun newPlayer(username: String) = RegisteredPlayer(
