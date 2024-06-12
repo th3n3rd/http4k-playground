@@ -6,6 +6,7 @@ participant "charlie"
 participant "app"
 database "players"
 database "games"
+database "rankings"
 "alice" -> "app": POST players
 activate "app"
 "app" <-> "players": save
@@ -44,6 +45,8 @@ activate "app"
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" <-> "players": find by id
+"app" <-> "rankings": find by player id
+"app" <-> "rankings": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": POST players
@@ -63,6 +66,8 @@ activate "app"
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" <-> "players": find by id
+"app" <-> "rankings": find by player id
+"app" <-> "rankings": save
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
 "charlie" -> "app": POST players
@@ -89,11 +94,13 @@ activate "app"
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
 "app" <-> "players": find by id
+"app" <-> "rankings": find by player id
+"app" <-> "rankings": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": GET leaderboard
 activate "app"
-
+"app" <-> "rankings": find all
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 200 
 deactivate "app"
 @enduml
