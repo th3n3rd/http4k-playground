@@ -1,8 +1,6 @@
 package com.example
 
-import com.example.common.infra.DatabaseContext
-import com.example.common.infra.TracingEvents
-import com.example.common.infra.ServerTracing
+import com.example.common.infra.*
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.infra.Database
@@ -35,15 +33,13 @@ object StartGuessTheSecretAppServer {
         val games = TracingGames(appEvents, Games.Database(database))
         val players = TracingRegisteredPlayers(appEvents, RegisteredPlayers.Database(database))
         val secrets = Secrets.Rotating(listOf("correct"))
-        val rankings = Rankings.InMemory().apply {
-            save(Ranking(PlayerId(), "alice", 25))
-            save(Ranking(PlayerId(), "bob", 100))
-            save(Ranking(PlayerId(), "charlie", 50))
-        }
+        val rankings = Rankings.InMemory()
+        val eventsBus = EventsBus.InMemory(appEvents)
 
         val printingApp: HttpHandler = PrintRequest()
             .then(ServerTracing(appEvents))
             .then(GuessTheSecretApp(
+                eventsBus = eventsBus,
                 players = players,
                 games = games,
                 secrets = secrets,

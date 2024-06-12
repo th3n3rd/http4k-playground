@@ -52,6 +52,7 @@ activate "app"
 "app" <-> "players": find by username
 "app" <-> "games": find by id and player id
 "app" <-> "games": save
+"app" <-> "players": find by id
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": GET games/{gameId}
