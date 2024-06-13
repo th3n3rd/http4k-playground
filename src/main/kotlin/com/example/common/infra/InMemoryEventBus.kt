@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 
 fun EventsBus.Companion.InMemory(events: Events = {}) = InMemoryEventBus(events)
 
-class InMemoryEventBus(private val events: Events): com.example.common.infra.EventsBus {
+class InMemoryEventBus(private val events: Events): EventsBus {
     private val listeners = ConcurrentHashMap<KClass<out Event>, List<(Event) -> Unit>>()
 
     override operator fun <T : Event> invoke(eventType: KClass<T>, listener: (T) -> Unit) {
