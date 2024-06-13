@@ -86,7 +86,7 @@ class TrackPerformancesTests {
 
         val result = trackPerformances(nonExistingPlayer, attempts = 1)
 
-        result shouldBeFailure TrackPerformanceError.PlayerNotFound(nonExistingPlayer)
+        result shouldBeFailure TrackPerformancesError.PlayerNotFound(nonExistingPlayer)
     }
 
     private fun newPlayer(username: String) = RegisteredPlayer(
