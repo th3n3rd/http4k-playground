@@ -2,6 +2,7 @@ package com.example.gameplay
 
 import com.example.gameplay.GameGuessingError.GameAlreadyCompleted
 import com.example.gameplay.SubmitGuessError.CouldNotGuess
+import com.example.gameplay.SubmitGuessError.GameNotFound
 import com.example.gameplay.infra.InMemory
 import com.example.player.PlayerId
 import dev.forkhandles.result4k.flatMap

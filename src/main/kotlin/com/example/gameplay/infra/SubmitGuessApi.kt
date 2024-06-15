@@ -1,9 +1,9 @@
 package com.example.gameplay.infra
 
 import com.example.gameplay.GameId
-import com.example.gameplay.GameNotFound
 import com.example.gameplay.SubmitGuess
 import com.example.gameplay.SubmitGuessError.CouldNotGuess
+import com.example.gameplay.SubmitGuessError.GameNotFound
 import com.example.player.PlayerId
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
