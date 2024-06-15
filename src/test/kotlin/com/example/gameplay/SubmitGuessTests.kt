@@ -113,7 +113,7 @@ class SubmitGuessTests {
 
         val result = submitGuess(game.id, "correct", game.playerId)
 
-        result shouldBeFailure GameAlreadyCompleted(game.id)
+        result shouldBeFailure GameGuessingError.GameAlreadyCompleted(game.id)
     }
 
     @Test

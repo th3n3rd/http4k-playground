@@ -17,7 +17,7 @@ data class Game(
 
     fun guess(secret: String): Result<Game, Exception> {
         if (won) {
-            return Failure(GameAlreadyCompleted(id))
+            return Failure(GameGuessingError.GameAlreadyCompleted(id))
         }
         return Success(copy(
             guesses = guesses + Guess(secret)
@@ -27,4 +27,8 @@ data class Game(
     fun ownedBy(playerId: PlayerId) = this.playerId == playerId
 
     data class Guess(val secret: String)
+}
+
+sealed interface GameGuessingError {
+    data class GameAlreadyCompleted(val gameId: GameId) : RuntimeException("Game with id ${gameId.value} is already completed"), GameGuessingError
 }

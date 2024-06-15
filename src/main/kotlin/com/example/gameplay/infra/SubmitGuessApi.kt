@@ -1,6 +1,6 @@
 package com.example.gameplay.infra
 
-import com.example.gameplay.GameAlreadyCompleted
+import com.example.gameplay.GameGuessingError
 import com.example.gameplay.GameId
 import com.example.gameplay.GameNotFound
 import com.example.gameplay.SubmitGuess
@@ -40,7 +40,7 @@ object SubmitGuessApi {
                 .recover { error ->
                     when (error) {
                         is GameNotFound -> Response(NOT_FOUND)
-                        is GameAlreadyCompleted -> Response(BAD_REQUEST)
+                        is GameGuessingError.GameAlreadyCompleted -> Response(BAD_REQUEST)
                         else -> Response(INTERNAL_SERVER_ERROR)
                     }
                 }
