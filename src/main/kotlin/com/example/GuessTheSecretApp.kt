@@ -1,7 +1,7 @@
 package com.example
 
-import com.example.common.infra.AppRequestContext
-import com.example.common.infra.AppRequestContext.withPlayerId
+import com.example.player.infra.PlayerRequestContext
+import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.common.infra.EventsBus
 import com.example.gameplay.*
 import com.example.gameplay.infra.asRoute
@@ -34,7 +34,7 @@ object GuessTheSecretApp {
         TrackPerformances(players, rankings)
             .asTask(eventsBus)
 
-        return AppRequestContext()
+        return PlayerRequestContext()
             .then(
                 routes(
                     RegisterNewPlayer(players, passwordEncoder)

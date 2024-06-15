@@ -1,7 +1,7 @@
 package com.example.gameplay.infra
 
-import com.example.common.infra.AppRequestContext.withPlayerId
-import com.example.common.infra.authenticatedAs
+import com.example.player.infra.PlayerRequestContext.withPlayerId
+import com.example.player.infra.authenticatedAs
 import com.example.gameplay.Games
 import com.example.gameplay.Secrets
 import com.example.gameplay.StartNewGame

@@ -1,7 +1,6 @@
 package com.example.player.infra
 
-import com.example.common.infra.AppRequestContext
-import com.example.common.infra.AppRequestContext.withPlayerId
+import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.player.EncodedPassword
 import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayer
@@ -29,7 +28,7 @@ class AuthenticationTests {
     )
 
     private val dummyApi = { request: Request -> Response(OK).body(withPlayerId(request).value.toString()) }
-    private val protectedApi = AppRequestContext()
+    private val protectedApi = PlayerRequestContext()
         .then(AuthenticatePlayer(players, PasswordEncoder.Fake(), withPlayerId))
         .then(dummyApi)
 

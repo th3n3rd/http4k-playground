@@ -1,6 +1,6 @@
 package com.example.leaderboard.infra
 
-import com.example.common.infra.authenticatedAs
+import com.example.player.infra.authenticatedAs
 import com.example.leaderboard.Ranking
 import com.example.leaderboard.Rankings
 import com.example.leaderboard.ShowLeaderboard

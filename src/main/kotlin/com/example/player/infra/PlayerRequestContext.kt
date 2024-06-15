@@ -1,12 +1,12 @@
-package com.example.common.infra
+package com.example.player.infra
 
 import com.example.player.PlayerId
 import org.http4k.core.RequestContexts
 import org.http4k.filter.ServerFilters.InitialiseRequestContext
 import org.http4k.lens.RequestContextKey
 
-object AppRequestContext {
-    private val context = RequestContexts()
+object PlayerRequestContext {
+    private val context = RequestContexts("player")
 
     val withPlayerId = RequestContextKey.required<PlayerId>(context, name = "authenticated-player-id")
 
