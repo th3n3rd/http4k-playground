@@ -15,7 +15,7 @@ data class Game(
     val hint = HintProgression(secret, attempts)
     val won = guesses.any { it.secret == secret }
 
-    fun guess(secret: String): Result<Game, Exception> {
+    fun guess(secret: String): Result<Game, GameGuessingError> {
         if (won) {
             return Failure(GameGuessingError.GameAlreadyCompleted(id))
         }

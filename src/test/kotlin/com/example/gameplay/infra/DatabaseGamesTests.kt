@@ -7,7 +7,7 @@ import com.example.common.infra.database.tables.references.GAMES
 import com.example.common.infra.database.tables.references.GAME_GUESSES
 import com.example.gameplay.Game
 import com.example.gameplay.Games
-import dev.forkhandles.result4k.orThrow
+import dev.forkhandles.result4k.valueOrNull
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.equals.shouldBeEqual
@@ -84,7 +84,7 @@ class DatabaseGamesTests {
             guesses = listOf(Game.Guess("first"), Game.Guess("second"))
         ))
 
-        val updatedGame = existingGame.guess("third").orThrow()
+        val updatedGame = existingGame.guess("third").valueOrNull()!!
         games.save(updatedGame)
 
         existingGame should havePersistedGuesses(listOf("first", "second", "third"))

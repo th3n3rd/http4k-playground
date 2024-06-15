@@ -1,5 +1,7 @@
 package com.example.gameplay
 
+import com.example.gameplay.GameGuessingError.GameAlreadyCompleted
+import com.example.gameplay.SubmitGuessError.CouldNotGuess
 import com.example.gameplay.infra.InMemory
 import com.example.player.PlayerId
 import dev.forkhandles.result4k.flatMap
@@ -113,7 +115,7 @@ class SubmitGuessTests {
 
         val result = submitGuess(game.id, "correct", game.playerId)
 
-        result shouldBeFailure GameGuessingError.GameAlreadyCompleted(game.id)
+        result shouldBeFailure CouldNotGuess(reason = GameAlreadyCompleted(game.id))
     }
 
     @Test
