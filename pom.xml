@@ -60,6 +60,12 @@
                 <version>${http4kVersion}</version>
         </dependency>
         <dependency>
+                <groupId>org.http4k</groupId>
+                <artifactId>http4k-contract</artifactId>
+                <version>${http4kVersion}</version>
+        </dependency>
+
+        <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
                 <version>${kotlinVersion}</version>
