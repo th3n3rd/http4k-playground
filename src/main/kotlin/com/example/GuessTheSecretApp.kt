@@ -41,6 +41,8 @@ object GuessTheSecretApp {
                     contract {
                         routes += RegisterNewPlayer(players, passwordEncoder)
                             .asRoute()
+                        routes += ShowLeaderboard()
+                            .asRoute(rankings)
                     },
                     StartNewGame(games, secrets)
                         .asRoute(withPlayerId)
@@ -51,8 +53,6 @@ object GuessTheSecretApp {
                     SubmitGuess(games, eventsBus)
                         .asRoute(withPlayerId)
                         .protectedBy(authentication),
-                    ShowLeaderboard()
-                        .asRoute(rankings)
                 )
             )
     }
