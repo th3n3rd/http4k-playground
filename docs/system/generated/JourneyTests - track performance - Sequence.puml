@@ -100,6 +100,7 @@ activate "app"
 deactivate "app"
 "bob" -> "app": GET leaderboard
 activate "app"
+"app" <-> "players": find by username
 "app" <-> "rankings": find all
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 200 
 deactivate "app"

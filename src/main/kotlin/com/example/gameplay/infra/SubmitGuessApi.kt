@@ -7,6 +7,8 @@ import com.example.gameplay.SubmitGuessError.GameNotFound
 import com.example.player.PlayerId
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
+import org.http4k.contract.ContractRoute
+import org.http4k.contract.div
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -18,32 +20,32 @@ import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
 import org.http4k.lens.RequestContextLens
-import org.http4k.routing.RoutingHttpHandler
-import org.http4k.routing.bind
 import java.util.*
 
 object SubmitGuessApi {
 
-    operator fun invoke(submitGuess: SubmitGuess, withPlayerId: RequestContextLens<PlayerId>): RoutingHttpHandler {
-        return "/games/{id}/guesses" bind POST to {
-            submitGuess(Request.gameId(it), Request.submittedGuess(it).secret, withPlayerId(it))
-                .map { game ->
-                    Response(CREATED).with(
-                        Response.gameUpdated of GameUpdated(
-                            id = game.id.value,
-                            playerId = game.playerId.value,
-                            hint = game.hint,
-                            won = game.won
+    operator fun invoke(submitGuess: SubmitGuess, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
+        return "/games" / Request.gameId / "guesses" bindContract POST to { gameId, _ ->
+            { req ->
+                submitGuess(gameId, Request.submittedGuess(req).secret, withPlayerId(req))
+                    .map { game ->
+                        Response(CREATED).with(
+                            Response.gameUpdated of GameUpdated(
+                                id = game.id.value,
+                                playerId = game.playerId.value,
+                                hint = game.hint,
+                                won = game.won
+                            )
                         )
-                    )
-                }
-                .recover { error ->
-                    when (error) {
-                        is GameNotFound -> Response(NOT_FOUND)
-                        is CouldNotGuess -> Response(BAD_REQUEST)
-                        else -> Response(INTERNAL_SERVER_ERROR)
                     }
-                }
+                    .recover { error ->
+                        when (error) {
+                            is GameNotFound -> Response(NOT_FOUND)
+                            is CouldNotGuess -> Response(BAD_REQUEST)
+                            else -> Response(INTERNAL_SERVER_ERROR)
+                        }
+                    }
+            }
         }
     }
 
