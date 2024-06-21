@@ -14,7 +14,6 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
-import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
@@ -25,28 +24,28 @@ import java.util.*
 object SubmitGuessApi {
 
     operator fun invoke(submitGuess: SubmitGuess, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
-        return "/games" / Request.gameId / "guesses" bindContract POST to { gameId, _ ->
-            { req ->
-                submitGuess(gameId, Request.submittedGuess(req).secret, withPlayerId(req))
-                    .map { game ->
-                        Response(CREATED).with(
-                            Response.gameUpdated of GameUpdated(
-                                id = game.id.value,
-                                playerId = game.playerId.value,
-                                hint = game.hint,
-                                won = game.won
+        return "/games" / Request.gameId / "guesses" bindContract POST to
+            { gameId, _ ->
+                { req ->
+                    submitGuess(gameId, Request.submittedGuess(req).secret, withPlayerId(req))
+                        .map { game ->
+                            Response(CREATED).with(
+                                Response.gameUpdated of GameUpdated(
+                                    id = game.id.value,
+                                    playerId = game.playerId.value,
+                                    hint = game.hint,
+                                    won = game.won
+                                )
                             )
-                        )
-                    }
-                    .recover { error ->
-                        when (error) {
-                            is GameNotFound -> Response(NOT_FOUND)
-                            is CouldNotGuess -> Response(BAD_REQUEST)
-                            else -> Response(INTERNAL_SERVER_ERROR)
                         }
-                    }
+                        .recover { error ->
+                            when (error) {
+                                is GameNotFound -> Response(NOT_FOUND)
+                                is CouldNotGuess -> Response(BAD_REQUEST)
+                            }
+                        }
+                }
             }
-        }
     }
 
     data class SubmittedGuess(val secret: String)
