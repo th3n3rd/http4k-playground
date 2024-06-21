@@ -33,6 +33,10 @@ object SubmitGuessApi {
     ): ContractRoute {
         return "/games" / Request.gameId / "guesses" meta {
             security = authentication
+            summary = "Submit guess for a specific game"
+            returning(CREATED to "Successful guess submission")
+            returning(NOT_FOUND to "Game not found")
+            returning(BAD_REQUEST to "Unsuccessful game submission")
         } bindContract POST to
             { gameId, _ ->
                 { req ->

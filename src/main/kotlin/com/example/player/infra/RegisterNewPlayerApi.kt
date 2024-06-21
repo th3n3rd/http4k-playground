@@ -2,7 +2,7 @@ package com.example.player.infra
 
 import com.example.player.RegisterNewPlayer
 import org.http4k.contract.ContractRoute
-import org.http4k.contract.bindContract
+import org.http4k.contract.meta
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -12,7 +12,10 @@ import org.http4k.format.Jackson.auto
 object RegisterNewPlayerApi {
 
     operator fun invoke(registerNewPlayer: RegisterNewPlayer): ContractRoute {
-        return "/players" bindContract POST to { req ->
+        return "/players" meta {
+            summary = "Register a new player"
+            returning(CREATED to "Successful player registration")
+        } bindContract POST to { req ->
             val credentials = Request.submittedCredentials(req)
             registerNewPlayer(
                 RegisterNewPlayer.Command(

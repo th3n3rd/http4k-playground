@@ -17,6 +17,8 @@ object ShowLeaderboardApi {
     operator fun invoke(rankings: Rankings, authentication: Security): ContractRoute {
         return "/leaderboard" meta {
             security = authentication
+            summary = "Show leaderboard"
+            returning(OK to "Successful retrieval")
         } bindContract GET to { _ ->
             Response(OK).with(
                 Response.leaderboard of Leaderboard(

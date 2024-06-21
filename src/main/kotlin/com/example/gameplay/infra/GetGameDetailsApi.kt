@@ -29,6 +29,9 @@ object GetGameDetailsApi {
     ): ContractRoute {
         return "/games" / Request.gameId meta {
             security = authentication
+            summary = "Retrieve details of a specific game"
+            returning(OK to "Successful retrieval of the game details")
+            returning(NOT_FOUND to "Could not find the game")
         } bindContract GET to
             { gameId ->
                 { req ->

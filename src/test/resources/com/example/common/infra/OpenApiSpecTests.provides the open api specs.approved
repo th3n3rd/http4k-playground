@@ -1,0 +1,178 @@
+{
+  "info": {
+    "title": "guess the secret app",
+    "version": "v1"
+  },
+  "tags": [
+  ],
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/games": {
+      "post": {
+        "summary": "Start a new game",
+        "tags": [
+          ""
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful start of a new game",
+            "content": {
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": [
+            ]
+          }
+        ],
+        "operationId": "postGames",
+        "deprecated": false
+      }
+    },
+    "/games/{id}": {
+      "get": {
+        "summary": "Retrieve details of a specific game",
+        "tags": [
+          ""
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of the game details",
+            "content": {
+            }
+          },
+          "404": {
+            "description": "Could not find the game",
+            "content": {
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": [
+            ]
+          }
+        ],
+        "operationId": "getGames_id",
+        "deprecated": false
+      }
+    },
+    "/games/{id}/guesses": {
+      "post": {
+        "summary": "Submit guess for a specific game",
+        "tags": [
+          ""
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful guess submission",
+            "content": {
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+            }
+          },
+          "400": {
+            "description": "Unsuccessful game submission",
+            "content": {
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": [
+            ]
+          }
+        ],
+        "operationId": "postGames_id_Guesses",
+        "deprecated": false
+      }
+    },
+    "/leaderboard": {
+      "get": {
+        "summary": "Show leaderboard",
+        "tags": [
+          ""
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval",
+            "content": {
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": [
+            ]
+          }
+        ],
+        "operationId": "getLeaderboard",
+        "deprecated": false
+      }
+    },
+    "/players": {
+      "post": {
+        "summary": "Register a new player",
+        "tags": [
+          ""
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful player registration",
+            "content": {
+            }
+          }
+        },
+        "security": [
+        ],
+        "operationId": "postPlayers",
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "scheme": "basic",
+        "type": "http"
+      }
+    }
+  },
+  "openapi": "3.0.0"
+}

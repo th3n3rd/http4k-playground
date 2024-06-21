@@ -26,6 +26,8 @@ object StartNewGameApi {
     ): ContractRoute {
         return "/games" meta {
             security = authentication
+            summary = "Start a new game"
+            returning(CREATED to "Successful start of a new game")
         } bindContract POST to { req ->
             val newGame = startNewGame(withPlayerId(req))
             Response(CREATED).with(Response.gameStarted of GameStarted(newGame.id.value))
