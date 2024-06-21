@@ -4,6 +4,8 @@ import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.gameplay.GetGameDetails
 import com.example.player.PlayerId
+import org.http4k.contract.ContractRoute
+import org.http4k.contract.div
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Response
@@ -13,26 +15,27 @@ import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
 import org.http4k.lens.RequestContextLens
-import org.http4k.routing.RoutingHttpHandler
-import org.http4k.routing.bind
 import java.util.*
 
 object GetGameDetailsApi {
 
-    operator fun invoke(games: Games, withPlayerId: RequestContextLens<PlayerId>): RoutingHttpHandler {
-        return "/games/{id}" bind GET to {
-            games.findByIdAndPlayerId(Request.gameId(it), withPlayerId(it))
-                ?.let { currentGame ->
-                    Response(OK).with(
-                        Response.gameDetails of GameDetails(
-                            id = currentGame.id.value,
-                            hint = currentGame.hint,
-                            won = currentGame.won
-                        )
-                    )
+    operator fun invoke(games: Games, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
+        return "/games" / Request.gameId bindContract GET to
+            { gameId ->
+                { req ->
+                    games.findByIdAndPlayerId(gameId, withPlayerId(req))
+                        ?.let { currentGame ->
+                            Response(OK).with(
+                                Response.gameDetails of GameDetails(
+                                    id = currentGame.id.value,
+                                    hint = currentGame.hint,
+                                    won = currentGame.won
+                                )
+                            )
+                        }
+                        ?: Response(NOT_FOUND)
                 }
-                ?: Response(NOT_FOUND)
-        }
+            }
     }
 
     data class GameDetails(val id: UUID, val hint: String, val won: Boolean)

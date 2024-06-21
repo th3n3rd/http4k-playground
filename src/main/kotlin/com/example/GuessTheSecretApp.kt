@@ -15,7 +15,6 @@ import com.example.player.infra.AuthenticatePlayer
 import com.example.player.infra.PlayerRequestContext
 import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.player.infra.asRoute
-import com.example.player.infra.protectedBy
 import org.http4k.contract.contract
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
@@ -30,7 +29,7 @@ object GuessTheSecretApp {
         rankings: Rankings,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
-        val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
+        AuthenticatePlayer(players, passwordEncoder, withPlayerId)
 
         TrackPerformances(players, rankings)
             .asTask(eventsBus)
@@ -39,24 +38,18 @@ object GuessTheSecretApp {
             .then(
                 routes(
                     contract {
-                        routes += RegisterNewPlayer(players, passwordEncoder)
-                            .asRoute()
+                        routes += RegisterNewPlayer(players, passwordEncoder).asRoute()
                     },
                     contract {
                         security = AuthenticatePlayer
                             .asSecurity(players, passwordEncoder, withPlayerId)
                         routes += setOf(
-                            ShowLeaderboard()
-                                .asRoute(rankings),
-                            SubmitGuess(games, eventsBus)
-                                .asRoute(withPlayerId),
-                            StartNewGame(games, secrets)
-                                .asRoute(withPlayerId)
+                            ShowLeaderboard().asRoute(rankings),
+                            SubmitGuess(games, eventsBus).asRoute(withPlayerId),
+                            StartNewGame(games, secrets).asRoute(withPlayerId),
+                            GetGameDetails(games).asRoute(withPlayerId)
                         )
-                    },
-                    GetGameDetails(games)
-                        .asRoute(withPlayerId)
-                        .protectedBy(authentication),
+                    }
                 )
             )
     }
