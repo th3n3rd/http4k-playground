@@ -1,12 +1,14 @@
 package com.example.player.infra
 
-import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.player.EncodedPassword
 import com.example.player.PasswordEncoder
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
+import com.example.player.infra.PlayerRequestContext.withPlayerId
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
+import org.http4k.contract.bindContract
+import org.http4k.contract.contract
 import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
@@ -29,8 +31,10 @@ class AuthenticationTests {
 
     private val dummyApi = { request: Request -> Response(OK).body(withPlayerId(request).value.toString()) }
     private val protectedApi = PlayerRequestContext()
-        .then(AuthenticatePlayer(players, PasswordEncoder.Fake(), withPlayerId))
-        .then(dummyApi)
+        .then(contract {
+            security = AuthenticatePlayer(players, PasswordEncoder.Fake(), withPlayerId)
+            routes += "/" bindContract GET to dummyApi
+        })
 
     @Test
     fun `fails when the player credentials are missing`() {

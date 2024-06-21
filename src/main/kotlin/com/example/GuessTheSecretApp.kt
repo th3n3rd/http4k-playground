@@ -29,8 +29,6 @@ object GuessTheSecretApp {
         rankings: Rankings,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
-        AuthenticatePlayer(players, passwordEncoder, withPlayerId)
-
         TrackPerformances(players, rankings)
             .asTask(eventsBus)
 
@@ -41,8 +39,7 @@ object GuessTheSecretApp {
                         routes += RegisterNewPlayer(players, passwordEncoder).asRoute()
                     },
                     contract {
-                        security = AuthenticatePlayer
-                            .asSecurity(players, passwordEncoder, withPlayerId)
+                        security = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
                         routes += setOf(
                             ShowLeaderboard().asRoute(rankings),
                             SubmitGuess(games, eventsBus).asRoute(withPlayerId),
