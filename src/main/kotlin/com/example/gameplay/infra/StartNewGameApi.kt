@@ -5,7 +5,9 @@ package com.example.gameplay.infra
 import com.example.gameplay.StartNewGame
 import com.example.player.PlayerId
 import org.http4k.contract.ContractRoute
-import org.http4k.contract.bindContract
+import org.http4k.contract.meta
+import org.http4k.contract.security.NoSecurity
+import org.http4k.contract.security.Security
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -17,8 +19,14 @@ import java.util.*
 
 object StartNewGameApi {
 
-    operator fun invoke(startNewGame: StartNewGame, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
-        return "/games" bindContract POST to { req ->
+    operator fun invoke(
+        startNewGame: StartNewGame,
+        withPlayerId: RequestContextLens<PlayerId>,
+        authentication: Security
+    ): ContractRoute {
+        return "/games" meta {
+            security = authentication
+        } bindContract POST to { req ->
             val newGame = startNewGame(withPlayerId(req))
             Response(CREATED).with(Response.gameStarted of GameStarted(newGame.id.value))
         }
@@ -31,4 +39,5 @@ object StartNewGameApi {
     }
 }
 
-fun StartNewGame.asRoute(withPlayerId: RequestContextLens<PlayerId>) = StartNewGameApi(this, withPlayerId)
+fun StartNewGame.asRoute(withPlayerId: RequestContextLens<PlayerId>, authentication: Security = NoSecurity) =
+    StartNewGameApi(this, withPlayerId, authentication)

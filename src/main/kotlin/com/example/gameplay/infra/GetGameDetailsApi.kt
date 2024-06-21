@@ -6,6 +6,9 @@ import com.example.gameplay.GetGameDetails
 import com.example.player.PlayerId
 import org.http4k.contract.ContractRoute
 import org.http4k.contract.div
+import org.http4k.contract.meta
+import org.http4k.contract.security.NoSecurity
+import org.http4k.contract.security.Security
 import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Response
@@ -19,8 +22,14 @@ import java.util.*
 
 object GetGameDetailsApi {
 
-    operator fun invoke(games: Games, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
-        return "/games" / Request.gameId bindContract GET to
+    operator fun invoke(
+        games: Games,
+        withPlayerId: RequestContextLens<PlayerId>,
+        authentication: Security
+    ): ContractRoute {
+        return "/games" / Request.gameId meta {
+            security = authentication
+        } bindContract GET to
             { gameId ->
                 { req ->
                     games.findByIdAndPlayerId(gameId, withPlayerId(req))
@@ -49,4 +58,5 @@ object GetGameDetailsApi {
     }
 }
 
-fun GetGameDetails.asRoute(withPlayerId: RequestContextLens<PlayerId>) = GetGameDetailsApi(games, withPlayerId)
+fun GetGameDetails.asRoute(withPlayerId: RequestContextLens<PlayerId>, authentication: Security = NoSecurity) =
+    GetGameDetailsApi(games, withPlayerId, authentication)

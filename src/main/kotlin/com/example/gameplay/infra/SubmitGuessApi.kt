@@ -9,6 +9,9 @@ import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
 import org.http4k.contract.ContractRoute
 import org.http4k.contract.div
+import org.http4k.contract.meta
+import org.http4k.contract.security.NoSecurity
+import org.http4k.contract.security.Security
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -23,8 +26,14 @@ import java.util.*
 
 object SubmitGuessApi {
 
-    operator fun invoke(submitGuess: SubmitGuess, withPlayerId: RequestContextLens<PlayerId>): ContractRoute {
-        return "/games" / Request.gameId / "guesses" bindContract POST to
+    operator fun invoke(
+        submitGuess: SubmitGuess,
+        withPlayerId: RequestContextLens<PlayerId>,
+        authentication: Security
+    ): ContractRoute {
+        return "/games" / Request.gameId / "guesses" meta {
+            security = authentication
+        } bindContract POST to
             { gameId, _ ->
                 { req ->
                     submitGuess(gameId, Request.submittedGuess(req).secret, withPlayerId(req))
@@ -61,4 +70,5 @@ object SubmitGuessApi {
     }
 }
 
-fun SubmitGuess.asRoute(withPlayerId: RequestContextLens<PlayerId>) = SubmitGuessApi(this, withPlayerId)
+fun SubmitGuess.asRoute(withPlayerId: RequestContextLens<PlayerId>, authentication: Security = NoSecurity) =
+    SubmitGuessApi(this, withPlayerId, authentication)

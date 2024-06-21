@@ -16,6 +16,8 @@ import com.example.player.infra.PlayerRequestContext
 import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.player.infra.asRoute
 import org.http4k.contract.contract
+import org.http4k.contract.openapi.ApiInfo
+import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.routing.routes
@@ -29,6 +31,8 @@ object GuessTheSecretApp {
         rankings: Rankings,
         passwordEncoder: PasswordEncoder
     ): HttpHandler {
+        val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
+
         TrackPerformances(players, rankings)
             .asTask(eventsBus)
 
@@ -36,15 +40,14 @@ object GuessTheSecretApp {
             .then(
                 routes(
                     contract {
-                        routes += RegisterNewPlayer(players, passwordEncoder).asRoute()
-                    },
-                    contract {
-                        security = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
+                        renderer = OpenApi3(ApiInfo("guess the secret app", "v1"))
+                        descriptionPath = "/docs/openapi.json"
                         routes += setOf(
-                            ShowLeaderboard().asRoute(rankings),
-                            SubmitGuess(games, eventsBus).asRoute(withPlayerId),
-                            StartNewGame(games, secrets).asRoute(withPlayerId),
-                            GetGameDetails(games).asRoute(withPlayerId)
+                            RegisterNewPlayer(players, passwordEncoder).asRoute(),
+                            ShowLeaderboard().asRoute(rankings, authentication),
+                            SubmitGuess(games, eventsBus).asRoute(withPlayerId, authentication),
+                            StartNewGame(games, secrets).asRoute(withPlayerId, authentication),
+                            GetGameDetails(games).asRoute(withPlayerId, authentication)
                         )
                     }
                 )
