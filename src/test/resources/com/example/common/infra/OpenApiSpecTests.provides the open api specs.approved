@@ -186,6 +186,22 @@
           "200": {
             "description": "Successful retrieval",
             "content": {
+              "application/json": {
+                "example": {
+                  "rankings": {
+                    "alice": 100,
+                    "bob": 50
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboard"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
             }
           }
         },
@@ -195,7 +211,7 @@
             ]
           }
         ],
-        "operationId": "getLeaderboard",
+        "operationId": "showLeaderboard",
         "deprecated": false
       }
     },
@@ -256,6 +272,42 @@
         "required": [
           "password",
           "username"
+        ]
+      },
+      "Leaderboard": {
+        "properties": {
+          "rankings": {
+            "additionalProperties": {
+              "properties": {
+                "alice": {
+                  "example": 100,
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "bob": {
+                  "example": 50,
+                  "format": "int32",
+                  "type": "integer"
+                }
+              },
+              "example": {
+                "alice": 100,
+                "bob": 50
+              },
+              "type": "object"
+            },
+            "type": "object"
+          }
+        },
+        "example": {
+          "rankings": {
+            "alice": 100,
+            "bob": 50
+          }
+        },
+        "type": "object",
+        "required": [
+          "rankings"
         ]
       },
       "GameUpdated": {
