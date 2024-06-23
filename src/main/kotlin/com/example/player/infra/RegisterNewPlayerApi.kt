@@ -14,6 +14,10 @@ object RegisterNewPlayerApi {
     operator fun invoke(registerNewPlayer: RegisterNewPlayer): ContractRoute {
         return "/players" meta {
             summary = "Register a new player"
+            operationId = "registerNewPlayer"
+
+            receiving(Request.submittedCredentials to SubmittedCredentials("player-username", "player-password"))
+
             returning(CREATED to "Successful player registration")
         } bindContract POST to { req ->
             val credentials = Request.submittedCredentials(req)

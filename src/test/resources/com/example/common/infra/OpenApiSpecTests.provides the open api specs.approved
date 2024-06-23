@@ -150,6 +150,20 @@
         ],
         "parameters": [
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "username": "player-username",
+                "password": "player-password"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/SubmittedCredentials"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "description": "Successful player registration",
@@ -159,13 +173,34 @@
         },
         "security": [
         ],
-        "operationId": "postPlayers",
+        "operationId": "registerNewPlayer",
         "deprecated": false
       }
     }
   },
   "components": {
     "schemas": {
+      "SubmittedCredentials": {
+        "properties": {
+          "username": {
+            "example": "player-username",
+            "type": "string"
+          },
+          "password": {
+            "example": "player-password",
+            "type": "string"
+          }
+        },
+        "example": {
+          "username": "player-username",
+          "password": "player-password"
+        },
+        "type": "object",
+        "required": [
+          "password",
+          "username"
+        ]
+      }
     },
     "securitySchemes": {
       "basicAuth": {
