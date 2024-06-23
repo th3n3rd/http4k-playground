@@ -13,6 +13,7 @@
         <kotlinVersion>1.9.22</kotlinVersion>
         <junitVersion>5.10.2</junitVersion>
         <http4kVersion>5.21.2.0</http4kVersion>
+        <mavenAssemblyPluginVersion>3.3.0</mavenAssemblyPluginVersion>
         <forkhandlesBomVersion>2.13.1.0</forkhandlesBomVersion>
         <kotestVersion>5.8.0</kotestVersion>
         <springVersion>6.2.0</springVersion>
@@ -83,7 +84,7 @@
         <dependency>
             <groupId>dev.forkhandles</groupId>
             <artifactId>result4k</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -248,6 +249,30 @@
 
                 <configuration>
                     <jvmTarget>${javaVersion}</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${mavenAssemblyPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.example.StartGuessTheSecretAppServerKt</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
             <plugin>
