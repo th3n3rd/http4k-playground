@@ -19,7 +19,12 @@ import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method.*
 import org.http4k.core.then
+import org.http4k.filter.CorsPolicy
+import org.http4k.filter.OriginPolicy
+import org.http4k.filter.Pattern
+import org.http4k.filter.ServerFilters.Cors
 import org.http4k.routing.routes
 
 object GuessTheSecretApp {
@@ -36,7 +41,15 @@ object GuessTheSecretApp {
         TrackPerformances(players, rankings)
             .asTask(eventsBus)
 
-        return PlayerRequestContext()
+        val corsPolicy = CorsPolicy(
+            OriginPolicy.Pattern(Regex("http(s)?://localhost(:[0-9]+)?")),
+            listOf("content-type"),
+            listOf(GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD),
+            true
+        )
+
+        return Cors(corsPolicy)
+            .then(PlayerRequestContext())
             .then(
                 routes(
                     contract {

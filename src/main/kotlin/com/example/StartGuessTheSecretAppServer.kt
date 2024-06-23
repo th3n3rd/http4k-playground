@@ -6,12 +6,10 @@ import com.example.gameplay.Secrets
 import com.example.gameplay.infra.Database
 import com.example.gameplay.infra.Rotating
 import com.example.gameplay.infra.TracingGames
-import com.example.leaderboard.infra.InMemory
-import com.example.leaderboard.Ranking
 import com.example.leaderboard.Rankings
+import com.example.leaderboard.infra.InMemory
 import com.example.leaderboard.infra.TracingRankings
 import com.example.player.PasswordEncoder
-import com.example.player.PlayerId
 import com.example.player.RegisteredPlayers
 import com.example.player.infra.Argon2
 import com.example.player.infra.Database
@@ -39,14 +37,16 @@ object StartGuessTheSecretAppServer {
 
         val printingApp: HttpHandler = PrintRequest()
             .then(ServerTracing(appEvents))
-            .then(GuessTheSecretApp(
-                eventsBus = eventsBus,
-                players = players,
-                games = games,
-                secrets = secrets,
-                rankings = rankings,
-                passwordEncoder = PasswordEncoder.Argon2(),
-            ))
+            .then(
+                GuessTheSecretApp(
+                    eventsBus = eventsBus,
+                    players = players,
+                    games = games,
+                    secrets = secrets,
+                    rankings = rankings,
+                    passwordEncoder = PasswordEncoder.Argon2(),
+                )
+            )
 
         return printingApp
             .asServer(SunHttp(port))
