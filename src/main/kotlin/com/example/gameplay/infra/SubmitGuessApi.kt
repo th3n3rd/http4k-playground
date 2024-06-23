@@ -1,5 +1,6 @@
 package com.example.gameplay.infra
 
+import com.example.common.infra.EmptyUuid
 import com.example.gameplay.GameId
 import com.example.gameplay.SubmitGuess
 import com.example.gameplay.SubmitGuessError.CouldNotGuess
@@ -18,6 +19,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
@@ -34,7 +36,12 @@ object SubmitGuessApi {
         return "/games" / Request.gameId / "guesses" meta {
             security = authentication
             summary = "Submit guess for a specific game"
-            returning(CREATED to "Successful guess submission")
+            operationId = "submitGuess"
+
+            receiving(Request.submittedGuess to SubmittedGuess("guess"))
+
+            returning(CREATED, Response.gameUpdated to GameUpdated(EmptyUuid, EmptyUuid, "hint", false), "Successful guess submission")
+            returning(UNAUTHORIZED to "Not authenticated")
             returning(NOT_FOUND to "Game not found")
             returning(BAD_REQUEST to "Unsuccessful game submission")
         } bindContract POST to

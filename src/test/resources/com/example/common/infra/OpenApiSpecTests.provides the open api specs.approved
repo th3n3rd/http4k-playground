@@ -103,9 +103,38 @@
             "required": true
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "secret": "guess"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/SubmittedGuess"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "description": "Successful guess submission",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "playerId": "00000000-0000-0000-0000-000000000000",
+                  "hint": "hint",
+                  "won": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GameUpdated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
             }
           },
@@ -126,7 +155,7 @@
             ]
           }
         ],
-        "operationId": "postGames_id_Guesses",
+        "operationId": "submitGuess",
         "deprecated": false
       }
     },
@@ -212,6 +241,56 @@
         "required": [
           "password",
           "username"
+        ]
+      },
+      "GameUpdated": {
+        "properties": {
+          "id": {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "format": "uuid",
+            "type": "string"
+          },
+          "playerId": {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "format": "uuid",
+            "type": "string"
+          },
+          "hint": {
+            "example": "hint",
+            "type": "string"
+          },
+          "won": {
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "playerId": "00000000-0000-0000-0000-000000000000",
+          "hint": "hint",
+          "won": false
+        },
+        "type": "object",
+        "required": [
+          "hint",
+          "id",
+          "playerId",
+          "won"
+        ]
+      },
+      "SubmittedGuess": {
+        "properties": {
+          "secret": {
+            "example": "guess",
+            "type": "string"
+          }
+        },
+        "example": {
+          "secret": "guess"
+        },
+        "type": "object",
+        "required": [
+          "secret"
         ]
       },
       "GameStarted": {
