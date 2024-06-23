@@ -1,5 +1,6 @@
 package com.example.gameplay.infra
 
+import com.example.common.infra.EmptyUuid
 import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.gameplay.GetGameDetails
@@ -14,6 +15,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.Path
@@ -30,7 +32,10 @@ object GetGameDetailsApi {
         return "/games" / Request.gameId meta {
             security = authentication
             summary = "Retrieve details of a specific game"
-            returning(OK to "Successful retrieval of the game details")
+            operationId = "getGameDetails"
+
+            returning(OK, Response.gameDetails to GameDetails(EmptyUuid, "hint", false),"Successful retrieval of the game details")
+            returning(UNAUTHORIZED to "Not authenticated")
             returning(NOT_FOUND to "Could not find the game")
         } bindContract GET to
             { gameId ->

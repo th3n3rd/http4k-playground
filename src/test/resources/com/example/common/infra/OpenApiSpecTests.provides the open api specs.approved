@@ -69,6 +69,21 @@
           "200": {
             "description": "Successful retrieval of the game details",
             "content": {
+              "application/json": {
+                "example": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "hint": "hint",
+                  "won": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GameDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
             }
           },
           "404": {
@@ -83,7 +98,7 @@
             ]
           }
         ],
-        "operationId": "getGames_id",
+        "operationId": "getGameDetails",
         "deprecated": false
       }
     },
@@ -307,6 +322,34 @@
         "type": "object",
         "required": [
           "id"
+        ]
+      },
+      "GameDetails": {
+        "properties": {
+          "id": {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "format": "uuid",
+            "type": "string"
+          },
+          "hint": {
+            "example": "hint",
+            "type": "string"
+          },
+          "won": {
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "hint": "hint",
+          "won": false
+        },
+        "type": "object",
+        "required": [
+          "hint",
+          "id",
+          "won"
         ]
       }
     },
