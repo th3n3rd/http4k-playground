@@ -19,7 +19,6 @@ import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.events.Events
-import org.http4k.filter.DebuggingFilters.PrintRequest
 import org.http4k.server.Http4kServer
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -35,8 +34,7 @@ object StartGuessTheSecretAppServer {
         val rankings = TracingRankings(appEvents, Rankings.InMemory())
         val eventsBus = EventsBus.InMemory(appEvents)
 
-        val printingApp: HttpHandler = PrintRequest()
-            .then(ServerTracing(appEvents))
+        val app: HttpHandler = ServerTracing(appEvents)
             .then(
                 GuessTheSecretApp(
                     eventsBus = eventsBus,
@@ -48,7 +46,7 @@ object StartGuessTheSecretAppServer {
                 )
             )
 
-        return printingApp
+        return app
             .asServer(SunHttp(port))
             .start()
             .apply {
