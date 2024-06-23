@@ -17,9 +17,11 @@ import com.example.player.infra.PlayerRequestContext.withPlayerId
 import com.example.player.infra.asRoute
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
+import org.http4k.contract.openapi.v3.ApiServer
 import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.*
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.CorsPolicy
 import org.http4k.filter.OriginPolicy
@@ -43,7 +45,7 @@ object GuessTheSecretApp {
 
         val corsPolicy = CorsPolicy(
             OriginPolicy.Pattern(Regex("http(s)?://localhost(:[0-9]+)?")),
-            listOf("content-type"),
+            listOf("content-type", "authorization"),
             listOf(GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD),
             true
         )
@@ -53,7 +55,10 @@ object GuessTheSecretApp {
             .then(
                 routes(
                     contract {
-                        renderer = OpenApi3(ApiInfo("guess the secret app", "v1"))
+                        renderer = OpenApi3(
+                            apiInfo = ApiInfo("guess the secret app", "v1"),
+                            servers = listOf(ApiServer(Uri.of("http://localhost:9000")))
+                        )
                         descriptionPath = "/docs/openapi.json"
                         routes += setOf(
                             RegisterNewPlayer(players, passwordEncoder).asRoute(),
