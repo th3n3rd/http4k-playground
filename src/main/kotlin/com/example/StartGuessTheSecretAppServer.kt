@@ -56,5 +56,6 @@ object StartGuessTheSecretAppServer {
 }
 
 fun main() {
+    RunDatabaseMigrations(environment = ENV)
     StartGuessTheSecretAppServer(environment = ENV, port = 9000)
 }
