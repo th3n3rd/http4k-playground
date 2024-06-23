@@ -23,6 +23,19 @@
           "201": {
             "description": "Successful start of a new game",
             "content": {
+              "application/json": {
+                "example": {
+                  "id": "00000000-0000-0000-0000-000000000000"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GameStarted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
             }
           }
         },
@@ -32,7 +45,7 @@
             ]
           }
         ],
-        "operationId": "postGames",
+        "operationId": "startNewGame",
         "deprecated": false
       }
     },
@@ -199,6 +212,22 @@
         "required": [
           "password",
           "username"
+        ]
+      },
+      "GameStarted": {
+        "properties": {
+          "id": {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "00000000-0000-0000-0000-000000000000"
+        },
+        "type": "object",
+        "required": [
+          "id"
         ]
       }
     },

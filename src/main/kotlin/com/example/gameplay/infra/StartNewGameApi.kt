@@ -2,6 +2,7 @@
 
 package com.example.gameplay.infra
 
+import com.example.common.infra.EmptyUuid
 import com.example.gameplay.StartNewGame
 import com.example.player.PlayerId
 import org.http4k.contract.ContractRoute
@@ -12,6 +13,7 @@ import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.CREATED
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.RequestContextLens
@@ -27,7 +29,10 @@ object StartNewGameApi {
         return "/games" meta {
             security = authentication
             summary = "Start a new game"
-            returning(CREATED to "Successful start of a new game")
+            operationId = "startNewGame"
+
+            returning(CREATED, Response.gameStarted to GameStarted(EmptyUuid), "Successful start of a new game")
+            returning(UNAUTHORIZED to "Not authenticated")
         } bindContract POST to { req ->
             val newGame = startNewGame(withPlayerId(req))
             Response(CREATED).with(Response.gameStarted of GameStarted(newGame.id.value))
