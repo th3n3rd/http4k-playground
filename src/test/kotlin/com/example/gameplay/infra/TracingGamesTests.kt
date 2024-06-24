@@ -4,40 +4,61 @@ import com.example.common.infra.DatabaseCall
 import com.example.gameplay.Game
 import com.example.gameplay.Games
 import com.example.player.PlayerId
-import io.kotest.matchers.nulls.beNull
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import org.http4k.testing.RecordingEvents
 import org.junit.jupiter.api.Test
 
 
-class TracingGamesTests {
+class TracingGamesTests : GamesContract {
 
     private val events = RecordingEvents()
-    private val games = Games.InMemory();
-    private val tracingGames = TracingGames(
+    private val inMemoryGames = Games.InMemory()
+    override val games: Games = TracingGames(
         events,
-        games
+        inMemoryGames
     )
 
     @Test
     fun `publish a new event when saving a game`() {
         val newGame = Game(playerId = PlayerId(), secret = "new-game")
 
-        tracingGames.save(newGame)
+        games.save(newGame)
 
-        games.findByIdAndPlayerId(newGame.id, newGame.playerId) shouldNot beNull()
         events.toList() shouldBe listOf(DatabaseCall("games", "save"))
     }
 
     @Test
-    fun  `publish a new event when retrieving an existing game`() {
-        val existingGame = Game(playerId = PlayerId(), secret = "existing-game")
-        games.save(existingGame)
+    fun `publish a new event when retrieving an existing game`() {
+        val existingGame = given(Game(playerId = PlayerId(), secret = "existing-game"))
 
-        val retrievedGame = tracingGames.findByIdAndPlayerId(existingGame.id, existingGame.playerId)
+        games.findByIdAndPlayerId(existingGame.id, existingGame.playerId)
 
-        retrievedGame shouldBe existingGame
         events.toList() shouldBe listOf(DatabaseCall("games", "find by id and player id"))
+    }
+
+    override fun given(game: Game): Game {
+        inMemoryGames.save(game)
+        return game
+    }
+
+    override fun haveBeenSaved() = Matcher<Game> { game ->
+        MatcherResult(
+            inMemoryGames.findByIdAndPlayerId(game.id, game.playerId) != null,
+            { "$game was not saved" },
+            { "$game should not have been saved" },
+        )
+    }
+
+    override fun haveSavedGuesses(expected: List<String>) = Matcher<Game> { game ->
+        MatcherResult(
+            inMemoryGames.findByIdAndPlayerId(game.id, game.playerId)
+                ?.guesses
+                ?.map { it.secret }
+                ?.sorted() == expected.sorted(),
+            { "$game was not saved" },
+            { "$game should not have been saved" },
+        )
     }
 }
