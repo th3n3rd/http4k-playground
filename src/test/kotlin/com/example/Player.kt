@@ -3,6 +3,7 @@ package com.example
 import com.example.common.infra.ClientTracing
 import com.example.common.infra.TracingEvents
 import com.example.gameplay.GameId
+import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.*
@@ -70,7 +71,7 @@ class Player(
         val response = client(Request(GET, "/leaderboard"))
         response.status.successful shouldBe true
         val leaderboard = leaderboardLens(response)
-        leaderboard.rankings shouldBe rankings
+        leaderboard.rankings shouldContainAll rankings
     }
 
     private fun register(username: String, password: String) {

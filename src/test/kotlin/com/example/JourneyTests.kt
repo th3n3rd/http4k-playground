@@ -19,4 +19,5 @@ class JourneyTests : RecordTraces(), WinningGameplayJourney, TrackPerformancesJo
     )
 
     override val appUri: Uri = Uri.of("http://localhost:${appServer.port()}")
+    override val randomisePlayerUsername: Boolean = false
 }
