@@ -4,19 +4,21 @@ import com.example.common.infra.DatabaseCall
 import com.example.player.EncodedPassword
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import org.http4k.testing.RecordingEvents
 import org.junit.jupiter.api.Test
 
 
-class TracingPlayersTests {
+class TracingPlayersTests : RegisteredPlayersContract {
 
     private val events = RecordingEvents()
-    private val players = RegisteredPlayers.InMemory();
-    private val tracingPlayers = TracingRegisteredPlayers(
+    private val inMemoryPlayers = RegisteredPlayers.InMemory();
+
+    override val players = TracingRegisteredPlayers(
         events,
-        players
+        inMemoryPlayers
     )
 
     @Test
@@ -26,36 +28,33 @@ class TracingPlayersTests {
             password = EncodedPassword("dont-care")
         )
 
-        tracingPlayers.save(newPlayer)
+        players.save(newPlayer)
 
-        players.findByUsername("new-player") shouldNotBe null
         events.toList() shouldBe listOf(DatabaseCall("players", "save"))
     }
 
     @Test
     fun  `publish a new event when retrieving an existing player`() {
-        val existingPlayer = RegisteredPlayer(
+        val existingPlayer = given(RegisteredPlayer(
             username = "existing-player",
             password = EncodedPassword("dont-care")
-        )
-        players.save(existingPlayer)
+        ))
 
-        val retrievedPlayer = tracingPlayers.findByUsername(existingPlayer.username)
+        players.findByUsername(existingPlayer.username)
 
-        retrievedPlayer shouldBe existingPlayer
         events.toList() shouldBe listOf(DatabaseCall("players", "find by username"))
     }
 
     @Test
     fun  `publish a new event when checking if a player already exist`() {
-        val existingPlayer = RegisteredPlayer(
+        val existingPlayer = given(RegisteredPlayer(
             username = "existing-player",
             password = EncodedPassword("dont-care")
-        )
-        players.save(existingPlayer)
+        ))
 
-        tracingPlayers.existByUsername(existingPlayer.username) shouldBe true
-        tracingPlayers.existByUsername("non-existing") shouldBe false
+        players.existByUsername(existingPlayer.username)
+        players.existByUsername("non-existing")
+
         events.toList() shouldBe listOf(
             DatabaseCall("players", "exist by username"),
             DatabaseCall("players", "exist by username"),
@@ -64,16 +63,26 @@ class TracingPlayersTests {
 
     @Test
     fun `publish a new event when retrieving an existing player by id`() {
-        val existingPlayer = RegisteredPlayer(
+        val existingPlayer = given(RegisteredPlayer(
             username = "existing-player",
             password = EncodedPassword("dont-care")
-        )
-        players.save(existingPlayer)
+        ))
 
-        val retrievedPlayer = tracingPlayers.findById(existingPlayer.id)
+        players.findById(existingPlayer.id)
 
-        retrievedPlayer shouldBe existingPlayer
         events.toList() shouldBe listOf(DatabaseCall("players", "find by id"))
     }
 
+    override fun given(player: RegisteredPlayer): RegisteredPlayer {
+        inMemoryPlayers.save(player)
+        return player
+    }
+
+    override fun haveBeenSaved() = Matcher<RegisteredPlayer> { player ->
+        MatcherResult(
+            inMemoryPlayers.existByUsername(player.username),
+            { "$player was not saved" },
+            { "$player should not have been saved" },
+        )
+    }
 }
