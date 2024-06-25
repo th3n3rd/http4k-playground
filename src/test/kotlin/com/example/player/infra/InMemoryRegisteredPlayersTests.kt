@@ -2,6 +2,7 @@ package com.example.player.infra
 
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
+import com.example.player.RegisteredPlayersContract
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 

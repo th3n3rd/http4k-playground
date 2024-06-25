@@ -6,6 +6,7 @@ import com.example.common.infra.TestEnvironment
 import com.example.common.infra.database.tables.references.PLAYERS
 import com.example.player.RegisteredPlayer
 import com.example.player.RegisteredPlayers
+import com.example.player.RegisteredPlayersContract
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import org.junit.jupiter.api.BeforeEach

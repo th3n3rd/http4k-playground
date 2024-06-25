@@ -1,9 +1,5 @@
-package com.example.player.infra
+package com.example.player
 
-import com.example.player.EncodedPassword
-import com.example.player.PlayerId
-import com.example.player.RegisteredPlayer
-import com.example.player.RegisteredPlayers
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.should
@@ -17,7 +13,7 @@ interface RegisteredPlayersContract {
     fun haveBeenSaved(): Matcher<RegisteredPlayer>
 
     @Test
-    fun `persist new registered players`() {
+    fun `store new registered players`() {
         val newPlayer = RegisteredPlayer(
             username = "new",
             password = EncodedPassword("encoded-new")
@@ -29,7 +25,7 @@ interface RegisteredPlayersContract {
     }
 
     @Test
-    fun `find persisted players by username`() {
+    fun `find stored players by username`() {
         val existingPlayer = given(RegisteredPlayer(
             id = PlayerId(),
             username = "existing-one",
@@ -54,7 +50,7 @@ interface RegisteredPlayersContract {
     }
 
     @Test
-    fun `find persisted players by id`() {
+    fun `find stored players by id`() {
         val existingPlayer = given(RegisteredPlayer(
             id = PlayerId(),
             username = "existing-one",
