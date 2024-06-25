@@ -3,6 +3,7 @@ package com.example.gameplay.infra
 import com.example.common.infra.DatabaseCall
 import com.example.gameplay.Game
 import com.example.gameplay.Games
+import com.example.gameplay.GamesContract
 import com.example.player.PlayerId
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult

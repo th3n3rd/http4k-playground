@@ -7,6 +7,7 @@ import com.example.common.infra.database.tables.references.GAMES
 import com.example.common.infra.database.tables.references.GAME_GUESSES
 import com.example.gameplay.Game
 import com.example.gameplay.Games
+import com.example.gameplay.GamesContract
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import org.junit.jupiter.api.BeforeEach

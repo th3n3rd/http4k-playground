@@ -1,7 +1,5 @@
-package com.example.gameplay.infra
+package com.example.gameplay
 
-import com.example.gameplay.Game
-import com.example.gameplay.Games
 import dev.forkhandles.result4k.valueOrNull
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.equals.shouldBeEqual
@@ -18,7 +16,7 @@ interface GamesContract {
     fun haveSavedGuesses(expected: List<String>): Matcher<Game>
 
     @Test
-    fun `persist new games`() {
+    fun `store new games`() {
         val newGame = Game(secret = "new")
 
         games.save(newGame)
@@ -28,7 +26,7 @@ interface GamesContract {
     }
 
     @Test
-    fun `persist games with guesses`() {
+    fun `store games with guesses`() {
         val newGame = Game(
             secret = "new-with-guesses",
             guesses = listOf(
@@ -44,7 +42,7 @@ interface GamesContract {
     }
 
     @Test
-    fun `find persisted games by id and player`() {
+    fun `find stored games by id and player`() {
         val first = given(Game(secret = "existing-one"))
         val second = given(Game(secret = "existing-two"))
 
@@ -70,7 +68,7 @@ interface GamesContract {
     }
 
     @Test
-    fun `persist updates for existing games`() {
+    fun `store updates for existing games`() {
         val existingGame = given(
             Game(
                 secret = "with-guesses",
