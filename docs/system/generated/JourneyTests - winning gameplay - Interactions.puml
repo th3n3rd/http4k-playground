@@ -4,7 +4,7 @@ title JourneyTests - winning gameplay
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 
-System(alice, "alice")
+Person(alice, "alice")
 System(app, "app")
 ContainerDb(players, "players")
 ContainerDb(games, "games")

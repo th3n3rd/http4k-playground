@@ -29,7 +29,7 @@ class Player(
     private val guessLens = Body.auto<Guess>().toLens()
     private val leaderboardLens = Body.auto<Leaderboard>().toLens()
 
-    private val client = ClientTracing(TracingEvents(username, events))
+    private val client = ClientTracing(TracingEvents(username, events, listOf("player")))
         .then(SetBaseUriFrom(baseUri))
         .then(BasicAuth(user = username, password = password))
         .then(JavaHttpClient())

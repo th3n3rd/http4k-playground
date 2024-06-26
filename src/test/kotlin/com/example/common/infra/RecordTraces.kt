@@ -1,9 +1,7 @@
 package com.example.common.infra
 
 import org.http4k.tracing.*
-import org.http4k.tracing.ActorType.Database
-import org.http4k.tracing.ActorType.Human
-import org.http4k.tracing.ActorType.System
+import org.http4k.tracing.ActorType.*
 import org.http4k.tracing.junit.ReportingMode.Companion.Always
 import org.http4k.tracing.junit.TracerBulletEvents
 import org.http4k.tracing.persistence.FileSystem
@@ -15,8 +13,9 @@ import java.io.File
 
 private val resolveOrigin = ActorResolver {
     val service = it.metadata["service"].toString()
+    val tags = it.metadata["tags"] as List<*>
     when {
-        service.startsWith("player-") -> Actor(service, Human)
+        tags.contains("player") -> Actor(service, Human)
         else -> Actor(service, System)
     }
 }
