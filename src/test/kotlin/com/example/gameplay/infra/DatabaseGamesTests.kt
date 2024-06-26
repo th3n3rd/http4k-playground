@@ -40,7 +40,7 @@ class DatabaseGamesTests : GamesContract {
         return game
     }
 
-    override fun haveBeenSaved() = Matcher<Game> { game ->
+    override fun hasBeenStored() = Matcher<Game> { game ->
         MatcherResult(
             database
                 .fetchExists(
@@ -55,7 +55,7 @@ class DatabaseGamesTests : GamesContract {
         )
     }
 
-    override fun haveSavedGuesses(expected: List<String>) = Matcher<Game> { game ->
+    override fun hasStoredGuesses(expected: List<String>) = Matcher<Game> { game ->
         val actual = database.select(GAME_GUESSES.SECRET)
             .from(GAME_GUESSES)
             .where(GAME_GUESSES.GAME_ID.eq(game.id.value))

@@ -29,7 +29,7 @@ class TracingRankingsTests : RankingsContract {
         return ranking
     }
 
-    override fun haveBeenSaved()= Matcher<Ranking> { ranking ->
+    override fun hasBeenStored()= Matcher<Ranking> { ranking ->
         MatcherResult(
             inMemoryRankings.findByPlayerId(ranking.playerId) != null,
             { "$ranking was not saved" },

@@ -15,7 +15,7 @@ class InMemoryRegisteredPlayersTests : RegisteredPlayersContract {
         return player
     }
 
-    override fun haveBeenSaved() = Matcher<RegisteredPlayer> { player ->
+    override fun haveBeenStored() = Matcher<RegisteredPlayer> { player ->
         MatcherResult(
             players.existByUsername(player.username),
             { "$player was not saved" },

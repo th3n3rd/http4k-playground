@@ -12,8 +12,8 @@ interface GamesContract {
     val games: Games
 
     fun given(game: Game): Game
-    fun haveBeenSaved(): Matcher<Game>
-    fun haveSavedGuesses(expected: List<String>): Matcher<Game>
+    fun hasBeenStored(): Matcher<Game>
+    fun hasStoredGuesses(expected: List<String>): Matcher<Game>
 
     @Test
     fun `store new games`() {
@@ -21,8 +21,8 @@ interface GamesContract {
 
         games.save(newGame)
 
-        newGame should haveBeenSaved()
-        newGame should haveSavedGuesses(emptyList())
+        newGame should hasBeenStored()
+        newGame should hasStoredGuesses(emptyList())
     }
 
     @Test
@@ -37,8 +37,8 @@ interface GamesContract {
 
         games.save(newGame)
 
-        newGame should haveBeenSaved()
-        newGame should haveSavedGuesses(listOf("first", "second"))
+        newGame should hasBeenStored()
+        newGame should hasStoredGuesses(listOf("first", "second"))
     }
 
     @Test
@@ -79,7 +79,7 @@ interface GamesContract {
         val updatedGame = existingGame.guess("third").valueOrNull()!!
         games.save(updatedGame)
 
-        existingGame should haveSavedGuesses(listOf("first", "second", "third"))
+        existingGame should hasStoredGuesses(listOf("first", "second", "third"))
     }
 
     @Test

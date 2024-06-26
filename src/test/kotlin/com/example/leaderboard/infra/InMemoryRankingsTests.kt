@@ -15,7 +15,7 @@ class InMemoryRankingsTests : RankingsContract {
         return ranking
     }
 
-    override fun haveBeenSaved() = Matcher<Ranking> { ranking ->
+    override fun hasBeenStored() = Matcher<Ranking> { ranking ->
         MatcherResult(
             rankings.findAll().contains(ranking),
             { "$ranking was not saved" },

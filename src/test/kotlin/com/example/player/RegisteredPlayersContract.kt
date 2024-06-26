@@ -10,7 +10,7 @@ interface RegisteredPlayersContract {
     val players: RegisteredPlayers
 
     fun given(player: RegisteredPlayer): RegisteredPlayer
-    fun haveBeenSaved(): Matcher<RegisteredPlayer>
+    fun haveBeenStored(): Matcher<RegisteredPlayer>
 
     @Test
     fun `store new registered players`() {
@@ -21,7 +21,7 @@ interface RegisteredPlayersContract {
 
         players.save(newPlayer)
 
-        newPlayer should haveBeenSaved()
+        newPlayer should haveBeenStored()
     }
 
     @Test

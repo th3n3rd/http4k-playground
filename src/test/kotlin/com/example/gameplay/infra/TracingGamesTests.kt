@@ -44,7 +44,7 @@ class TracingGamesTests : GamesContract {
         return game
     }
 
-    override fun haveBeenSaved() = Matcher<Game> { game ->
+    override fun hasBeenStored() = Matcher<Game> { game ->
         MatcherResult(
             inMemoryGames.findByIdAndPlayerId(game.id, game.playerId) != null,
             { "$game was not saved" },
@@ -52,7 +52,7 @@ class TracingGamesTests : GamesContract {
         )
     }
 
-    override fun haveSavedGuesses(expected: List<String>) = Matcher<Game> { game ->
+    override fun hasStoredGuesses(expected: List<String>) = Matcher<Game> { game ->
         MatcherResult(
             inMemoryGames.findByIdAndPlayerId(game.id, game.playerId)
                 ?.guesses

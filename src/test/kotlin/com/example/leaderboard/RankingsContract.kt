@@ -11,8 +11,7 @@ interface RankingsContract {
     val rankings: Rankings
 
     fun given(ranking: Ranking): Ranking
-
-    fun haveBeenSaved(): Matcher<Ranking>
+    fun hasBeenStored(): Matcher<Ranking>
 
     @Test
     fun `store new ranking`() {
@@ -20,7 +19,7 @@ interface RankingsContract {
 
         rankings.save(newRanking)
 
-        newRanking should haveBeenSaved()
+        newRanking should hasBeenStored()
     }
 
     @Test

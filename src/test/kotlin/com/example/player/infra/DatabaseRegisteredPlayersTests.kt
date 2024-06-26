@@ -31,7 +31,7 @@ class DatabaseRegisteredPlayersTests : RegisteredPlayersContract {
         return player
     }
 
-    override fun haveBeenSaved() = Matcher<RegisteredPlayer> { player ->
+    override fun haveBeenStored() = Matcher<RegisteredPlayer> { player ->
         MatcherResult(
             context
                 .fetchExists(

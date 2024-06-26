@@ -79,7 +79,7 @@ class TracingPlayersTests : RegisteredPlayersContract {
         return player
     }
 
-    override fun haveBeenSaved() = Matcher<RegisteredPlayer> { player ->
+    override fun haveBeenStored() = Matcher<RegisteredPlayer> { player ->
         MatcherResult(
             inMemoryPlayers.existByUsername(player.username),
             { "$player was not saved" },
