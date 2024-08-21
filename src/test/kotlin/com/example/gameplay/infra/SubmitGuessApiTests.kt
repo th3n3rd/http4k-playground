@@ -1,29 +1,28 @@
 package com.example.gameplay.infra
 
-import com.example.player.infra.PlayerRequestContext.withPlayerId
-import com.example.player.infra.authenticatedAs
 import com.example.gameplay.Game
+import com.example.gameplay.GameId
 import com.example.gameplay.Games
 import com.example.gameplay.SubmitGuess
 import com.example.player.PlayerId
-import io.kotest.assertions.json.schema.jsonSchema
-import io.kotest.assertions.json.schema.obj
-import io.kotest.assertions.json.schema.shouldMatchSchema
-import io.kotest.assertions.json.shouldEqualSpecifiedJson
-import io.kotest.common.ExperimentalKotest
+import com.example.player.infra.PlayerRequestContext.withPlayerId
+import com.example.player.infra.authenticatedAs
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.beUUID
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.kotest.shouldHaveStatus
+import org.http4k.testing.Approver
+import org.http4k.testing.JsonApprovalTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-@OptIn(ExperimentalKotest::class)
+@ExtendWith(JsonApprovalTest::class)
 class SubmitGuessApiTests {
 
-    private val authenticatedPlayerId = PlayerId()
+    private val authenticatedPlayerId = PlayerId.Placeholder
     private val anotherPlayerId = PlayerId()
     private val games = Games.InMemory()
     private val api = SubmitGuess(games)
@@ -31,8 +30,9 @@ class SubmitGuessApiTests {
         .authenticatedAs(authenticatedPlayerId)
 
     @Test
-    fun `mark the game as won when the guess is right`() {
+    fun `mark the game as won when the guess is right`(approver: Approver) {
         val existingGame = Game(
+            id = GameId.Placeholder,
             playerId = authenticatedPlayerId,
             secret = "correct"
         )
@@ -44,31 +44,15 @@ class SubmitGuessApiTests {
         }            
         """.trimIndent()))
 
-        with(response) {
-            status shouldBe CREATED
-            bodyString() shouldMatchSchema jsonSchema {
-                obj {
-                    string("id") { beUUID() }
-                    string("playerId") { beUUID() }
-                    string("hint")
-                    boolean("won")
-                    additionalProperties = false
-                }
-            }
-            bodyString() shouldEqualSpecifiedJson """
-            {
-                "playerId": "${authenticatedPlayerId.value}",
-                "hint": "c______",
-                "won": true
-            }
-            """.trimIndent()
-        }
+        response shouldHaveStatus CREATED
+        approver.assertApproved(response)
         games.findByIdAndPlayerId(existingGame.id, authenticatedPlayerId)!!.won shouldBe true
     }
 
     @Test
     fun `fails when a game is not found for the authenticated player`() {
         val existingGame = Game(
+            id = GameId.Placeholder,
             playerId = anotherPlayerId,
             secret = "correct",
         )
@@ -86,6 +70,7 @@ class SubmitGuessApiTests {
     @Test
     fun `fails when the game is already completed`() {
         val completedGame = Game(
+            id = GameId.Placeholder,
             playerId = authenticatedPlayerId,
             secret = "correct",
             guesses = listOf(
