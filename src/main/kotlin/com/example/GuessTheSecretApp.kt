@@ -65,7 +65,7 @@ object GuessTheSecretApp {
                         )
                         descriptionPath = "/docs/openapi.json"
                         routes += setOf(
-                            RegisterNewPlayer(players, passwordEncoder).asRoute(),
+                            RegisterNewPlayer(players, passwordEncoder, idGenerator).asRoute(),
                             ShowLeaderboard().asRoute(rankings, authentication),
                             SubmitGuess(games, eventsBus).asRoute(withPlayerId, authentication),
                             StartNewGame(games, secrets, idGenerator).asRoute(withPlayerId, authentication),

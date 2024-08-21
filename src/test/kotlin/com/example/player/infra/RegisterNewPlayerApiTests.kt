@@ -1,5 +1,7 @@
 package com.example.player.infra
 
+import com.example.common.infra.IdGenerator
+import com.example.common.infra.Static
 import com.example.player.PasswordEncoder
 import com.example.player.RegisterNewPlayer
 import com.example.player.RegisteredPlayers
@@ -15,7 +17,8 @@ class RegisterNewPlayerApiTests {
 
     private val passwordEncoder = PasswordEncoder.Fake()
     private val players = RegisteredPlayers.InMemory()
-    private val api = RegisterNewPlayer(players, passwordEncoder).asRoute()
+    private val idGenerator = IdGenerator.Static()
+    private val api = RegisterNewPlayer(players, passwordEncoder, idGenerator).asRoute()
 
     @Test
     fun `registers new players`() {
