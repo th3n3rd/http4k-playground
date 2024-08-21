@@ -1,10 +1,11 @@
 package com.example.gameplay
 
+import com.example.common.infra.IdGenerator
 import com.example.player.PlayerId
 
-class StartNewGame(private val games: Games, private val secrets: Secrets) {
+class StartNewGame(private val games: Games, private val secrets: Secrets, private val idGenerator: IdGenerator) {
     operator fun invoke(playerId: PlayerId): Game {
-        val newGame = Game(playerId = playerId, secret = secrets.next())
+        val newGame = Game(id = GameId(idGenerator()), playerId = playerId, secret = secrets.next())
         games.save(newGame)
         return newGame
     }

@@ -1,6 +1,8 @@
 package com.example
 
 import com.example.common.infra.EventsBus
+import com.example.common.infra.IdGenerator
+import com.example.common.infra.Random
 import com.example.gameplay.*
 import com.example.gameplay.infra.asRoute
 import com.example.leaderboard.Rankings
@@ -50,6 +52,8 @@ object GuessTheSecretApp {
             true
         )
 
+        val idGenerator = IdGenerator.Random()
+
         return Cors(corsPolicy)
             .then(PlayerRequestContext())
             .then(
@@ -64,7 +68,7 @@ object GuessTheSecretApp {
                             RegisterNewPlayer(players, passwordEncoder).asRoute(),
                             ShowLeaderboard().asRoute(rankings, authentication),
                             SubmitGuess(games, eventsBus).asRoute(withPlayerId, authentication),
-                            StartNewGame(games, secrets).asRoute(withPlayerId, authentication),
+                            StartNewGame(games, secrets, idGenerator).asRoute(withPlayerId, authentication),
                             GetGameDetails(games).asRoute(withPlayerId, authentication)
                         )
                     }

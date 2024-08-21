@@ -1,5 +1,7 @@
 package com.example.gameplay
 
+import com.example.common.infra.IdGenerator
+import com.example.common.infra.Random
 import com.example.gameplay.infra.InMemory
 import com.example.gameplay.infra.Rotating
 import com.example.player.PlayerId
@@ -14,7 +16,8 @@ class StartNewGameTests {
 
     private val secrets = Secrets.Rotating(listOf("first", "second"))
     private val games = Games.InMemory()
-    private val startNewGame = StartNewGame(games, secrets)
+    private val idGenerator = IdGenerator.Random()
+    private val startNewGame = StartNewGame(games, secrets, idGenerator)
 
     @Test
     fun `starts a different game every time`() {
