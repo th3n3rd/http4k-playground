@@ -1,3 +1,3 @@
 package com.example.gameplay
 
-class GetGameDetails(val games: Games) {}
+class GetGameDetails(val games: Games)

@@ -1,13 +1,13 @@
 package com.example.player
 
+import com.example.common.UseCase
 import com.example.common.infra.IdGenerator
 
 class RegisterNewPlayer(
     private val players: RegisteredPlayers,
     private val passwordEncoder: PasswordEncoder,
     private val idGenerator: IdGenerator
-) {
-
+) : UseCase {
     data class Command(val username: String, val password: String)
 
     operator fun invoke(command: Command) {

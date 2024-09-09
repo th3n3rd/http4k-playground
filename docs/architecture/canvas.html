@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Canvas</title>
+    <style>
+        #container {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .layer {
+            fill-opacity: 0.3;
+        }
+
+        .component:hover, .component.highlight {
+            stroke: black;
+            stroke-opacity: 0.3;
+            stroke-width: 3px;
+        }
+
+        .components-container {
+            max-width: 50vw;
+            display: flex;
+        }
+
+        .components {
+            font-family: sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 24px;
+            width: 300px;
+        }
+
+        .components .title {
+            font-weight: bold;
+        }
+
+        .components .component-id:hover {
+            font-weight: bold;
+        }
+
+        .components .component-id.highlight {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+<script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+    class Component {
+        constructor(id, shared, color) {
+            this.id = id;
+            this.shared = shared;
+            this.color = color;
+            this.x = 0;
+            this.y = 0;
+            this.sanitizedId = this.sanitizeId(id);
+        }
+
+        sanitizeId(id) {
+            return id.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+        }
+
+        setPosition(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        render(svgGroup, componentRadius) {
+            svgGroup.append("circle")
+                .attr("class", "component")
+                .attr("r", componentRadius)
+                .attr("cx", this.x)
+                .attr("cy", this.y)
+                .attr("fill", this.color)
+                .attr("id", `comp-${this.sanitizedId}`)
+                .attr("stroke", "none")
+                .on("mouseover", () => {
+                    d3.select(`#text-${this.sanitizedId}`).classed("highlight", true);
+                })
+                .on("mouseout", () => {
+                    d3.select(`#text-${this.sanitizedId}`).classed("highlight", false);
+                });
+        }
+    }
+
+    class Layer {
+        constructor(name, radius, color, distribution, components) {
+            this.name = name;
+            this.radius = radius;
+            this.color = color;
+            this.distribution = distribution;
+            this.components = components.map(comp => new Component(comp.id, comp.shared, this.color));
+        }
+
+        distributeComponents(componentRadius) {
+            if (this.distribution === "even-around") {
+                this.distributeEvenAround(componentRadius);
+            } else if (this.distribution === "even-random") {
+                this.distributeEvenRandom(componentRadius);
+            }
+        }
+
+        distributeEvenRandom(componentRadius) {
+            const placedComponents = [];
+            const maxAttempts = 100;
+
+            this.components.forEach(component => {
+                let position;
+                let attempts = 0;
+                let overlapping = false;
+
+                do {
+                    position = this.randomPositionInCircle(this.radius - componentRadius - 10);
+                    overlapping = placedComponents.some(
+                        placedComp => this.distance(position.x, position.y, placedComp.x, placedComp.y) < componentRadius * 2
+                    );
+                    attempts++;
+                } while (overlapping && attempts < maxAttempts);
+
+                component.setPosition(position.x, position.y);
+                placedComponents.push(position); // Store the placed position to avoid overlaps
+            });
+        }
+
+        distance(x1, y1, x2, y2) {
+            return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+        }
+
+        randomPositionInCircle(radius) {
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.sqrt(Math.random()) * radius;
+            return { x: distance * Math.cos(angle), y: distance * Math.sin(angle) };
+        }
+
+        distributeEvenAround(componentRadius) {
+            const angleStep = (2 * Math.PI) / this.components.length;
+            const componentPlacementRadius = this.radius - componentRadius - 10;  // Ensure components are within the layer
+
+            this.components.forEach((component, index) => {
+                const angle = index * angleStep;
+                const x = componentPlacementRadius * Math.cos(angle);
+                const y = componentPlacementRadius * Math.sin(angle);
+                component.setPosition(x, y);
+            });
+        }
+
+        render(svgGroup, componentRadius) {
+            svgGroup.append("circle")
+                .attr("class", "layer")
+                .attr("r", this.radius)
+                .attr("fill", this.color);
+
+            this.components.forEach(component => component.render(svgGroup, componentRadius));
+        }
+    }
+
+    // **Canvas Class**
+    class Canvas {
+        constructor(layersData, componentRadius, svgWidth, svgHeight) {
+            this.layers = layersData.map(layerData => new Layer(layerData.name, layerData.radius, layerData.color, layerData.distribution, layerData.components));
+            this.componentRadius = componentRadius;
+            this.svgWidth = svgWidth;
+            this.svgHeight = svgHeight;
+            this.centerX = svgWidth / 2;
+            this.centerY = svgHeight / 2;
+        }
+
+        distributeComponents() {
+            this.layers.forEach(layer => {
+                layer.distributeComponents(this.componentRadius);
+            });
+        }
+
+        render() {
+            const svg = d3.select("#container")
+                .append("svg")
+                .attr("width", this.svgWidth)
+                .attr("height", this.svgHeight);
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${this.centerX}, ${this.centerY})`);
+
+            this.layers.forEach(layer => layer.render(g, this.componentRadius));
+
+            this.renderComponentNames();
+        }
+
+        renderComponentNames() {
+            const nameListContainer = d3.select("#container").append("div").attr("class", "components-container");
+
+            this.layers.reverse().forEach(layer => {
+                const nameList = nameListContainer.append("div").attr("class", "components");
+
+                nameList.append("div")
+                    .attr("class", "title")
+                    .style("color", layer.color)
+                    .text(layer.name)
+
+                layer.components.forEach(component => {
+                    nameList.append("div")
+                        .attr("id", `text-${component.sanitizedId}`)
+                        .attr("class", "component-id")
+                        .style("color", component.shared ? "lightgray" : component.color)
+                        .text(component.id)
+                        .on("mouseover", function () {
+                            d3.select(`#comp-${component.sanitizedId}`).classed("highlight", true);
+                        })
+                        .on("mouseout", function () {
+                            d3.select(`#comp-${component.sanitizedId}`).classed("highlight", false);
+                        });
+                });
+            });
+        }
+    }
+
+    const layersData = [
+    {
+        name: "Infrastructure",
+        radius: 200,
+        color: "lightblue",
+        distribution: "even-around",
+        components: [{ id: "DatabaseGames", shared: false }, { id: "GetGameDetailsApi", shared: false }, { id: "InMemoryGames", shared: false }, { id: "RotatingSecrets", shared: false }, { id: "StartNewGameApi", shared: false }, { id: "SubmitGuessApi", shared: false }, { id: "TracingGames", shared: false }, { id: "AddTags", shared: true }, { id: "AppProperties", shared: true }, { id: "ClientTracing", shared: true }, { id: "DataSources", shared: true }, { id: "DatabaseCall", shared: true }, { id: "DatabaseContext", shared: true }, { id: "EventsBus", shared: true }, { id: "IdGenerator", shared: true }, { id: "InMemoryEventBus", shared: true }, { id: "RandomIdGenerator", shared: true }, { id: "RunDatabaseMigrations", shared: true }, { id: "ServerTracing", shared: true }, { id: "TracingEvents", shared: true }]
+    },
+    {
+        name: "Use Cases",
+        radius: 150,
+        color: "lightgreen",
+        distribution: "even-around",
+        components: [{ id: "StartNewGame", shared: false }, { id: "SubmitGuess", shared: false }]
+    },
+    {
+        name: "Domain",
+        radius: 110,
+        color: "lightcoral",
+        distribution: "even-random",
+        components: [{ id: "Game", shared: false }, { id: "GameCompleted", shared: false }, { id: "GameGuessingError", shared: false }, { id: "GameId", shared: false }, { id: "Games", shared: false }, { id: "GetGameDetails", shared: false }, { id: "HintProgression", shared: false }, { id: "Secrets", shared: false }, { id: "SubmitGuessError", shared: false }]
+    }
+];;
+
+    const canvas = new Canvas(layersData, 10, 460, 460);
+    canvas.distributeComponents();
+    canvas.render();
+
+</script>
+</body>
+</html>

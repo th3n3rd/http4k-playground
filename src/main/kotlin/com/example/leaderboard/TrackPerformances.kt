@@ -1,5 +1,6 @@
 package com.example.leaderboard
 
+import com.example.common.UseCase
 import com.example.leaderboard.TrackPerformancesError.PlayerNotFound
 import com.example.player.PlayerId
 import com.example.player.RegisteredPlayers
@@ -10,7 +11,7 @@ import dev.forkhandles.result4k.Success
 class TrackPerformances(
     private val players: RegisteredPlayers,
     private val rankings: Rankings
-) {
+) : UseCase {
     operator fun invoke(playerId: PlayerId, attempts: Int): Result<Unit, TrackPerformancesError> {
         val player = players.findById(playerId)
             ?: return Failure(PlayerNotFound(playerId))

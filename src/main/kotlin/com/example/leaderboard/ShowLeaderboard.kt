@@ -1,3 +1,5 @@
 package com.example.leaderboard
 
-class ShowLeaderboard
+import com.example.common.UseCase
+
+class ShowLeaderboard : UseCase

@@ -9,7 +9,7 @@
     <description>Project GuessTheSecret</description>
 
     <properties>
-        <javaVersion>11</javaVersion>
+        <javaVersion>21</javaVersion>
         <kotlinVersion>1.9.22</kotlinVersion>
         <junitVersion>5.10.2</junitVersion>
         <http4kVersion>5.21.2.0</http4kVersion>
@@ -30,6 +30,7 @@
         <codegenDbUsername>example</codegenDbUsername>
         <codegenDbPassword>example</codegenDbPassword>
         <archunitVersion>1.3.0</archunitVersion>
+        <classgraphVersion>4.8.175</classgraphVersion>
     </properties>
 
     <dependencyManagement>
@@ -211,6 +212,11 @@
             <artifactId>archunit-junit5</artifactId>
             <version>${archunitVersion}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>${classgraphVersion}</version>
         </dependency>
     </dependencies>
 
