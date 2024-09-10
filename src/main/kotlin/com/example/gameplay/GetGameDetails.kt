@@ -1,3 +1,5 @@
 package com.example.gameplay
 
-class GetGameDetails(val games: Games)
+import com.example.common.UseCase
+
+class GetGameDetails(val games: Games) : UseCase
