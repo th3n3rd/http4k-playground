@@ -331,7 +331,7 @@
                                 </database>
                                 <generate/>
                                 <target>
-                                    <packageName>com.example.common.infra.database</packageName>
+                                    <packageName>com.example.guessing.common.infra.database</packageName>
                                     <directory>${project.basedir}/target/generated-sources/jooq</directory>
                                 </target>
                             </generator>
