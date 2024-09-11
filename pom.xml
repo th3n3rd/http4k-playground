@@ -10,6 +10,8 @@
 
     <properties>
         <javaVersion>21</javaVersion>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <kotlinVersion>1.9.22</kotlinVersion>
         <junitVersion>5.10.2</junitVersion>
         <http4kVersion>5.21.2.0</http4kVersion>
