@@ -143,6 +143,11 @@
             <version>${logbackClassicVersion}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>${classgraphVersion}</version>
+        </dependency>
+        <dependency>
                 <groupId>org.http4k</groupId>
                 <artifactId>http4k-testing-approval</artifactId>
                 <version>${http4kVersion}</version>
@@ -212,11 +217,6 @@
             <artifactId>archunit-junit5</artifactId>
             <version>${archunitVersion}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-            <version>${classgraphVersion}</version>
         </dependency>
     </dependencies>
 

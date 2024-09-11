@@ -43,7 +43,7 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
         ];
         """.trimIndent()
 
-        val template = Files.readString(Path.of("src/test/resources/architecture-canvas-template.html"))
+        val template = Files.readString(Path.of("src/main/resources/architecture-canvas-template.html"))
         val rendered = template.replace("{{data}}", data)
 
         if (!Files.isDirectory(directory)) {
