@@ -25,6 +25,9 @@ class ArchitectureTests {
 
     @Nested
     inner class CanvasGeneration {
+
+        private val canvas = ArchitectureCanvas.of("com.example.guessing")
+
         @Test
         fun `identifies top-level modules`() {
             val canvas = ArchitectureCanvas.of("com.example.guessing")
@@ -38,20 +41,17 @@ class ArchitectureTests {
 
         @Test
         fun `identifies infrastructure components for a module`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             canvas.modules.first().infra.all { it.name.contains(".infra.") } shouldBe true
         }
 
         @Test
         fun `identifies domain components for a module`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             val module = canvas.modules.first()
             module.domain.all { it.packagePath == module.name } shouldBe true
         }
 
         @Test
         fun `identifies use case components for a module`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             canvas.modules.filter { !it.shared }.forEach {
                 it.useCases shouldNotContainAnyOf it.infra
                 it.useCases shouldNotContainAnyOf it.domain
@@ -60,7 +60,6 @@ class ArchitectureTests {
 
         @Test
         fun `identifies when a component is shared`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             val shared = canvas.modules.first { it.shared }
             shared.infra.all { it.shared } shouldBe true
             shared.useCases.all { it.shared } shouldBe true
@@ -69,7 +68,6 @@ class ArchitectureTests {
 
         @Test
         fun `excludes marking interfaces`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             val shared = canvas.modules.first { it.shared }
             shared.domain.map { it.simpleName } shouldNotContainAnyOf listOf("DomainEvent")
             shared.useCases.map { it.simpleName } shouldNotContainAnyOf listOf("UseCase")
@@ -77,7 +75,6 @@ class ArchitectureTests {
 
         @Test
         fun `excludes test code`() {
-            val canvas = ArchitectureCanvas.of("com.example.guessing")
             canvas.modules.filter { !it.shared }.forEach {
                 it.infra.any { component -> component.name.endsWith("Tests") } shouldBe false
                 it.useCases.any { component -> component.name.endsWith("Tests") } shouldBe false
