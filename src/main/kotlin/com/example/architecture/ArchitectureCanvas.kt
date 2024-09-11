@@ -101,7 +101,6 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
     data class Component(val name: String) {
         val packagePath = name.split(".").dropLast(1).joinToString(".")
         val simpleName = name.split(".").last()
-        val shortName = name.compacted()
         val shared = name.contains(".common.")
     }
 
