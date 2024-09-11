@@ -1,4 +1,4 @@
-package com.example.guessing
+package com.example.architecture
 
 import com.example.guessing.common.UseCase
 import io.github.classgraph.ClassGraph
