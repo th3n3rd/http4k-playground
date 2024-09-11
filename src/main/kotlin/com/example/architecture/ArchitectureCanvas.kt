@@ -1,9 +1,7 @@
 package com.example.architecture
 
-import com.example.guessing.common.UseCase
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassInfo
-import org.http4k.events.Event
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.pathString
@@ -79,12 +77,12 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
                     .filter { it.isNotSyntheticCode() }
                     .filter { it.isProductionCode() }
                     .filter { it.isTopLevelCode() }
-                    .filter { it.isNotMarkingInterface() }
+                    .filter { it.isNotExcluded() }
                     .forEach {
                         when {
-                            it.isInfrastructure() -> infra.add(Component(it.name))
-                            it.isUseCase() -> useCases.add(Component(it.name))
-                            it.packageName == packagePath -> domain.add(Component(it.name))
+                            it.isInfrastructure() -> infra.add(Component(it))
+                            it.isUseCase() -> useCases.add(Component(it))
+                            it.isCore() -> domain.add(Component(it))
                         }
                     }
 
@@ -98,10 +96,11 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
         }
     }
 
-    data class Component(val name: String) {
-        val packagePath = name.split(".").dropLast(1).joinToString(".")
-        val simpleName = name.split(".").last()
-        val shared = name.contains(".common.")
+    data class Component(val info: ClassInfo) {
+        val name: String = info.name
+        val packagePath = info.name.split(".").dropLast(1).joinToString(".")
+        val simpleName = info.name.split(".").last()
+        val shared = info.packageInfo.hasAnnotation(Architecture.Shared::class.java)
     }
 
     companion object {
@@ -111,10 +110,10 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
                 .enableAllInfo()
                 .scan()
 
-            val modules = scanResult.allClasses
-                .filter { it.belongsToChildPackageOf(rootPackage) }
-                .groupBy { it.packageName }
-                .map { Module.of(it.key) }
+            val modules = scanResult.packageInfo
+                .filter { it.hasAnnotation(Architecture.Core::class.java) }
+                .sortedBy { it.name }
+                .map { Module.of(it.name) }
 
             return ArchitectureCanvas(modules)
         }
@@ -128,17 +127,13 @@ private fun ClassInfo.isProductionCode() = !classpathElementURL.path.contains("/
 
 private fun ClassInfo.isTopLevelCode() = !name.contains("$")
 
-private fun ClassInfo.isInfrastructure() = packageName.endsWith(".infra")
+private fun ClassInfo.isInfrastructure() = packageInfo.hasAnnotation(Architecture.Infra::class.java)
 
-private fun ClassInfo.isUseCase() = simpleName == UseCase::class.simpleName || implementsInterface(UseCase::class.java)
+private fun ClassInfo.isCore() = packageInfo.hasAnnotation(Architecture.Core::class.java)
 
-private fun ClassInfo.isNotMarkingInterface() = !listOf(
-    Event::class.simpleName,
-    UseCase::class.simpleName,
-).contains(simpleName)
+private fun ClassInfo.isUseCase() = isCore() && hasAnnotation(Architecture.UseCase::class.java)
 
-private fun ClassInfo.belongsToChildPackageOf(rootPackage: String) =
-    packageName.split(".").size == rootPackage.split(".").size + 1
+private fun ClassInfo.isNotExcluded() = !hasAnnotation(Architecture.Excluded::class.java)
 
 private fun ClassInfo.belongsToAnySubpackageOf(rootPackage: String) = packageName.contains(rootPackage)
 

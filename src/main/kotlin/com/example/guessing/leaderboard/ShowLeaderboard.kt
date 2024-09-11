@@ -1,5 +1,6 @@
 package com.example.guessing.leaderboard
 
-import com.example.guessing.common.UseCase
+import com.example.architecture.Architecture
 
-class ShowLeaderboard : UseCase
+@Architecture.UseCase
+class ShowLeaderboard

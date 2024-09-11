@@ -1,5 +1,6 @@
 package com.example.guessing.gameplay
 
-import com.example.guessing.common.UseCase
+import com.example.architecture.Architecture
 
-class GetGameDetails(val games: Games) : UseCase
+@Architecture.UseCase
+class GetGameDetails(val games: Games)

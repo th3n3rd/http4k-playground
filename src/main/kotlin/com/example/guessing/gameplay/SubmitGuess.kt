@@ -1,6 +1,6 @@
 package com.example.guessing.gameplay
 
-import com.example.guessing.common.UseCase
+import com.example.architecture.Architecture
 import com.example.guessing.gameplay.SubmitGuessError.CouldNotGuess
 import com.example.guessing.gameplay.SubmitGuessError.GameNotFound
 import com.example.guessing.player.PlayerId
@@ -10,10 +10,11 @@ import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.peek
 import org.http4k.events.Events
 
+@Architecture.UseCase
 class SubmitGuess(
     private val games: Games,
     private val events: Events = {}
-) : UseCase {
+) {
     operator fun invoke(gameId: GameId, secret: String, playerId: PlayerId): Result<Game, SubmitGuessError> {
         val game = games.findByIdAndPlayerId(gameId, playerId) ?: return Failure(GameNotFound(gameId))
         return game.guess(secret)
