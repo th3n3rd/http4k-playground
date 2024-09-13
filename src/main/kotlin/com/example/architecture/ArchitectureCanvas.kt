@@ -18,27 +18,21 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
         val data: String = """
         [
             {
-                name: "Infrastructure",
-                radius: 200,
-                color: "lightblue",
-                distribution: "even-around",
+                id: "Infrastructure",
+                colour: "lightblue",
                 components: [${infra.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
             },
             {
-                name: "Use Cases",
-                radius: 150,
-                color: "lightgreen",
-                distribution: "even-around",
+                id: "Use Cases",
+                colour: "lightgreen",
                 components: [${useCases.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
             },
             {
-                name: "Domain",
-                radius: 110,
-                color: "lightcoral",
-                distribution: "even-random",
+                id: "Domain",
+                colour: "lightcoral",
                 components: [${domain.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
             }
-        ];
+        ]
         """.trimIndent()
 
         val template = Files.readString(Path.of("src/main/resources/architecture-canvas-template.html"))

@@ -53,179 +53,158 @@
 <script type="module">
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-    class Component {
-        constructor(id, shared, color) {
-            this.id = id;
-            this.shared = shared;
-            this.color = color;
-            this.x = 0;
-            this.y = 0;
-            this.sanitizedId = this.sanitizeId(id);
-        }
-
-        sanitizeId(id) {
-            return id.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-        }
-
-        setPosition(x, y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        render(svgGroup, componentRadius) {
-            svgGroup.append("circle")
-                .attr("class", "component")
-                .attr("r", componentRadius)
-                .attr("cx", this.x)
-                .attr("cy", this.y)
-                .attr("fill", this.color)
-                .attr("id", `comp-${this.sanitizedId}`)
-                .attr("stroke", "none")
-                .on("mouseover", () => {
-                    d3.select(`#text-${this.sanitizedId}`).classed("highlight", true);
-                })
-                .on("mouseout", () => {
-                    d3.select(`#text-${this.sanitizedId}`).classed("highlight", false);
-                });
-        }
-    }
-
-    class Layer {
-        constructor(name, radius, color, distribution, components) {
-            this.name = name;
-            this.radius = radius;
-            this.color = color;
-            this.distribution = distribution;
-            this.components = components.map(comp => new Component(comp.id, comp.shared, this.color));
-        }
-
-        distributeComponents(componentRadius) {
-            if (this.distribution === "even-around") {
-                this.distributeEvenAround(componentRadius);
-            } else if (this.distribution === "even-random") {
-                this.distributeEvenRandom(componentRadius);
-            }
-        }
-
-        distributeEvenRandom(componentRadius) {
-            const placedComponents = [];
-            const maxAttempts = 100;
-
-            this.components.forEach(component => {
-                let position;
-                let attempts = 0;
-                let overlapping = false;
-
-                do {
-                    position = this.randomPositionInCircle(this.radius - componentRadius - 10);
-                    overlapping = placedComponents.some(
-                        placedComp => this.distance(position.x, position.y, placedComp.x, placedComp.y) < componentRadius * 2
-                    );
-                    attempts++;
-                } while (overlapping && attempts < maxAttempts);
-
-                component.setPosition(position.x, position.y);
-                placedComponents.push(position); // Store the placed position to avoid overlaps
-            });
-        }
-
-        distance(x1, y1, x2, y2) {
-            return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-        }
-
-        randomPositionInCircle(radius) {
-            const angle = Math.random() * 2 * Math.PI;
-            const distance = Math.sqrt(Math.random()) * radius;
-            return { x: distance * Math.cos(angle), y: distance * Math.sin(angle) };
-        }
-
-        distributeEvenAround(componentRadius) {
-            const angleStep = (2 * Math.PI) / this.components.length;
-            const componentPlacementRadius = this.radius - componentRadius - 10;  // Ensure components are within the layer
-
-            this.components.forEach((component, index) => {
-                const angle = index * angleStep;
-                const x = componentPlacementRadius * Math.cos(angle);
-                const y = componentPlacementRadius * Math.sin(angle);
-                component.setPosition(x, y);
-            });
-        }
-
-        render(svgGroup, componentRadius) {
-            svgGroup.append("circle")
-                .attr("class", "layer")
-                .attr("r", this.radius)
-                .attr("fill", this.color);
-
-            this.components.forEach(component => component.render(svgGroup, componentRadius));
-        }
-    }
-
-    // **Canvas Class**
-    class Canvas {
-        constructor(layersData, componentRadius, svgWidth, svgHeight) {
-            this.layers = layersData.map(layerData => new Layer(layerData.name, layerData.radius, layerData.color, layerData.distribution, layerData.components));
-            this.componentRadius = componentRadius;
-            this.svgWidth = svgWidth;
-            this.svgHeight = svgHeight;
-            this.centerX = svgWidth / 2;
-            this.centerY = svgHeight / 2;
-        }
-
-        distributeComponents() {
-            this.layers.forEach(layer => {
-                layer.distributeComponents(this.componentRadius);
-            });
+    class Components {
+        constructor(layers, containerSelector) {
+            this.layers = layers
+            this.containerSelector = containerSelector
         }
 
         render() {
-            const svg = d3.select("#container")
-                .append("svg")
-                .attr("width", this.svgWidth)
-                .attr("height", this.svgHeight);
-
-            const g = svg.append("g")
-                .attr("transform", `translate(${this.centerX}, ${this.centerY})`);
-
-            this.layers.forEach(layer => layer.render(g, this.componentRadius));
-
-            this.renderComponentNames();
-        }
-
-        renderComponentNames() {
-            const nameListContainer = d3.select("#container").append("div").attr("class", "components-container");
+            const container = d3.select(this.containerSelector)
+                .append("div")
+                .attr("class", "components-container");
 
             this.layers.reverse().forEach(layer => {
-                const nameList = nameListContainer.append("div").attr("class", "components");
+                const list = container
+                    .append("div")
+                    .attr("class", "components");
 
-                nameList.append("div")
-                    .attr("class", "title")
-                    .style("color", layer.color)
-                    .text(layer.name)
+                this.renderTitle(list, layer)
 
                 layer.components.forEach(component => {
-                    nameList.append("div")
-                        .attr("id", `text-${component.sanitizedId}`)
-                        .attr("class", "component-id")
-                        .style("color", component.shared ? "lightgray" : component.color)
-                        .text(component.id)
-                        .on("mouseover", function () {
-                            d3.select(`#comp-${component.sanitizedId}`).classed("highlight", true);
-                        })
-                        .on("mouseout", function () {
-                            d3.select(`#comp-${component.sanitizedId}`).classed("highlight", false);
-                        });
+                    this.renderComponent(list, layer, component)
                 });
             });
+        }
+
+        renderTitle(list, layer) {
+            list.append("div")
+                .attr("class", "title")
+                .style("color", layer.colour)
+                .text(layer.id)
+        }
+
+        renderComponent(list, layer, component) {
+            list.append("div")
+                .attr("id", `text-${component.id}`)
+                .attr("class", "component-id")
+                .style("color", component.shared ? "lightgray" : layer.colour)
+                .text(component.id)
+                .on("mouseover", function () {
+                    d3.select(`#comp-${component.id}`).classed("highlight", true);
+                })
+                .on("mouseout", function () {
+                    d3.select(`#comp-${component.id}`).classed("highlight", false);
+                });
+        }
+    }
+
+    class BubbleChart {
+        constructor(layers, containerSelector, width, height) {
+            this.width = width;
+            this.height = height;
+            this.containerSelector = containerSelector;
+            this.layers = layers;
+        }
+
+        render() {
+            const svg = d3.select(this.containerSelector)
+                .append("svg")
+                .attr("width", this.width)
+                .attr("height", this.height);
+
+            const packedLayers = this.packLayers(this.layers)
+
+            const group = svg.selectAll("g")
+                .data(packedLayers)
+                .enter()
+                .append("g")
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+
+            const allBubbles = group.append("circle")
+                .attr("r", d => d.r)
+
+            const componentBubbles = allBubbles.filter(d => !d.children)
+            const layerBubbles = allBubbles.filter(d => d.children)
+
+            layerBubbles
+                .attr("fill", d => d.data.colour)
+                .attr("fill-opacity", 0.3)
+
+            componentBubbles
+                .attr("class", "component")
+                .attr("id", d => `comp-${d.data.id}`)
+                .attr("fill", d => d.parent.data.colour)
+                .attr("fill-opacity", 1)
+                .on("mouseover", function (e, d) {
+                    d3.select(`#text-${d.data.id}`).classed("highlight", true);
+                })
+                .on("mouseout", function (e, d) {
+                    d3.select(`#text-${d.data.id}`).classed("highlight", false);
+                });
+        }
+
+        packLayers(layers) {
+            const packer = d3.pack()
+                .size([this.width, this.height])
+                .padding(10);
+
+            const root = d3.hierarchy(this.computeHierarchy(layers))
+                .sum(d => d.weight)
+                .sort((a, b) => b.value - a.value); // TODO: figure out how to show the packing from bottom-up rather than left-to-right
+
+            return packer(root).descendants()
+        }
+
+        computeHierarchy(layers) {
+            const infra = layers.find(it => it.id === "Infrastructure")
+            const useCases = layers.find(it => it.id === "Use Cases")
+            const domain = layers.find(it => it.id === "Domain")
+            return {
+                id: infra.id,
+                colour: infra.colour,
+                weight: 1,
+                children: [
+                    ...infra.components.map(component => ({
+                        id: component.id,
+                        shared: component.shared,
+                        weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                    })),
+                    {
+                        id: useCases.id,
+                        colour: useCases.colour,
+                        weight: 1,
+                        children: [
+                            ...useCases.components.map(component => ({
+                                id: component.id,
+                                shared: component.shared,
+                                weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                            })),
+                            {
+                                id: domain.id,
+                                colour: domain.colour,
+                                weight: 1,
+                                children: domain.components.map(component => ({
+                                    id: component.id,
+                                    shared: component.shared,
+                                    weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                                }))
+                            }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        randomWeight() {
+            return (Math.random() * 100) + 10;
         }
     }
 
     const layersData = {{data}};
 
-    const canvas = new Canvas(layersData, 10, 460, 460);
-    canvas.distributeComponents();
-    canvas.render();
-
+    new BubbleChart(layersData, "#container", 460, 460).render()
+    new Components(layersData, "#container").render()
 </script>
 </body>
 </html>
