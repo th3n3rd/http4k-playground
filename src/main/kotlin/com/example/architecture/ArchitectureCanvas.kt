@@ -8,35 +8,44 @@ import kotlin.io.path.pathString
 
 data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
     fun render(directory: Path) {
-        val module = modules.first { !it.shared }
         val shared = modules.first { it.shared }
+        val notShared = modules.filter { !it.shared }
 
-        val infra = module.infra + shared.infra
-        val useCases = module.useCases + shared.useCases
-        val domain = module.domain + shared.domain
+        val renderedModules = notShared.joinToString {
+            val module = it
+            val infra = module.infra + shared.infra
+            val useCases = module.useCases + shared.useCases
+            val domain = module.domain + shared.domain
 
-        val data: String = """
-        [
-            {
-                id: "Infrastructure",
-                colour: "lightblue",
-                components: [${infra.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
-            },
-            {
-                id: "Use Cases",
-                colour: "lightgreen",
-                components: [${useCases.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
-            },
-            {
-                id: "Domain",
-                colour: "lightcoral",
-                components: [${domain.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }"} }]
-            }
-        ]
-        """.trimIndent()
+            val renderedLayers: String = """
+            [
+                {
+                    id: "Infrastructure",
+                    colour: "lightblue",
+                    components: [${infra.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }" }}]
+                },
+                {
+                    id: "Use Cases",
+                    colour: "lightgreen",
+                    components: [${useCases.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }" }}]
+                },
+                {
+                    id: "Domain",
+                    colour: "lightcoral",
+                    components: [${domain.joinToString { "{ id: \"${it.simpleName}\", shared: ${it.shared} }" }}]
+                }
+            ]""".trimIndent()
+
+            """
+                {
+                    id: "${it.simpleName}",
+                    layers: $renderedLayers
+                }
+            """.trimIndent()
+        }
 
         val template = Files.readString(Path.of("src/main/resources/architecture-canvas-template.html"))
-        val rendered = template.replace("{{data}}", data)
+        val rendered = template.replace("{{data}}", "[$renderedModules]")
 
         if (!Files.isDirectory(directory)) {
             Files.createDirectory(directory)
@@ -54,7 +63,7 @@ data class ArchitectureCanvas(val modules: List<Module> = emptyList()) {
             val modules = scanResult.packageInfo
                 .filter { it.isCore() }
                 .sortedBy { it.name }
-                .map { Module.of(it.name) }
+                .map { Module.of(it) }
 
             return ArchitectureCanvas(modules)
         }

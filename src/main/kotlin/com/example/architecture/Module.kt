@@ -2,22 +2,25 @@ package com.example.architecture
 
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassInfo
+import io.github.classgraph.PackageInfo
 
 data class Module(
-    val name: String,
+    val info: PackageInfo,
     val useCases: List<Component> = emptyList(),
     val domain: List<Component> = emptyList(),
     val infra: List<Component> = emptyList(),
 ) {
+    val name: String = info.name
+    val simpleName = name.split(".").last()
     val shortName = name.compacted()
     val shared = infra.all { it.shared }
         && useCases.all { it.shared }
         && domain.all { it.shared }
 
     companion object {
-        fun of(packagePath: String): Module {
+        fun of(packageInfo: PackageInfo): Module {
             val scanResult = ClassGraph()
-                .acceptPackages(packagePath)
+                .acceptPackages(packageInfo.name)
                 .enableAllInfo()
                 .scan()
 
@@ -26,7 +29,7 @@ data class Module(
             val infra = mutableListOf<Component>()
 
             scanResult.allClasses
-                .filter { it.belongsToAnySubpackageOf(packagePath) }
+                .filter { it.belongsToAnySubpackageOf(packageInfo.name) }
                 .filter { it.isNotSyntheticCode() }
                 .filter { it.isProductionCode() }
                 .filter { it.isTopLevelCode() }
@@ -40,7 +43,7 @@ data class Module(
                 }
 
             return Module(
-                name = packagePath,
+                info = packageInfo,
                 useCases = useCases,
                 domain = domain,
                 infra = infra,

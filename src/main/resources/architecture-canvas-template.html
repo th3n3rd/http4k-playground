@@ -54,18 +54,14 @@
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
     class Components {
-        constructor(layers, containerSelector) {
+        constructor(layers, container) {
             this.layers = layers
-            this.containerSelector = containerSelector
+            this.container = container
         }
 
         render() {
-            const container = d3.select(this.containerSelector)
-                .append("div")
-                .attr("class", "components-container");
-
-            this.layers.reverse().forEach(layer => {
-                const list = container
+            this.layers.toReversed().forEach(layer => {
+                const list = this.container
                     .append("div")
                     .attr("class", "components");
 
@@ -100,20 +96,23 @@
     }
 
     class BubbleChart {
-        constructor(layers, containerSelector, width, height) {
+        constructor(modules, container, width, height, dispatcher) {
             this.width = width;
             this.height = height;
-            this.containerSelector = containerSelector;
-            this.layers = layers;
+            this.contaienr = container;
+            this.modules = modules;
+            this.dispatcher = dispatcher
         }
 
         render() {
-            const svg = d3.select(this.containerSelector)
+            const dispatcher = this.dispatcher
+
+            const svg = this.contaienr
                 .append("svg")
                 .attr("width", this.width)
                 .attr("height", this.height);
 
-            const packedLayers = this.packLayers(this.layers)
+            const packedLayers = this.packModules(this.modules)
 
             const group = svg.selectAll("g")
                 .data(packedLayers)
@@ -124,8 +123,30 @@
             const allBubbles = group.append("circle")
                 .attr("r", d => d.r)
 
-            const componentBubbles = allBubbles.filter(d => !d.children)
-            const layerBubbles = allBubbles.filter(d => d.children)
+            const componentBubbles = allBubbles.filter(d => d.data.type === "component")
+            const layerBubbles = allBubbles.filter(d => d.data.type === "layer")
+            const moduleBubbles = allBubbles.filter(d => d.data.type === "module")
+            const rootBubble = allBubbles.filter(d => d.data.type === "root")
+            const allNonRootBubbles = allBubbles.filter(d => d.data.type !== "root")
+
+            rootBubble
+                .attr("fill", "none")
+
+            allNonRootBubbles
+                .on("click", function (e, d) {
+                    e.stopPropagation();
+                    let module = d
+                    while (module.data.type !== "module") {
+                        module = module.parent
+                    }
+                    dispatcher.call("module-selected", d3.select(this), {
+                        moduleId: module.data.id
+                    })
+                })
+
+            moduleBubbles
+                .attr("fill", "black")
+                .attr("fill-opacity", 0)
 
             layerBubbles
                 .attr("fill", d => d.data.colour)
@@ -144,56 +165,75 @@
                 });
         }
 
-        packLayers(layers) {
+        packModules(modules) {
             const packer = d3.pack()
                 .size([this.width, this.height])
                 .padding(10);
 
-            const root = d3.hierarchy(this.computeHierarchy(layers))
+            const root = d3.hierarchy(this.computeHierarchy(modules))
                 .sum(d => d.weight)
                 .sort((a, b) => b.value - a.value); // TODO: figure out how to show the packing from bottom-up rather than left-to-right
 
             return packer(root).descendants()
         }
 
-        computeHierarchy(layers) {
-            const infra = layers.find(it => it.id === "Infrastructure")
-            const useCases = layers.find(it => it.id === "Use Cases")
-            const domain = layers.find(it => it.id === "Domain")
+        computeHierarchy(modules) {
             return {
-                id: infra.id,
-                colour: infra.colour,
-                weight: 1,
-                children: [
-                    ...infra.components.map(component => ({
-                        id: component.id,
-                        shared: component.shared,
-                        weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
-                    })),
-                    {
-                        id: useCases.id,
-                        colour: useCases.colour,
+                type: "root",
+                children: modules.map(it => {
+                    const layers = it.layers
+                    const infra = layers.find(it => it.id === "Infrastructure")
+                    const useCases = layers.find(it => it.id === "Use Cases")
+                    const domain = layers.find(it => it.id === "Domain")
+                    return {
+                        id: it.id,
                         weight: 1,
+                        type: "module",
                         children: [
-                            ...useCases.components.map(component => ({
-                                id: component.id,
-                                shared: component.shared,
-                                weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
-                            })),
                             {
-                                id: domain.id,
-                                colour: domain.colour,
+                                id: infra.id,
+                                colour: infra.colour,
                                 weight: 1,
-                                children: domain.components.map(component => ({
-                                    id: component.id,
-                                    shared: component.shared,
-                                    weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
-                                }))
+                                type: "layer",
+                                children: [
+                                    ...infra.components.map(component => ({
+                                        id: component.id,
+                                        shared: component.shared,
+                                        type: "component",
+                                        weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                                    })),
+                                    {
+                                        id: useCases.id,
+                                        colour: useCases.colour,
+                                        weight: 1,
+                                        type: "layer",
+                                        children: [
+                                            ...useCases.components.map(component => ({
+                                                id: component.id,
+                                                shared: component.shared,
+                                                type: "component",
+                                                weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                                            })),
+                                            {
+                                                id: domain.id,
+                                                colour: domain.colour,
+                                                weight: 1,
+                                                type: "layer",
+                                                children: domain.components.map(component => ({
+                                                    id: component.id,
+                                                    shared: component.shared,
+                                                    type: "component",
+                                                    weight: this.randomWeight(), // TODO: should be reflecting the complexity of the component
+                                                }))
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
-                    }
-                ]
-            };
+                    };
+                })
+            }
         }
 
         randomWeight() {
@@ -201,10 +241,39 @@
         }
     }
 
-    const layersData = {{data}};
+    class ArchitectureCanvas {
+        constructor(modules, container) {
+            this.modules = modules;
+            this.dispatcher = d3.dispatch("module-selected");
+            this.chartContainer = container.append("div");
+            this.componentsContainer = container.append("div").attr("class", "components-container");
+            this.selectedModule = null;
+            this.dispatcher.on("module-selected", (data) => this.onModuleSelected(data.moduleId))
+        }
 
-    new BubbleChart(layersData, "#container", 460, 460).render()
-    new Components(layersData, "#container").render()
+        onModuleSelected(selectedModule) {
+            if (this.selectedModule === selectedModule) {
+                return
+            }
+            this.selectedModule = selectedModule
+            this.renderComponents()
+        }
+
+        renderComponents() {
+            this.componentsContainer.html("")
+            const layers = this.modules.find(it => it.id === this.selectedModule).layers;
+            new Components(layers, this.componentsContainer).render()
+        }
+
+        render() {
+            new BubbleChart(this.modules, this.chartContainer, 460, 460, this.dispatcher).render()
+        }
+    }
+
+    const modules = {{data}};
+
+    const canvas = new ArchitectureCanvas(modules, d3.select("#container"));
+    canvas.render();
 </script>
 </body>
 </html>
