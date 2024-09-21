@@ -23,6 +23,8 @@ class Player(
     password: String = "",
     events: Events
 ) {
+    private var currentGame: GameId = GameId.Placeholder
+
     private val credentialsLens = Body.auto<Credentials>().toLens()
     private val gameStartedLens = Body.auto<GameStarted>().toLens()
     private val gameDetailsLens = Body.auto<GameDetails>().toLens()
@@ -36,50 +38,56 @@ class Player(
         .debug()
 
     init {
-        register(username, password)
+        registers(username, password)
     }
 
-    fun startNewGame(): GameId {
+    fun startsNewGame(): Player {
         val response = client(Request(POST, "/games"))
         response.status.successful shouldBe true
-        return GameId(gameStartedLens(response).id)
+        currentGame = GameId(gameStartedLens(response).id)
+        return this
     }
 
-    fun hasWon(game: GameId) {
-        val response = client(RoutedRequest(Request(GET, "/games/${game.value}"), UriTemplate.from("/games/{gameId}")))
+    fun confirmsHasWon(): Player {
+        val response = client(RoutedRequest(Request(GET, "/games/${currentGame.value}"), UriTemplate.from("/games/{gameId}")))
         response.status.successful shouldBe true
         val details = gameDetailsLens(response)
         details.won shouldBe true
+        return this
     }
 
-    fun guess(game: GameId, secret: String) {
+    fun makesGuess(secret: String): Player {
         val response = client(
-            RoutedRequest(Request(POST, "/games/${game.value}/guesses"), UriTemplate.from("/games/{gameId}/guesses"))
+            RoutedRequest(Request(POST, "/games/${currentGame.value}/guesses"), UriTemplate.from("/games/{gameId}/guesses"))
                 .with(guessLens of Guess(secret))
         )
         response.status.successful shouldBe true
+        return this
     }
 
-    fun receivedHint(game: GameId, hint: String) {
-        val response = client(RoutedRequest(Request(GET, "/games/${game.value}"), UriTemplate.from("/games/{gameId}")))
+    fun confirmsReceivedHint(hint: String): Player {
+        val response = client(RoutedRequest(Request(GET, "/games/${currentGame.value}"), UriTemplate.from("/games/{gameId}")))
         response.status.successful shouldBe true
         val details = gameDetailsLens(response)
         details.hint shouldBe hint
+        return this
     }
 
-    fun checkLeaderboard(rankings: Map<String, Int>) {
+    fun confirmsLeaderboardContains(rankings: Map<String, Int>): Player {
         val response = client(Request(GET, "/leaderboard"))
         response.status.successful shouldBe true
         val leaderboard = leaderboardLens(response)
         leaderboard.rankings shouldContainAll rankings
+        return this
     }
 
-    private fun register(username: String, password: String) {
+    private fun registers(username: String, password: String): Player {
         val response = client(
             Request(POST, "/players")
                 .with(credentialsLens of Credentials(username, password))
         )
         response.status.successful shouldBe true
+        return this
     }
 
     data class Credentials(val username: String, val password: String)

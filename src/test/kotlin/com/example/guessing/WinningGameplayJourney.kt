@@ -5,19 +5,17 @@ import org.junit.jupiter.api.Test
 interface WinningGameplayJourney : Journey {
     @Test
     fun `winning gameplay`() {
-        val alice = newPlayer("alice")
-        val newGame = alice.startNewGame()
+        newPlayer("alice")
+            .startsNewGame()
+            .confirmsReceivedHint("_______")
 
-        alice.receivedHint(newGame, "_______")
+            .makesGuess("incorrect")
+            .confirmsReceivedHint("c______")
 
-        alice.guess(newGame, "incorrect")
-        alice.receivedHint(newGame, "c______")
+            .makesGuess("incorrect")
+            .confirmsReceivedHint("c_____t")
 
-        alice.guess(newGame, "incorrect")
-        alice.receivedHint(newGame, "c_____t")
-
-        alice.guess(newGame, "correct")
-
-        alice.hasWon(newGame)
+            .makesGuess("correct")
+            .confirmsHasWon()
     }
 }
