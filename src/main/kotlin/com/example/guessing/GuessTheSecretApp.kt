@@ -2,6 +2,8 @@ package com.example.guessing
 
 import com.example.guessing.common.infra.IdGenerator
 import com.example.guessing.common.infra.Random
+import com.example.guessing.common.infra.RunDatabaseMigrations
+import com.example.guessing.common.infra.ServerTracing
 import com.example.guessing.gameplay.GetGameDetails
 import com.example.guessing.gameplay.StartNewGame
 import com.example.guessing.gameplay.SubmitGuess
@@ -15,6 +17,7 @@ import com.example.guessing.player.infra.AuthenticatePlayer
 import com.example.guessing.player.infra.PlayerRequestContext
 import com.example.guessing.player.infra.PlayerRequestContext.withPlayerId
 import com.example.guessing.player.infra.asRoute
+import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.ApiServer
@@ -28,9 +31,11 @@ import org.http4k.filter.OriginPolicy
 import org.http4k.filter.Pattern
 import org.http4k.filter.ServerFilters.Cors
 import org.http4k.routing.routes
+import org.http4k.server.SunHttp
+import org.http4k.server.asServer
 
-object GuessTheSecretApp {
-    operator fun invoke(context: GuessTheSecretAppContext = GuessTheSecretAppContext()): HttpHandler {
+object App {
+    operator fun invoke(context: AppContext = AppContext()): HttpHandler {
         with (context) {
             val authentication = AuthenticatePlayer(players, passwordEncoder, withPlayerId)
 
@@ -46,7 +51,8 @@ object GuessTheSecretApp {
 
             val idGenerator = IdGenerator.Random()
 
-            return Cors(corsPolicy)
+            return ServerTracing(eventsBus)
+                .then(Cors(corsPolicy))
                 .then(PlayerRequestContext())
                 .then(
                     routes(
@@ -68,5 +74,11 @@ object GuessTheSecretApp {
                 )
         }
     }
+}
 
+fun main() {
+    RunDatabaseMigrations(environment = ENV)
+    App(AppContext.Prod(ENV))
+        .asServer(SunHttp(9000))
+        .start()
 }

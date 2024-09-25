@@ -1,6 +1,8 @@
 package com.example.guessing.common.infra
 
-import com.example.guessing.StartGuessTheSecretAppServer
+import com.example.guessing.App
+import com.example.guessing.AppContext
+import com.example.guessing.Prod
 import io.kotest.matchers.should
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.Method.GET
@@ -12,6 +14,8 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.kotest.haveHeader
 import org.http4k.kotest.haveStatus
+import org.http4k.server.SunHttp
+import org.http4k.server.asServer
 import org.http4k.testing.Approver
 import org.http4k.testing.JsonApprovalTest
 import org.junit.jupiter.api.Test
@@ -20,7 +24,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(JsonApprovalTest::class)
 class OpenApiSpecTests {
 
-    private val appServer = StartGuessTheSecretAppServer(TestEnvironment())
+    private val appServer = App(AppContext.Prod(TestEnvironment()))
+        .asServer(SunHttp(0))
+        .start()
+
     private val client = SetBaseUriFrom(Uri.of("http://localhost:${appServer.port()}"))
         .then(JavaHttpClient())
 

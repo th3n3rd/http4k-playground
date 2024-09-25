@@ -22,7 +22,7 @@ import com.example.guessing.player.infra.TracingRegisteredPlayers
 import org.http4k.cloudnative.env.Environment
 import org.http4k.events.Events
 
-data class GuessTheSecretAppContext(
+data class AppContext(
     val eventsBus: EventsBus = EventsBus.InMemory(),
     val players: RegisteredPlayers = RegisteredPlayers.InMemory(),
     val games: Games = Games.InMemory(),
@@ -33,11 +33,11 @@ data class GuessTheSecretAppContext(
     companion object
 }
 
-fun GuessTheSecretAppContext.Companion.Prod(environment: Environment, events: Events = {}): GuessTheSecretAppContext {
+fun AppContext.Companion.Prod(environment: Environment, events: Events = {}): AppContext {
     val database = DatabaseContext(environment)
     val appEvents = TracingEvents("app", events)
 
-    return GuessTheSecretAppContext(
+    return AppContext(
         eventsBus = EventsBus.InMemory(appEvents),
         players = TracingRegisteredPlayers(appEvents, RegisteredPlayers.Database(database)),
         games = TracingGames(appEvents, Games.Database(database)),
