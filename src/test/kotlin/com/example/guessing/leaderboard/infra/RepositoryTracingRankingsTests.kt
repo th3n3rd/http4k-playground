@@ -1,6 +1,7 @@
 package com.example.guessing.leaderboard.infra
 
-import com.example.guessing.common.infra.DatabaseCall
+import com.example.guessing.common.infra.RepositoryCall
+import com.example.guessing.common.infra.RepositoryTracing
 import com.example.guessing.leaderboard.Ranking
 import com.example.guessing.leaderboard.Rankings
 import com.example.guessing.leaderboard.RankingsContract
@@ -13,7 +14,7 @@ import io.kotest.matchers.shouldBe
 import org.http4k.testing.RecordingEvents
 import org.junit.jupiter.api.Test
 
-class TracingRankingsTests : RankingsContract {
+class RepositoryTracingRankingsTests : RankingsContract {
 
     private val events = RecordingEvents()
     private val inMemoryRankings = Rankings.InMemory()
@@ -22,14 +23,14 @@ class TracingRankingsTests : RankingsContract {
     private val bob = RegisteredPlayer(PlayerId(), "bob", EncodedPassword("bob"))
     private val charlie = RegisteredPlayer(PlayerId(), "charlie", EncodedPassword("charlie"))
 
-    override val rankings = TracingRankings(events, inMemoryRankings)
+    override val rankings = RepositoryTracing<Rankings>(inMemoryRankings, events, )
 
     override fun given(ranking: Ranking): Ranking {
         inMemoryRankings.save(ranking)
         return ranking
     }
 
-    override fun hasBeenStored()= Matcher<Ranking> { ranking ->
+    override fun hasBeenStored() = Matcher<Ranking> { ranking ->
         MatcherResult(
             inMemoryRankings.findByPlayerId(ranking.playerId) != null,
             { "$ranking was not saved" },
@@ -43,7 +44,7 @@ class TracingRankingsTests : RankingsContract {
 
         rankings.save(newRanking)
 
-        events.toList() shouldBe listOf(DatabaseCall("rankings", "save"))
+        events.toList() shouldBe listOf(RepositoryCall("Rankings", "save"))
     }
 
     @Test
@@ -53,7 +54,7 @@ class TracingRankingsTests : RankingsContract {
 
         rankings.findByPlayerId(existingRanking.playerId)
 
-        events.toList() shouldBe listOf(DatabaseCall("rankings", "find by player id"))
+        events.toList() shouldBe listOf(RepositoryCall("Rankings", "findByPlayerId"))
     }
 
     @Test
@@ -67,6 +68,6 @@ class TracingRankingsTests : RankingsContract {
 
         rankings.findAll()
 
-        events.toList() shouldBe listOf(DatabaseCall("rankings", "find all"))
+        events.toList() shouldBe listOf(RepositoryCall("Rankings", "findAll"))
     }
 }

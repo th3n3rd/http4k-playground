@@ -4,104 +4,104 @@ participant "alice"
 participant "bob"
 participant "charlie"
 participant "app"
-database "players"
-database "games"
-database "rankings"
+database "RegisteredPlayers"
+database "Games"
+database "Rankings"
 "alice" -> "app": POST players
 activate "app"
-"app" <-> "players": save
+"app" <-> "RegisteredPlayers": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": POST games
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "alice" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
-"app" <-> "players": find by id
-"app" <-> "rankings": find by player id
-"app" <-> "rankings": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
+"app" <-> "RegisteredPlayers": findById
+"app" <-> "Rankings": findByPlayerId
+"app" <-> "Rankings": save
 "app" -[#DarkGreen]> "alice": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": POST players
 activate "app"
-"app" <-> "players": save
+"app" <-> "RegisteredPlayers": save
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": POST games
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
-"app" <-> "players": find by id
-"app" <-> "rankings": find by player id
-"app" <-> "rankings": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
+"app" <-> "RegisteredPlayers": findById
+"app" <-> "Rankings": findByPlayerId
+"app" <-> "Rankings": save
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 201 
 deactivate "app"
 "charlie" -> "app": POST players
 activate "app"
-"app" <-> "players": save
+"app" <-> "RegisteredPlayers": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
 "charlie" -> "app": POST games
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
 "charlie" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
 "charlie" -> "app": POST games/{gameId}/guesses
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "games": find by id and player id
-"app" <-> "games": save
-"app" <-> "players": find by id
-"app" <-> "rankings": find by player id
-"app" <-> "rankings": save
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Games": findByIdAndPlayerId
+"app" <-> "Games": save
+"app" <-> "RegisteredPlayers": findById
+"app" <-> "Rankings": findByPlayerId
+"app" <-> "Rankings": save
 "app" -[#DarkGreen]> "charlie": <color:DarkGreen> 201 
 deactivate "app"
 "bob" -> "app": GET leaderboard
 activate "app"
-"app" <-> "players": find by username
-"app" <-> "rankings": find all
+"app" <-> "RegisteredPlayers": findByUsername
+"app" <-> "Rankings": findAll
 "app" -[#DarkGreen]> "bob": <color:DarkGreen> 200 
 deactivate "app"
 @enduml

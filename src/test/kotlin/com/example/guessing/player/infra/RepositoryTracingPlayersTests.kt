@@ -1,6 +1,7 @@
 package com.example.guessing.player.infra
 
-import com.example.guessing.common.infra.DatabaseCall
+import com.example.guessing.common.infra.RepositoryCall
+import com.example.guessing.common.infra.RepositoryTracing
 import com.example.guessing.player.EncodedPassword
 import com.example.guessing.player.RegisteredPlayer
 import com.example.guessing.player.RegisteredPlayers
@@ -12,14 +13,14 @@ import org.http4k.testing.RecordingEvents
 import org.junit.jupiter.api.Test
 
 
-class TracingPlayersTests : RegisteredPlayersContract {
+class RepositoryTracingPlayersTests : RegisteredPlayersContract {
 
     private val events = RecordingEvents()
     private val inMemoryPlayers = RegisteredPlayers.InMemory();
 
-    override val players = TracingRegisteredPlayers(
+    override val players = RepositoryTracing<RegisteredPlayers>(
+        inMemoryPlayers,
         events,
-        inMemoryPlayers
     )
 
     @Test
@@ -31,38 +32,38 @@ class TracingPlayersTests : RegisteredPlayersContract {
 
         players.save(newPlayer)
 
-        events.toList() shouldBe listOf(DatabaseCall("players", "save"))
+        events.toList() shouldBe listOf(RepositoryCall("RegisteredPlayers", "save"))
     }
 
     @Test
-    fun  `publish a new event when retrieving an existing player`() {
+    fun `publish a new event when retrieving an existing player`() {
         val existingPlayer = given(
             RegisteredPlayer(
-            username = "existing-player",
-            password = EncodedPassword("dont-care")
-        )
+                username = "existing-player",
+                password = EncodedPassword("dont-care")
+            )
         )
 
         players.findByUsername(existingPlayer.username)
 
-        events.toList() shouldBe listOf(DatabaseCall("players", "find by username"))
+        events.toList() shouldBe listOf(RepositoryCall("RegisteredPlayers", "findByUsername"))
     }
 
     @Test
-    fun  `publish a new event when checking if a player already exist`() {
+    fun `publish a new event when checking if a player already exist`() {
         val existingPlayer = given(
             RegisteredPlayer(
-            username = "existing-player",
-            password = EncodedPassword("dont-care")
-        )
+                username = "existing-player",
+                password = EncodedPassword("dont-care")
+            )
         )
 
         players.existByUsername(existingPlayer.username)
         players.existByUsername("non-existing")
 
         events.toList() shouldBe listOf(
-            DatabaseCall("players", "exist by username"),
-            DatabaseCall("players", "exist by username"),
+            RepositoryCall("RegisteredPlayers", "existByUsername"),
+            RepositoryCall("RegisteredPlayers", "existByUsername"),
         )
     }
 
@@ -70,14 +71,14 @@ class TracingPlayersTests : RegisteredPlayersContract {
     fun `publish a new event when retrieving an existing player by id`() {
         val existingPlayer = given(
             RegisteredPlayer(
-            username = "existing-player",
-            password = EncodedPassword("dont-care")
-        )
+                username = "existing-player",
+                password = EncodedPassword("dont-care")
+            )
         )
 
         players.findById(existingPlayer.id)
 
-        events.toList() shouldBe listOf(DatabaseCall("players", "find by id"))
+        events.toList() shouldBe listOf(RepositoryCall("RegisteredPlayers", "findById"))
     }
 
     override fun given(player: RegisteredPlayer): RegisteredPlayer {
